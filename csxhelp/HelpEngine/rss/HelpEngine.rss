@@ -1,0 +1,155 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:
+*
+*/
+
+*/
+
+NAME HELL
+#include <eikon.rh>
+#include <eikon.rsg>
+#include <avkon.rh>
+
+NAME HE
+// ---------------------------------------------------------
+//   
+//    Define the resource file signature 
+//    This resource should be empty.
+//
+// ---------------------------------------------------------
+//
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF { buf=""; }
+// ---------------------------------------------------------
+//   
+//    Define default menu and CBA key.
+//
+// ---------------------------------------------------------
+//
+
+//								
+///    Folder Name Texts:		
+//	   Their content is at the loc-file	
+
+STRUCT STRING
+    {
+    LTEXT text;
+    }	
+
+RESOURCE TBUF r_type_xhtml_folder_name 
+    {
+    buf = qtn_app_xhtml_folder_text;
+    }
+    
+//								
+///    Meta FileName Texts:		
+//	   Their content is at the loc-file		
+
+RESOURCE TBUF r_type_meta_file_name 
+    {
+    buf = qtn_app_meta_file_text;
+    }
+    
+//								
+///    Index FileName Texts:		
+//	   Their content is at the loc-file		
+
+RESOURCE TBUF r_type_index_file_name 
+    {
+    buf = qtn_app_index_file_text;
+    }
+
+//								
+///    Keywordsearch FileName Texts:		
+//	   Their content is at the loc-file		
+RESOURCE TBUF r_type_kywd_file_name 
+    {
+    buf = qtn_app_kywd_file_text;
+    }   
+
+//								
+///    Forward slash:		
+//	   Their content is at the loc-file		
+RESOURCE TBUF r_type_forward_slash
+    {
+    buf = qtn_app_forward_slash_text;
+    }
+    
+//								
+///    ApplicationName Tag Texts:		
+//	   Their content is at the loc-file		
+
+RESOURCE TBUF r_type_application_tag_name 
+    {
+    buf = qtn_app_application_name_tag_text;
+    }
+
+//								
+///    Index FileName Texts:		
+//	   Their content is at the loc-file		
+
+RESOURCE TBUF r_type_toc2title_tag_name 
+    {
+    buf = qtn_app_toc2title_name_tag_text;
+    }
+
+//								
+///    Index FileName Texts:		
+//	   Their content is at the loc-file		
+
+RESOURCE TBUF r_type_htmlpage_tag_name 
+    {
+    buf = qtn_app_htmlpage_name_tag_text;
+    }
+    
+//								
+///    Index FileName Texts:		
+//	   Their content is at the loc-file		
+
+RESOURCE TBUF r_type_compress_tag_name 
+    {
+    buf = qtn_app_compress_name_tag_text;
+    }
+    
+//								
+///    Index FileName Texts:		
+//	   Their content is at the loc-file		
+RESOURCE TBUF r_type_compress_tag_value_name 
+    {
+    buf = qtn_app_compress_name_tag_value_text;
+    }
+    
+//								
+///    keywordsearch FileName Texts:		
+//	   Their content is at the loc-file		
+RESOURCE TBUF r_type_searchview_toc1title_tag_name 
+    {
+    buf = qtn_app_searchview_toc1title_tag_text;
+    }
+    
+//								
+///    keywordsearch FileName Texts:		
+//	   Their content is at the loc-file		
+RESOURCE TBUF r_type_searchview_toc2title_tag_name 
+    {
+    buf = qtn_app_searchview_toc2title_tag_text;
+    }
+    
+RESOURCE TBUF r_type_title_help
+    {
+    buf = qtn_help_title_hel;
+    }
+        
