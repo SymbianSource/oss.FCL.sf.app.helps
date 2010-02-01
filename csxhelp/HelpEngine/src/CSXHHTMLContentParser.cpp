@@ -241,7 +241,7 @@ TBool CCSXHHTMLContentParser::HandleMasterMetaFileL(CCSXHHelpDataBase* aDataBase
     if(BaflUtils::FileExists( FileSession,masterFile ) )
         {
 #ifdef _DEBUG
-        RDebug::Print(_L("index exist begin to parse!    %c"), aDrive );
+        RDebug::Print(_L("index exist begin to parse!    %c"), TUint( aDrive ) );
 #endif
         CCSXHXMLParseHandler_MasterMetaFile* masterMetaHandler = 
         CCSXHXMLParseHandler_MasterMetaFile::NewL(iCoeEnv);
@@ -356,6 +356,10 @@ void CCSXHHTMLContentParser::ScanAndParseXMLfileToCreateTOC1ObjectL(RFs& FileSes
 					{
 		            CCSXHHtmlTOC1* CategoryObj = CCSXHHtmlTOC1::NewL(
 		                                        XMLParser->GetApplicationName(),entry.iName,aDrive);
+		            if ( !CategoryObj )
+		                {
+		                continue;
+		                }
 		            iIndexing->RuntimeGenerateIndexL( *CategoryObj, XMLParser->GetFeatureIds() );
 		            if(CategoryObj && aDataBase->GetMainTopics()->InsertChild(CategoryObj,EFalse))
 		            	iHtmlTOC1List.Append(CategoryObj);//Keep a local copy*/ 

@@ -30,8 +30,8 @@
 
 
 #include <brctlinterface.h>
-#include <BrowserLauncher.h>
-#include <BrCtlDefs.h>
+#include <browserlauncher.h>
+#include <brctldefs.h>
 
 #include <coemain.h>
 #include <AknUtils.h>

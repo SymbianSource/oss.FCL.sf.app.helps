@@ -23,7 +23,7 @@
 //reports an error but produces results for other files
 
 #include <coecntrl.h>
-#include <BrCtlLinkResolver.h>
+#include <brctllinkresolver.h>
 #include <brctlinterface.h>
 //RUNTIME
 #include <featurecontrol.h>
