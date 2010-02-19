@@ -224,6 +224,12 @@ class CCSXHXMLParseHandler_MetaFile : public CCSXHXMLParseHandler
 */		
 		TInt Characters (const TDesC8 &aBuff, const TInt aStart,
 			 const TInt aLength); 					
+		
+		TInt32 Priority();
+		
+	private:
+		TBuf<8> iPriority;
+		TBool iIsPriority;
 	};
 
 class CCSXHXMLParseHandler_IndexFile : public CCSXHXMLParseHandler
@@ -482,5 +488,95 @@ class CCSXHXMLParseHandler_MasterKywd : public CCSXHXMLParseHandler
 	private:
  		CCSXHHtmlTOC1 *iCurrentHtmlToc1; 		
  		CCSXHHTMLContentParser *iParser;
-	};        
+	};  
+
+/** 
+* @class CCSXHXMLParseHandler_RedirectFile
+* This class is used retrive the data from redirect.xml file
+*/	
+class CCSXHXMLParseHandler_RedirectFile : public CCSXHXMLParseHandler
+	{
+	public:
+/** 
+*  @function CCSXHXMLParseHandler_RedirectFile
+*  @since S60 3.2
+*  Construct a CCSXHXMLParseHandler_RedirectFile 
+*  @param aCoeEnv 	- Control Environment 
+*  @param aSourceUid - source uid
+*  @param aSourceContextname - source context name
+*  @retrun a CCSXHXMLParseHandler_RedirectFile pointer
+*/	
+		static CCSXHXMLParseHandler_RedirectFile* NewL(CCoeEnv * aCoeEnv, 
+				const TUid &aSourceUid, const TCoeContextName &aSourceContextName);
+
+	protected:
+/** 
+*  @function CCSXHXMLParseHandler_RedirectFile
+*  @since S60 3.2
+*  Construct a CCSXHXMLParseHandler_RedirectFile 
+*  @param aCoeEnv 	- Control Environment 
+*  @param aSourceUid - source uid
+*  @param aSourceContextname - source context name
+*/
+		CCSXHXMLParseHandler_RedirectFile(CCoeEnv * aCoeEnv, 
+				const TUid &aSourceUid, const TCoeContextName &aSourceContextName);
+
+	public:	
+/** 
+*  @function StartElement
+*  @since S60 3.2
+*  Receive notification of the beginning of an element
+*  @param aURI		 -  The Namespace URI, or the empty string 
+						if the element has no Namespace URI or
+						if Namespace processing is not being performed.  
+		  aLocalName -  The local name (without prefix)  
+		  aName		 -  The qualified name  
+		  apAttrs	 -  The attributes attached to the element. 
+		  				If there are no attributes, it shall be 
+		  				an empty array.Namespaces declared in the current 
+		  				element will be located in the array also 
+*  @return KErrNone or some of the system-wide Symbian error codes 
+*/	
+		TInt StartElement (const TDesC8 &aURI, const TDesC8 &aLocalName, 
+		const TDesC8 &aName, const RAttributeArray &apAttrs);
+/** 
+*  @function EndElement
+*  @since S60 3.2
+*  Receive notification of the end of an element
+*  @param aURI		 -  The Namespace URI, or the empty string 
+						if the element has no Namespace URI or
+						if Namespace processing is not being performed.  
+		  aLocalName -  The local name (without prefix)  
+		  aName		 -  The qualified name  
+*  @return KErrNone or some of the system-wide Symbian error codes 
+*/		
+		TInt EndElement  (  const TDesC8 &aURI,const TDesC8 &aLocalName,const TDesC8 &aName);
+/** 
+*  @function Characters
+*  @since S60 3.2
+*  Receive notification inside an element
+*  @param aBuff   -  The characters.  
+*		  aStart  -  The start position in the character buffer.  
+*		  aLength -  The number of characters to use from the character buffer.  
+*  @return KErrNone or some of the system-wide Symbian error codes 
+*/		
+		TInt Characters (const TDesC8 &aBuff, const TInt aStart,
+			 const TInt aLength); 
+		
+		TBool IsTargetPathFound();
+		TUid TargetUid();
+		TBuf<KMaxFileName>& TargetContextName();
+
+	private:
+
+		TCoeContextName iSourceContextName;
+		TCoeContextName iFromContent;
+		TBuf<KMaxFileName> iTargetPath; 
+		TBool iIsFromTag;
+		TBool iIsToTag;
+		TBool iIsSourceContextNameFound;
+		TBool iIsTargetPathFound;
+		TUid  iTargetUid;
+		TBuf<KMaxFileName> iTargetContextName;
+	};
 #endif 

@@ -37,7 +37,7 @@ class CCSXHMainTopics : public CCSXHGenericTOC1
 *  @param aCoeEnv 	- Control Environment 
 *  @retrun a CCSXHMainTopics pointer
 */
-    static CCSXHMainTopics* NewL(const TUid&, const TApaAppCaption& aAppCaption);
+    static CCSXHMainTopics* NewL(const TUid&, const TApaAppCaption& aAppCaption, const TInt32 aPriority = 0);
 /** 
 *  @function CCSXHMainTopics
 *  @since S60 3.2
@@ -45,7 +45,7 @@ class CCSXHMainTopics : public CCSXHGenericTOC1
 *  @param aCoeEnv 	- Control Environment 
 *  @retrun a CCSXHMainTopics pointer
 */  
-    static CCSXHMainTopics* NewLC(const TUid&,const TApaAppCaption& aAppCaption);
+    static CCSXHMainTopics* NewLC(const TUid&,const TApaAppCaption& aAppCaption, const TInt32 aPriority = 0);
     
 /** 
  * @function ~CCSXHMainTopics
@@ -76,7 +76,7 @@ class CCSXHMainTopics : public CCSXHGenericTOC1
 *  @param aUid  - Application Uid
 *         aName - TOC1 Object Name  
 */    
-    CCSXHMainTopics(const TUid& aUid, const TDesC& aName);
+    CCSXHMainTopics(const TUid& aUid, const TDesC& aName, const TInt32 aPriority);
     	
     const TUid &iUid;
     };

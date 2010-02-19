@@ -19,5 +19,5 @@ EXPORTS
 	?GetTopicContentL@CCSXHHtmlTOC2@@UAEPAXXZ @ 18 NONAME ; void * CCSXHHtmlTOC2::GetTopicContentL(void)
 	?GetTopicContentL@CCSXHLegacyTOC2@@UAEPAXXZ @ 19 NONAME ; void * CCSXHLegacyTOC2::GetTopicContentL(void)
 	?InitGenerateKeywordTOC2ListL@CCSXHHelpDataBase@@QAEHPAVCCSXHKywdTOC1@@@Z @ 20 NONAME ; int CCSXHHelpDataBase::InitGenerateKeywordTOC2ListL(class CCSXHKywdTOC1 *)
-	?NewL@CCSXHHelpDataBase@@SAPAV1@PAVCCoeEnv@@ABV?$TBuf@$0BAA@@@@Z @ 21 NONAME ; class CCSXHHelpDataBase * CCSXHHelpDataBase::NewL(class CCoeEnv *, class TBuf<256> const &)
-
+	?NewL@CCSXHHelpDataBase@@SAPAV1@PAVCCoeEnv@@ABV?$TBuf@$0BAA@@@1@Z @ 21
+	?GetAppHelpsTopics@CCSXHHelpDataBase@@QAEPAVCCSXHGenericTOC1@@XZ @ 22

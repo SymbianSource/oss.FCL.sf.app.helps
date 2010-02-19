@@ -94,13 +94,13 @@ void CCSXHRuntimeIndexing::ConstructL()
         }
     }
     
-TBool CCSXHRuntimeIndexing::IndexFileExists()
+TBool CCSXHRuntimeIndexing::IndexFileExistsL()
     {
     RFs& fileSession = iCoeEnv->FsSession();
     TBuf<KMaxFileName> fileName;
     GetPrivatePath( fileName );
     fileName.Append( _L("Z\\") );
-    AppendLocale( fileName );
+    AppendLocaleL( fileName );
     fileName.Append( KMasterMetaFile );
     
     // Now the dirName is C:\\private\\<app-uid>\\Z\\index.xml
@@ -111,7 +111,7 @@ TBool CCSXHRuntimeIndexing::IndexFileExists()
     
     }
     
-void CCSXHRuntimeIndexing::BeginIndexFile( const TChar& aDrive )
+void CCSXHRuntimeIndexing::BeginIndexFileL( const TChar& aDrive )
     {
     RFs& fileSession = iCoeEnv->FsSession();
     TPtr des = iFullDirName->Des();
@@ -120,7 +120,7 @@ void CCSXHRuntimeIndexing::BeginIndexFile( const TChar& aDrive )
     GetPrivatePath( des );
     des.Append( aDrive );
     des.Append( KFwdSlash );
-    AppendLocale( des );
+    AppendLocaleL( des );
     if ( !BaflUtils::PathExists( fileSession, des ) )
         {
         // generate C:\\private\\<help-uid>\\<aDrive>\\ folder
@@ -175,7 +175,7 @@ void CCSXHRuntimeIndexing::FinishAndCloseIndexFileL()
         helpDir.Append( iDriveLetter );  
         helpDir.Append( KInstallPath );
         // append locale information
-        AppendLocale( helpDir );
+        AppendLocaleL( helpDir );
         
         fileSession.Modified( helpDir, time );
         err = fileSession.SetModified( newName, time );
@@ -214,6 +214,11 @@ void CCSXHRuntimeIndexing::RuntimeGenerateIndexL( const CCSXHHtmlTOC1& aToc1, co
     // Append app id
     des.Append( buffUid );
     des.Append( KIndexQuoteEnd );
+    // Append app priority 
+    des.Append( KPriorityTag );
+    des.Append( KIndexQuoteBegin );
+    des.AppendNum(aToc1.Priority());
+    des.Append( KIndexQuoteEnd );
     // Append app name attribut "navtitle"
     des.Append( KTOC2NameTag );
     des.Append( KIndexQuoteBegin );
@@ -250,7 +255,7 @@ void CCSXHRuntimeIndexing::GetPrivatePath( TDes& aName )
     aName.Append( privatePath );
     }
 
-void CCSXHRuntimeIndexing::AppendLocale( TDes& aDir )
+void CCSXHRuntimeIndexing::AppendLocaleL( TDes& aDir )
     {
     RFs& fileSession = iCoeEnv->FsSession();
     RArray<TLanguage> langs;
@@ -279,14 +284,14 @@ void CCSXHRuntimeIndexing::AppendLocale( TDes& aDir )
     langs.Reset();
     }
     
-void CCSXHRuntimeIndexing::DeleteIndexFile( const TChar& aDrive )
+void CCSXHRuntimeIndexing::DeleteIndexFileL( const TChar& aDrive )
     {
     RFs& fileSession = iCoeEnv->FsSession();
     TBuf<KMaxFileName> des;
     GetPrivatePath( des );
     des.Append( aDrive );
     des.Append( KFwdSlash );
-    AppendLocale( des );
+    AppendLocaleL( des );
     // C:\\private\\<app-uid>\\<drive letter>\\<language-id>\\index.xml
     des.Append( KMasterMetaFile );
     
@@ -297,7 +302,7 @@ void CCSXHRuntimeIndexing::DeleteIndexFile( const TChar& aDrive )
 
     }
     
-TInt CCSXHRuntimeIndexing::CheckDirChange( const TChar& aDrive )
+TInt CCSXHRuntimeIndexing::CheckDirChangeL( const TChar& aDrive )
     {
     RFs& fsSession = iCoeEnv->FsSession();
     
@@ -309,7 +314,7 @@ TInt CCSXHRuntimeIndexing::CheckDirChange( const TChar& aDrive )
 
     // Begin to append locale, note this will append current locale,
     // thru which, app can determine if it's caused by user changed locales
-    AppendLocale( dirName );
+    AppendLocaleL( dirName );
 
     TTime dirModified(0);
     TTime fileModified(0);
@@ -329,7 +334,7 @@ TInt CCSXHRuntimeIndexing::CheckDirChange( const TChar& aDrive )
     GetPrivatePath( filename );
     filename.Append( aDrive );
     filename.Append( KFwdSlash );
-    AppendLocale( filename );
+    AppendLocaleL( filename );
     filename.Append( KMasterMetaFile );
                 
     if ( BaflUtils::FileExists( fsSession, filename ) )

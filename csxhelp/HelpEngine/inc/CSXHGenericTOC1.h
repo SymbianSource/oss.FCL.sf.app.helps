@@ -63,6 +63,7 @@ class CCSXHGenericTOC1 : public CCSXHHelpContentBase
  */  	
   	TBool InsertChild(CCSXHHelpContentBase* atoc2,TBool aDeleteObject = ETrue);
   	
+  	TBool InsertChildWithPriority(CCSXHHelpContentBase* aChild, TBool aDeleteObject = ETrue);
 /** 
  * @function ResetChildList
  * @since S60 3.2
@@ -79,7 +80,7 @@ class CCSXHGenericTOC1 : public CCSXHHelpContentBase
 *  Construct a CCSXHGenericTOC1 
 *  @param aName 	- TOC1 Name
 */
-  	CCSXHGenericTOC1(const TDesC& aName); 
+  	CCSXHGenericTOC1(const TDesC& aName, const TInt32 aPriority = 0); 
   	
 /** 
 *  @function InitChildList

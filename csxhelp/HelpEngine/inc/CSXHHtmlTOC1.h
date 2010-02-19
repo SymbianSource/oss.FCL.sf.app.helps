@@ -61,7 +61,7 @@ class CCSXHHtmlTOC1 : public CCSXHGenericTOC1
 *  @return a CCSXHHtmlTOC1 Pointer 
 */
     static CCSXHHtmlTOC1* NewL(const TDesC& aName,const TDesC& aFolder,
-    							const TInt& aDrive);
+    							const TInt& aDrive, TUid aViewId, TInt32 aPriority = 0);
 /** 
  * @function ~CCSXHHtmlTOC1
  * @since S60 3.2
@@ -124,7 +124,7 @@ class CCSXHHtmlTOC1 : public CCSXHGenericTOC1
 *		  aUid 		- Application Uid
 *		  aDrive    - Drive Number
 */    
-    CCSXHHtmlTOC1(const TDesC& aName,const TDesC& aFolder,const TInt& aDriveName);
+    CCSXHHtmlTOC1(const TDesC& aName, const TDesC& aFolder, const TInt& aDriveName, TUid aViewId, TInt32 aPriority);
 /** 
 *  @function InitChildList
 *  @since S60 3.2
@@ -140,6 +140,7 @@ class CCSXHHtmlTOC1 : public CCSXHGenericTOC1
 	  
      TAppUid iAppUid;
       short iDrive;
+    TUid iViewId;
     };
 
 

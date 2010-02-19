@@ -36,9 +36,9 @@ const TInt KBufSize = 35;
 // ---------------------------------------------------------
 // Items commented in header.
 // ---------------------------------------------------------
-CCSXHHtmlTOC1* CCSXHHtmlTOC1::NewL(const TDesC& aName, const TDesC& aFolder,const TInt& aDrive)
+CCSXHHtmlTOC1* CCSXHHtmlTOC1::NewL(const TDesC& aName, const TDesC& aFolder,const TInt& aDrive, TUid aViewId, TInt32 aPriority)
     {
-    CCSXHHtmlTOC1* self = new(ELeave) CCSXHHtmlTOC1(aName,aFolder,aDrive);
+    CCSXHHtmlTOC1* self = new(ELeave) CCSXHHtmlTOC1(aName,aFolder,aDrive, aViewId, aPriority);
     if(self->IsValid())
     	return self;	
     delete self;
@@ -48,8 +48,8 @@ CCSXHHtmlTOC1* CCSXHHtmlTOC1::NewL(const TDesC& aName, const TDesC& aFolder,cons
 // ---------------------------------------------------------
 // Items commented in header.
 // ---------------------------------------------------------
-CCSXHHtmlTOC1::CCSXHHtmlTOC1(const TDesC& aName, const TDesC& aFolder,const TInt& aDrive):
-                    CCSXHGenericTOC1(aName),iAppUid(aFolder),iDrive(aDrive)
+CCSXHHtmlTOC1::CCSXHHtmlTOC1(const TDesC& aName, const TDesC& aFolder,const TInt& aDrive, TUid aViewId, TInt32 aPriority):
+                    CCSXHGenericTOC1(aName, aPriority), iAppUid(aFolder), iDrive(aDrive), iViewId(aViewId)
     {//No implementation required
     }
 
@@ -65,7 +65,7 @@ CCSXHHtmlTOC1::~CCSXHHtmlTOC1()
 // ---------------------------------------------------------
 TUid CCSXHHtmlTOC1::GetViewID() const
     {
-    return KCSXHToc2ViewID;
+    return iViewId;
     }
     
 // ---------------------------------------------------------

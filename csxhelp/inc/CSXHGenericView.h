@@ -145,7 +145,7 @@ class CCSXHGenericView : public CAknView
         CCSXHGenericContainer *iContainer;
         TBool iResetContainerInActivate;
         
-        const TUid &iUid;
+        TUid  iUid;
         const TInt &iAppFlags;
 
     };

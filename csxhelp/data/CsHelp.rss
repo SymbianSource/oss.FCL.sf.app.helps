@@ -1124,5 +1124,18 @@ RESOURCE TBUF256 r_cshelp_tutorial_text
     {
     buf = qtn_help_toc_list_item_tutorial;
     }
-#endif    
+#endif
+
+// ---------------------------------------------------------
+//   
+//   qtn_help_toc_app_helps
+//   One topic indicates for a collection of post-build helps,
+//   all installed helps should be put within it
+// ---------------------------------------------------------
+//
+RESOURCE TBUF80 r_cshelp_toc_app_helps
+    {
+    buf = qtn_help_toc_app_helps;
+    }
+  
 // End of File

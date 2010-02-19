@@ -52,6 +52,8 @@ class CCSXHHelpContentBase : public CBase
 *  @return Pointer which contains Name
 */
     IMPORT_C TPtr GetName() const;
+    
+    TInt32 Priority() const;
 
   protected:
 /** 
@@ -60,7 +62,7 @@ class CCSXHHelpContentBase : public CBase
 *  Construct a CCSXHHelpContentBase 
 *  @param aName 	- Name
 */  
-    CCSXHHelpContentBase(const TDesC& name);
+    CCSXHHelpContentBase(const TDesC& name, const TInt32 aPriority = 0);
 
   private:
     // 1. For Generic TOC1: The TOC1 entry name
@@ -70,10 +72,13 @@ class CCSXHHelpContentBase : public CBase
     //typedef TBuf<30> TCoeContextName;
     
     HBufC *iName;
+    TInt32 iPriority;
     
     template <class T>
     friend TInt Orderer(const T& left, const T& right);
 
+    template <class T>
+	friend TInt OrdererWithPriority(const T& left, const T& right);
     };
 /** 
 *  @function Orderer
@@ -87,7 +92,25 @@ template <class T>
 TInt Orderer(const T& left, const T& right) 
     {
     //return left.GetName().CompareC(right.GetName());
-    return (left.iName)->CompareC(*right.iName);
+    return (left.iName)->CompareF(*right.iName);
 	}
+
+template <class T>
+TInt OrdererWithPriority(const T& left, const T& right) 
+    {
+    if (left.iPriority < right.iPriority)
+    	{
+    	return -1;
+    	}
+    else if (left.iPriority == right.iPriority)
+    	{
+        return (left.iName)->CompareF(*right.iName);
+    	}
+    else
+    	{
+    	return 1;
+    	}
+	}
+
     
 #endif /* INC_CSXHHELPCONTENTBASE_H_HEADER_INCLUDED_BC0553D0 */

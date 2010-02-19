@@ -132,5 +132,10 @@
 //l: popup_note_wait_window
 //r: 5.0
 #define qtn_help_noteg_install    "Help content changed due to install/uninstallation, please restart Help application to see new app"
-    
+
+//d: Collection for custom applications helps
+//d: This topic is a collection for all of post-build applications
+//l: list_single_pane_t1
+//r: 5.2
+#define qtn_help_toc_app_helps             "Application helps" 
 // End of file

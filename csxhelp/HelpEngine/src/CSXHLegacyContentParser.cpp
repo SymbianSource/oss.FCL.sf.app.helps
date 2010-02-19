@@ -110,7 +110,7 @@ void CCSXHLegacyContentParser::GenerateTOC1ListL(CCSXHHelpDataBase* aDataBase)
         {           
         appName = categoryList->MdcaPoint(i);                           
         CategoryObj = CCSXHLegacyTOC1::NewL(appName);
-        if(aDataBase->GetMainTopics()->InsertChild(CategoryObj))
+        if ( aDataBase->GetAppHelpsTopics()->InsertChild(CategoryObj) )
                 iLegacyTOC1List.Append(CategoryObj);//Keep a local copy*/       
         }
     CleanupStack::Pop(categoryList);            

@@ -181,7 +181,7 @@ class CCSXHHtmlTopicView : public CAknView
     *  @param None
     *  @return None
     */
-    void LaunchTutorial();
+    void LaunchTutorialL();
 #endif // FF_HELP_TUTORIAL_MERGE
 
     protected: // functions from base classes

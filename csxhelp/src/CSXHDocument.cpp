@@ -59,7 +59,10 @@ CEikAppUi* CCSXHDocument::CreateAppUiL()
     // object will be called by the Application Framework
     iHelpAppUi = new (ELeave) CCSXHAppUi;
     
-    iHelpDataBase = CCSXHHelpDataBase::NewL(CCSXHAppUi::GetCoeEnv(),AppCaption());
+    HBufC* appToc = CCSXHAppUi::GetCoeEnv()->AllocReadResourceLC( R_CSHELP_TOC_APP_HELPS );
+    iHelpDataBase = CCSXHHelpDataBase::NewL(CCSXHAppUi::GetCoeEnv(),AppCaption(), *appToc);
+    CleanupStack::PopAndDestroy( appToc );
+	
 	iDisplayTopic = iHelpDataBase->GetMainTopics();
 	iPrevTopic = NULL;
 	
