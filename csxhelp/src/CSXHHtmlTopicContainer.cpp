@@ -30,8 +30,8 @@
 
 
 #include <brctlinterface.h>
-#include <browserlauncher.h>
-#include <brctldefs.h>
+#include <BrowserLauncher.h>
+#include <BrCtlDefs.h>
 
 #include <coemain.h>
 #include <AknUtils.h>
@@ -450,9 +450,12 @@ void CCSXHHtmlTopicContainer::HandleBrowserLoadEventL(TBrCtlDefs::TBrCtlLoadEven
         //then browser call back function triggers which leads to crash. This check 
         //will avoid crash.
         TUid viewId = iDocument.GetDisplayTopic()->GetViewID();
-		if(viewId == KCSXHToc1ViewID ||	viewId == KCSXHKywdToc1ViewID
-		|| viewId == KCSXHToc2ViewID || viewId == KCSXHKywdToc2ViewID)
+		if (viewId == KCSXHToc1ViewID || viewId == KCSXHKywdToc1ViewID
+			|| viewId == KCSXHToc2ViewID || viewId == KCSXHKywdToc2ViewID
+			|| viewId == KCSXHToc1AppHelpsViewID || viewId == KCSXHToc2AppHelpsViewID)
+			{
 			return;
+			}
 		
         //When user clicks on Application Topics, application topics 
         //corresponding to the topic being displayed has to be opened

@@ -234,7 +234,7 @@ class CCSXHAppUi : public CAknViewAppUi,
         *  @param None
         *  @return None
         */
-        void LoadTutorialService();
+        void LoadTutorialServiceL();
 #endif
   private:
     
@@ -249,6 +249,8 @@ class CCSXHAppUi : public CAknViewAppUi,
 	
 	CCSXHGenericView* iKywdTOC2View;
 	CCSXHGenericView* iTOC2View;
+	CCSXHGenericView* iAppHelpsTOC1View;
+	CCSXHGenericView* iAppHelpsTOC2View;
 	
 	static CCSXHAppUi* iInstance;
 	CCSXHRuntimeAppWatcher* iRuntimeWatcher;

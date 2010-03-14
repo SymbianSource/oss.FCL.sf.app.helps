@@ -20,6 +20,7 @@
 #define __CCSXHHTMLCONTENTPARSER_H__
 
 #include "CSXHGenericTOC1.h"
+#include "coehelp.h"
 #include <f32file.h>
 #include <barsc.h> 
 #include <featurecontrol.h>
@@ -37,6 +38,7 @@ class CCSXHGenericTOC2;
 class MSenContentHandlerClient;
 class CCSXHXMLParseHandler_Kywd;
 class CCSXHRuntimeIndexing;
+class CCSXHXMLParseHandler_MetaFile;
 /**
 *  CCSXHHTMLContentParser class.
 *  This class is used to parse XML files & generate Html data
@@ -131,13 +133,15 @@ class CCSXHHTMLContentParser : public CBase
 		void GenerateTOC2ListForKeywordSearchL(CCSXHHelpDataBase* aDataBase,
 										CCSXHKywdTOC1* akywdtoc1);
 /** 
-*  @function GetContextTopic
+*  @function GetContextTopicL
 *  @since S60 3.2
 *  Get the help Context object
-*  @param aContext - Help context object
-*  @return database class pointer 
+*  @param aContextName - Help context object
+*  @param aUid - Help content UID
+*  @return Help content class pointer 
 */		
-		CCSXHHelpContentBase* GetContextTopic(const TUid &aUid, const TDesC &contextName);
+		CCSXHHelpContentBase* GetContextTopicL(CCSXHHelpDataBase *aDataBase, 
+				                        TUid &aUid, TCoeContextName &aContextName);
 /** 
 *  @function GetHtmlTopicForUrlL
 *  @since S60 3.2
@@ -158,7 +162,7 @@ class CCSXHHTMLContentParser : public CBase
 		
 		
 		void InsertHTMLToc1L(const TDesC &appUidName,const TDesC &appName,const TInt& aDrive,
-		                        CCSXHHelpDataBase* aDataBase,const TDesC &FeatureIds );
+		                        CCSXHHelpDataBase* aDataBase, const TDesC &FeatureIds, TInt32 aPriority);
 		
 /** 
 *  @function GetHTMLToc1
@@ -211,7 +215,12 @@ class CCSXHHTMLContentParser : public CBase
 */
 		void ScanAndParseXMLfileToCreateTOC1ObjectL(RFs& aFileSession,CDirScan* ascanner,
 												   CCSXHHelpDataBase* aDataBase,
-												   const TInt& aDrive,CCSXHXMLParseHandler* aXMLParser);		
+												   const TInt& aDrive,
+												   CCSXHXMLParseHandler_MetaFile* aXMLParser);		
+
+
+		
+		TBool IsRomBasedContentL( RFs& FileSession, const TDesC &aUid );
 /** 
 *  @function HandleMasterMetaFileL(
 *  @since S60 3.2
@@ -224,6 +233,17 @@ class CCSXHHTMLContentParser : public CBase
 */
 	    TBool HandleMasterMetaFileL(CCSXHHelpDataBase* aDataBase, 
 	        TChar& aDrive, MSenContentHandlerClient *aPrevHandler);
+
+/** 
+*  @function IsRedirectedL(
+*  @param aDatabase	    - Database pointer
+*		  aPath	        - Context root directory
+*		  aUid          - App uid
+*         aContextName  - file name
+*  @return  ETrue if the context is redirected successfully, EFalse otherwise
+*/
+	    TBool IsRedirectedL(CCSXHHelpDataBase *aDataBase, 
+	        			const TDesC &aPath, TUid &aUid, TCoeContextName &aContextName);
 /** 
 *  @function HandleMasterKeywordFileL(
 *  @since S60 3.2

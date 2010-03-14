@@ -29,6 +29,8 @@ const TUid KCSXHKywdToc1ViewID = {5};
 const TUid KCSXHKywdToc2ViewID = {6};
 const TUid KCSXHContextHtmlTopicViewID = {7};
 const TUid KCSXHContextLegacyTopicViewID = {8};
+const TUid KCSXHToc1AppHelpsViewID = {9};
+const TUid KCSXHToc2AppHelpsViewID = {10};
 
 
 #endif /* INC_CSXHVIEWIDS_H_HEADER_INCLUDED_BC05356D */

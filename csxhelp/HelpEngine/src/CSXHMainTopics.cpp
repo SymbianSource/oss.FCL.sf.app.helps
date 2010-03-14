@@ -24,22 +24,22 @@
 #include <eikenv.h> 
 #include <e32base.h>
 
-CCSXHMainTopics* CCSXHMainTopics::NewL(const TUid& aUid, const TApaAppCaption& aAppCaption)
+CCSXHMainTopics* CCSXHMainTopics::NewL(const TUid& aUid, const TApaAppCaption& aAppCaption, const TInt32 aPriority)
     {
-    CCSXHMainTopics* self = CCSXHMainTopics::NewLC(aUid,aAppCaption);
+    CCSXHMainTopics* self = CCSXHMainTopics::NewLC(aUid,aAppCaption, aPriority);
     CleanupStack::Pop(self);
     return self;
     }
 
-CCSXHMainTopics* CCSXHMainTopics::NewLC(const TUid& aUid,const TApaAppCaption& aAppCaption)
+CCSXHMainTopics* CCSXHMainTopics::NewLC(const TUid& aUid,const TApaAppCaption& aAppCaption, const TInt32 aPriority)
     {
-    CCSXHMainTopics* self = new(ELeave) CCSXHMainTopics(aUid, aAppCaption);
+    CCSXHMainTopics* self = new(ELeave) CCSXHMainTopics(aUid, aAppCaption, aPriority);
     CleanupStack::PushL(self);
     return self;
     }
 
-CCSXHMainTopics::CCSXHMainTopics(const TUid& aUid,const TDesC& aName) :
-CCSXHGenericTOC1(aName), iUid(aUid)
+CCSXHMainTopics::CCSXHMainTopics(const TUid& aUid,const TDesC& aName, const TInt32 aPriority) :
+CCSXHGenericTOC1(aName, aPriority), iUid(aUid)
     {//No implementation required
     }
 

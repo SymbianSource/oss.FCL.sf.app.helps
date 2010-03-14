@@ -38,15 +38,16 @@
 #include <AknProgressDialog.h>
 
 EXPORT_C CCSXHHelpDataBase* CCSXHHelpDataBase::NewL(CCoeEnv* aCoeEnv,
-	const TApaAppCaption& aAppCaption)
+	const TApaAppCaption& aAppCaption, const TApaAppCaption& aAppHelpTopic)
     {
-    CCSXHHelpDataBase* self = CCSXHHelpDataBase::NewLC(aCoeEnv,aAppCaption);
+    CCSXHHelpDataBase* self = CCSXHHelpDataBase::NewLC(aCoeEnv,aAppCaption, aAppHelpTopic);
     CleanupStack::Pop(self);
     return self;    
     }
 
-CCSXHHelpDataBase* CCSXHHelpDataBase::NewLC(CCoeEnv* aCoeEnv,const TApaAppCaption& aAppCaption)
+CCSXHHelpDataBase* CCSXHHelpDataBase::NewLC(CCoeEnv* aCoeEnv, const TApaAppCaption& aAppCaption, const TApaAppCaption& aAppHelpTopic)
     {
+    CCSXHHelpDataBase *self = NULL;
     //Add stuff into TLS
     if(Dll::Tls() == NULL )
         {
@@ -54,26 +55,25 @@ CCSXHHelpDataBase* CCSXHHelpDataBase::NewLC(CCoeEnv* aCoeEnv,const TApaAppCaptio
         // been instantiated yet. Do so now, and return that
         // instance:
         // Store a pointer to the new instance in thread local storage:
-        CCSXHHelpDataBase* self = new(ELeave) CCSXHHelpDataBase(aCoeEnv,aAppCaption);
+        self = new(ELeave) CCSXHHelpDataBase(aCoeEnv,aAppCaption, aAppHelpTopic);
         CleanupStack::PushL(self);
         self->ConstructL();
      
         TInt err = Dll::SetTls(self);
-        if(err == KErrNone )
+        if (err != KErrNone)
             {
-            return self;
-            }
-        else
-            {
+            CleanupStack::Pop(self);            
             delete self;
-            User::Leave( err );
-            return NULL;
+            self = NULL;
+            User::Leave(err);
             }
         }
      else
         {
-            return GetInstance();
-        }   
+        self = GetInstance();
+        }
+
+    return self;
     }
     
 CCSXHHelpDataBase* CCSXHHelpDataBase::GetInstance()
@@ -83,8 +83,8 @@ CCSXHHelpDataBase* CCSXHHelpDataBase::GetInstance()
     return static_cast<CCSXHHelpDataBase*>(Dll::Tls());
     }
 
-CCSXHHelpDataBase::CCSXHHelpDataBase(CCoeEnv* aCoeEnv,const TApaAppCaption& aAppCaption)
-             : iCoeEnv(aCoeEnv),iAppCaption(aAppCaption),iKeywordSearchCount(0)
+CCSXHHelpDataBase::CCSXHHelpDataBase(CCoeEnv* aCoeEnv, const TApaAppCaption& aAppCaption, const TApaAppCaption& aAppHelpTopic)
+             : iCoeEnv(aCoeEnv), iAppCaption(aAppCaption), iAppHelpTopic(aAppHelpTopic), iKeywordSearchCount(0)
              
     {
     }
@@ -106,8 +106,15 @@ void CCSXHHelpDataBase::ConstructL()
     
     iMainTOC1 = CCSXHMainTopics::NewL(KCSXHToc1ViewID,iAppCaption);
     iKywdTOC1 = CCSXHKywdTopics::NewL(iAppCaption);
+    
+    //No need to delete iAppHelpsToc in destruct,
+    //because it will be deleted when deleting iMainTOC1.
+    //All third-party helps will be put to this topic
+    TInt appHelpPriority = 20001;
+    iAppHelpsToc = CCSXHMainTopics::NewL( KCSXHToc1AppHelpsViewID, iAppHelpTopic, appHelpPriority );
         
     //Build the TOC1 list here
+    iMainTOC1->InsertChildWithPriority(iAppHelpsToc, EFalse);
     iHTMLContentParser->GenerateTOC1ListL(this);
     iLegacyContentParser->GenerateTOC1ListL(this);
     }
@@ -124,6 +131,11 @@ EXPORT_C CCSXHGenericTOC1* CCSXHHelpDataBase::GetMainTopics()
 EXPORT_C CCSXHGenericTOC1* CCSXHHelpDataBase::GetKywdTopics()
     {
     return iKywdTOC1;
+    }
+
+EXPORT_C CCSXHGenericTOC1* CCSXHHelpDataBase::GetAppHelpsTopics()
+    {
+    return iAppHelpsToc;   
     }
 
 EXPORT_C CCSXHHelpContentBase* CCSXHHelpDataBase::GetContextTopic(const TDesC8& aContextMessage)
@@ -158,7 +170,7 @@ CCSXHHelpContentBase* CCSXHHelpDataBase::GetContextTopicL(const TDesC8& aContext
         {
         context = &(contextList->At(i));
         
-        contextTopic = iHTMLContentParser->GetContextTopic(context->iMajor,context->iContext);
+        contextTopic = iHTMLContentParser->GetContextTopicL(this, context->iMajor,context->iContext);
         if(contextTopic)
             {
             CleanupStack::PopAndDestroy(contextList);

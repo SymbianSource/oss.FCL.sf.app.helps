@@ -329,6 +329,16 @@ alocalName, const TDesC8&  , const RAttributeArray& aAttributes)
 	    TPtr FIdValue = iFeatureIds->Des();
 	    FIdValue.Copy(_L("-1"));  
 		}
+    
+    if ( LocalTagName.Compare(KPriorityTag) == 0 && nElements == 0 )
+    	{
+    	iIsPriority = ETrue;
+    	iPriority.Copy(KEmptyString); 
+    	}
+    else
+    	{
+    	iIsPriority = EFalse;
+    	}
         
     return KErrNone;
     }
@@ -336,18 +346,42 @@ alocalName, const TDesC8&  , const RAttributeArray& aAttributes)
 TInt CCSXHXMLParseHandler_MetaFile::EndElement  (  const TDesC8&  ,const TDesC8& ,const TDesC8& ) 
     {
     iIsAppName = EFalse;
+    iIsPriority = EFalse;
     return KErrNone;
     }
     
 TInt CCSXHXMLParseHandler_MetaFile::Characters (const TDesC8&  aBuff, const TInt /*aStart*/, const TInt /*aLength*/) 
     {
-    TBuf<KMaxFileName> TitleName;   
-    if(iIsAppName)
-        {           
+    if (iIsAppName)
+        {  
+        TBuf<KMaxFileName> TitleName; 
         CnvUtfConverter::ConvertToUnicodeFromUtf8(TitleName,aBuff);
         iApplicationName.Append(TitleName);     
         }
+		
+    if (iIsPriority)
+        {    
+        TBuf<8> Priority; 
+        CnvUtfConverter::ConvertToUnicodeFromUtf8(Priority,aBuff);
+        iPriority.Append(Priority); 
+        }
+
     return KErrNone;
+    }
+
+TInt32 CCSXHXMLParseHandler_MetaFile::Priority()
+    {
+	//The default priority is set to 0
+	TInt priority = 0;
+	
+	if (iPriority.Length() != 0)
+		{
+	    TLex lex( iPriority );
+	    lex.Val( priority );
+	    iPriority.Copy(KEmptyString); 
+		}
+	      
+    return priority;
     }
     
 
@@ -379,6 +413,8 @@ void CCSXHXMLParseHandler_MasterMetaFile::CreateTOC1ObjectsL(const
     TInt nElements = aAttributes.Count();
     TBuf<KMaxFileName> appUid; 
     TBuf<KMaxFileName> appName; 
+    TBuf<8> priorityBuf;
+    TInt32 appPriority;
     RAttribute AttributeInfo;
     RTagInfo TagInformation;
     TLinearOrder<CCSXHHelpContentBase> anOrder(Orderer<CCSXHHelpContentBase>);      
@@ -402,6 +438,13 @@ void CCSXHXMLParseHandler_MasterMetaFile::CreateTOC1ObjectsL(const
             {
             CnvUtfConverter::ConvertToUnicodeFromUtf8(appUid,AttributeInfo.Value().DesC());                    
             }
+        
+        if (LocalName.Compare(KPriorityTag) == 0)
+            {
+            CnvUtfConverter::ConvertToUnicodeFromUtf8(priorityBuf,AttributeInfo.Value().DesC());
+            TLex lex( priorityBuf );
+            lex.Val( appPriority );
+            }
                     
         if(LocalName.Compare(KTOC2NameTag) == 0)
             {
@@ -420,7 +463,7 @@ void CCSXHXMLParseHandler_MasterMetaFile::CreateTOC1ObjectsL(const
             	}
             	
             
-            iParser->InsertHTMLToc1L( appUid, appName, iDrive, iDataBase, iFeatureIds->Des() );                            	
+            iParser->InsertHTMLToc1L( appUid, appName, iDrive, iDataBase, iFeatureIds->Des(), appPriority );                            	
             }
             
         if(LocalName.Compare(_L("FeatureID")) == 0) 
@@ -641,4 +684,125 @@ void CCSXHXMLParseHandler_MasterKywd::CreateTOC1ObjectsL(const
 			}
         }        
     }
+
+//-------------- CCSXHXMLParseHandler_RedirectFile -------------------
+
+CCSXHXMLParseHandler_RedirectFile* CCSXHXMLParseHandler_RedirectFile::NewL( CCoeEnv *aCoeEnv, 
+		const TUid &aSourceUid, const TCoeContextName &aSourceContextName )
+    {
+    CCSXHXMLParseHandler_RedirectFile* self = 
+    		new (ELeave)CCSXHXMLParseHandler_RedirectFile( aCoeEnv, aSourceUid, aSourceContextName );   
+    return self;
+    }
+    
+CCSXHXMLParseHandler_RedirectFile::CCSXHXMLParseHandler_RedirectFile( CCoeEnv *aCoeEnv, 
+		const TUid &aSourceUid, const TCoeContextName &aSourceContextName )
+:CCSXHXMLParseHandler( aCoeEnv ), iSourceContextName( aSourceContextName ), iTargetUid( aSourceUid )
+    {
+    }
+TInt  CCSXHXMLParseHandler_RedirectFile::StartElement (const TDesC8&  , 
+		const TDesC8 &alocalName, const TDesC8&  , const RAttributeArray &aAttributes) 
+    {
+    if ( !iIsTargetPathFound )
+    	{
+        TBuf<KMaxFileName> LocalTagName; 
+  
+        CnvUtfConverter::ConvertToUnicodeFromUtf8(LocalTagName,alocalName);
+        
+        if ( LocalTagName.Compare(KFromTag) == 0 )        
+		    {
+		    iIsFromTag = ETrue;
+		    iIsToTag = EFalse;
+		    }
+        else if (LocalTagName.Compare(KToTag) == 0 )        
+            {
+    	    iIsToTag = ETrue;
+    	    iIsFromTag = EFalse;
+    	    }
+        else
+            {
+            iIsFromTag = EFalse;
+            iIsToTag = EFalse;
+            }
+        iFromContent.Copy(KEmptyString);
+    	}
+        
+    return KErrNone;
+    }
+
+TInt CCSXHXMLParseHandler_RedirectFile::EndElement  ( const TDesC8&  ,const TDesC8& ,const TDesC8& ) 
+    { 
+    if ( iIsFromTag && iFromContent.Compare( iSourceContextName ) == 0 )
+    	{
+        iIsSourceContextNameFound = ETrue;
+    	}
+    else
+    	{
+        iIsSourceContextNameFound = EFalse;
+    	}
+    
+    iIsFromTag = EFalse;
+    iIsToTag = EFalse;
+    
+    return KErrNone;
+    }
+    
+TInt CCSXHXMLParseHandler_RedirectFile::Characters (const TDesC8&  aBuff, const TInt /*aStart*/, const TInt /*aLength*/) 
+    {
+    if ( iIsFromTag )
+        {  
+        TCoeContextName file; 
+        CnvUtfConverter::ConvertToUnicodeFromUtf8(file,aBuff);
+        iFromContent.Append(file);     
+        }
+    
+    else if ( iIsSourceContextNameFound && iIsToTag )
+    	{
+    	TBuf<KMaxFileName> targetPath; 
+    	CnvUtfConverter::ConvertToUnicodeFromUtf8(targetPath,aBuff);
+    	iTargetPath.Append(targetPath); 
+	
+    	iIsTargetPathFound = ETrue;	
+    	}
+   
+    return KErrNone;
+    }
+
+TUid CCSXHXMLParseHandler_RedirectFile::TargetUid()
+	{
+	TInt loc = iTargetPath.Find( KHexPrefix );
+	if ( loc != KErrNotFound )
+	    {
+	    TLex lex( iTargetPath.Mid( loc+KHexPrefixLength, KHexUidLength ) );
+	    TUint appId = 0;
+	    lex.Val( appId, EHex );
+	    		
+	    if ( appId )
+	        {
+	    	iTargetUid = TUid::Uid( (TInt)appId );		
+	        }
+	    }
+	    	
+	return iTargetUid;
+	}
+
+TBuf<KMaxFileName>& CCSXHXMLParseHandler_RedirectFile::TargetContextName()
+	{
+	TInt loc = iTargetPath.Find( KHexPrefix );
+    if ( loc != KErrNotFound )
+        {    	    
+		iTargetContextName = iTargetPath.Mid( loc + KOffsetFromUidToContext );
+		}
+    else
+        {
+		iTargetContextName = iTargetPath;
+		}
+		    	
+	return iTargetContextName;
+	}
+
+TBool CCSXHXMLParseHandler_RedirectFile::IsTargetPathFound()
+	{
+	return iIsTargetPathFound;
+	}
 

@@ -90,6 +90,10 @@ void CCSXHGenericView::HandleCommandL(TInt aCommand)
                 doc->SetDisplayAndPrevTopic(doc->GetHelpDataBase()->GetMainTopics());
             else if(iUid == KCSXHKywdToc2ViewID)
                 doc->SetDisplayAndPrevTopic(doc->GetHelpDataBase()->GetKywdTopics());
+            else if ( iUid == KCSXHToc1AppHelpsViewID )
+                doc->SetDisplayAndPrevTopic( doc->GetHelpDataBase()->GetMainTopics() );
+            else if ( iUid == KCSXHToc2AppHelpsViewID )
+                doc->SetDisplayAndPrevTopic( doc->GetHelpDataBase()->GetAppHelpsTopics() );
             
             AppUi()->HandleCommandL(ECSXHOpenItem); 
             }

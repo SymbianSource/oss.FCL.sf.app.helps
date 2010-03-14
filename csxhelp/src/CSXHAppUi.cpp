@@ -82,6 +82,8 @@ void CCSXHAppUi::ConstructL()
     iHtmlTopicView = NULL;
     iLegacyTopicView = NULL;
     iLegacyContextTopicView = NULL;
+    iAppHelpsTOC1View = NULL;
+    iAppHelpsTOC2View = NULL;
     
     SetDefaultViewL(*iTOC1View);  
         
@@ -167,6 +169,11 @@ void CCSXHAppUi::InitDisplayTopicViewL(TUid aViewID)
 		iTOC2View = CCSXHGenericView::NewL(KCSXHToc2ViewID,R_TOPICLIST);
     	AddViewL(iTOC2View); 
 		}
+	else if(aViewID == KCSXHToc2AppHelpsViewID && iAppHelpsTOC2View == NULL)
+	    {
+	    iAppHelpsTOC2View = CCSXHGenericView::NewL(KCSXHToc2AppHelpsViewID,R_TOPICLIST);
+	    AddViewL(iAppHelpsTOC2View);
+	    }
 	 else if(aViewID == KCSXHKywdToc1ViewID && iKywdTOC1View == NULL)
 	 	{
 	 	iKywdTOC1View = CCSXHGenericView::NewL(KCSXHKywdToc1ViewID,R_KYWDTOC1LIST);
@@ -214,6 +221,11 @@ void CCSXHAppUi::InitDisplayTopicViewL(TUid aViewID)
 	 		iHtmlTopicView->SetViewTypeL(CCSXHHtmlTopicView::EHtmlView);
 	 		}
 	 	}
+    else if ( aViewID == KCSXHToc1AppHelpsViewID && !iAppHelpsTOC1View )
+        {
+        iAppHelpsTOC1View = CCSXHGenericView::NewL( KCSXHToc1AppHelpsViewID, R_TOPICLIST );
+        AddViewL( iAppHelpsTOC1View ); 
+        }
 	}
 // --------------------------------------------------------------------------
 // Activates the view corresponding to the topic to be displayed
@@ -238,13 +250,18 @@ void CCSXHAppUi::ActivateDisplayTopicViewL()
         	iKywdTOC2View->ResetContainer();
         if(iTOC2View)
         	iTOC2View->ResetContainer();
+        if (iAppHelpsTOC2View)
+        	iAppHelpsTOC2View->ResetContainer();
         }
 	else if(viewId == KCSXHToc1ViewID ||
 	        viewId == KCSXHContextHtmlTopicViewID ||
-            viewId == KCSXHContextLegacyTopicViewID )
+            viewId == KCSXHContextLegacyTopicViewID ||
+            viewId == KCSXHToc1AppHelpsViewID)
 	    {
 	    if(iTOC2View)
 			iTOC2View->ResetContainer();
+	    if (iAppHelpsTOC2View)
+	    	iAppHelpsTOC2View->ResetContainer();
 	    }
 /*	else if(viewId == KCSXHKywdToc1ViewID)  
 		{
@@ -331,12 +348,12 @@ void  CCSXHAppUi::HandleContextSensitiveLaunchL(const TDesC8& aContext )
     doc->SetDisplayTopic(doc->GetHelpDataBase()->GetMainTopics());
     ActivateDisplayTopicViewL();
         
-    HBufC* ErrorMessage = iCoeEnv->AllocReadResourceLC(R_TYPE_NO_HELP_TOPICS);      
-    CAknGlobalNote* note = CAknGlobalNote::NewLC();
-    note->ShowNoteL(EAknGlobalInformationNote, *ErrorMessage);
+//    HBufC* ErrorMessage = iCoeEnv->AllocReadResourceLC(R_TYPE_NO_HELP_TOPICS);      
+//    CAknGlobalNote* note = CAknGlobalNote::NewLC();
+//    note->ShowNoteL(EAknGlobalInformationNote, *ErrorMessage);
 
-    CleanupStack::PopAndDestroy(note); 
-    CleanupStack::PopAndDestroy(ErrorMessage); 
+//    CleanupStack::PopAndDestroy(note); 
+//    CleanupStack::PopAndDestroy(ErrorMessage); 
     }
 
 CCSXHAppUi* CCSXHAppUi::GetInstance()
@@ -396,6 +413,10 @@ void CCSXHAppUi::PropagateResourceChange(TInt aType)
     	iKywdTOC2View->ResourceChangeHdl(aType);
     if(iTOC2View)
 		iTOC2View->ResourceChangeHdl(aType);    
+    if (iAppHelpsTOC2View)
+    	iAppHelpsTOC2View->ResourceChangeHdl(aType);
+    if (iAppHelpsTOC1View)
+        iAppHelpsTOC1View->ResourceChangeHdl(aType);
     if(iHtmlTopicView)
     	iHtmlTopicView->ResourceChangeHdl(aType);
     if(iLegacyTopicView)
@@ -406,10 +427,13 @@ void CCSXHAppUi::PropagateResourceChange(TInt aType)
  
 void CCSXHAppUi::RuntimeUpdateIndex()
     {
-    CAknNoteDialog* dlg = new ( ELeave ) CAknNoteDialog();
-    dlg->SetTimeout( CAknNoteDialog::EShortTimeout );
-    dlg->SetTone( CAknNoteDialog::ENoTone );
-    dlg->ExecuteLD( R_CSHELP_INSTALL_UNINSTALL_NOTE );
+    CAknNoteDialog* dlg = new CAknNoteDialog();
+    if (dlg != NULL)
+        {
+        dlg->SetTimeout( CAknNoteDialog::EShortTimeout );
+        dlg->SetTone( CAknNoteDialog::ENoTone );
+        TRAP_IGNORE(dlg->ExecuteLD(R_CSHELP_INSTALL_UNINSTALL_NOTE));
+        }
     }
    
        
@@ -437,7 +461,7 @@ CAiwGenericParamList* CCSXHAppUi::NewParamListLC(
 // CCSXHAppUi::LoadTutorialService
 // Load service handler and attach interest for using tutorial service command.
 // --------------------------------------------------------------------------
-void CCSXHAppUi::LoadTutorialService()
+void CCSXHAppUi::LoadTutorialServiceL()
     {
     iServiceHandler = CAiwServiceHandler::NewL();
 

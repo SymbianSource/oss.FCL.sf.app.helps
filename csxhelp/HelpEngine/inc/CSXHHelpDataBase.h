@@ -51,7 +51,7 @@ class CCSXHHelpDataBase : public CBase
 *  @param aCoeEnv 	- Control Environment
 *  @return a CCSXHHelpDataBase Pointer 
 */
-    IMPORT_C static CCSXHHelpDataBase* NewL(CCoeEnv* aCoeEnv,const TApaAppCaption& aAppCaption);
+    IMPORT_C static CCSXHHelpDataBase* NewL(CCoeEnv* aCoeEnv,const TApaAppCaption& aAppCaption, const TApaAppCaption& aAppHelpTopic);
 /** 
 *  @function NewLC
 *  @since S60 3.2
@@ -60,7 +60,7 @@ class CCSXHHelpDataBase : public CBase
 *  @param aCoeEnv 	- Control Environment
 *  @return a CCSXHHelpDataBase Pointer 
 */
-    static CCSXHHelpDataBase* NewLC(CCoeEnv *aCoeEnv,const TApaAppCaption& aAppCaption);
+    static CCSXHHelpDataBase* NewLC(CCoeEnv *aCoeEnv,const TApaAppCaption& aAppCaption, const TApaAppCaption& aAppHelpTopic);
 
 /** 
 *  @function GetInstance
@@ -90,6 +90,13 @@ class CCSXHHelpDataBase : public CBase
 *  @return toc1 pointer 
 */  
     IMPORT_C CCSXHGenericTOC1* GetKywdTopics();
+/** 
+*  @function GetAppHelpsTopics
+*  @since S60 5.2
+*  Get the instance of application (custom) helps toc1
+*  @return toc1 pointer 
+*/  
+    IMPORT_C CCSXHGenericTOC1* GetAppHelpsTopics();
 /** 
 *  @function ClearAllTOC1Contents
 *  @since S60 3.2
@@ -225,7 +232,7 @@ IMPORT_C	TInt GetKeywordSearchCount();
 *  Construct a CCSXHHelpDataBase
 *  @param aCoeEnv  - Control Environment
 */
-    CCSXHHelpDataBase(CCoeEnv* aCoeEnv,const TApaAppCaption& aAppCaption);
+    CCSXHHelpDataBase(CCoeEnv* aCoeEnv,const TApaAppCaption& aAppCaption, const TApaAppCaption& aAppHelpTopic);
 
 /** 
 *  @function GetContextTopicL
@@ -241,6 +248,8 @@ IMPORT_C	TInt GetKeywordSearchCount();
     // List of keyword entries
     CCSXHKywdTopics *iKywdTOC1;
     
+    CCSXHMainTopics* iAppHelpsToc;
+    
     
     CCSXHHTMLContentParser *iHTMLContentParser;
     CCSXHLegacyContentParser *iLegacyContentParser;
@@ -253,6 +262,7 @@ IMPORT_C	TInt GetKeywordSearchCount();
 	
 	TApaAppCaption iAppCaption;
 	
+	TApaAppCaption  iAppHelpTopic;
 	TInt iKeywordSearchCount;
 	
     };

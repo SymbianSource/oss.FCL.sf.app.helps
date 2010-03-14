@@ -33,10 +33,16 @@ EXPORT_C  TPtr CCSXHHelpContentBase::GetName() const
     return iName->Des();
     }
 
+TInt32 CCSXHHelpContentBase::Priority() const 
+	{
+	return iPriority;
+	}
+
 // ---------------------------------------------------------
 // Items commented in header.
 // ---------------------------------------------------------
-CCSXHHelpContentBase::CCSXHHelpContentBase(const TDesC& name) : iName(name.Alloc())
+CCSXHHelpContentBase::CCSXHHelpContentBase(const TDesC& name, const TInt32 aPriority) 
+                      : iName(name.Alloc()), iPriority(aPriority)
     {//No implementation required
     }
 

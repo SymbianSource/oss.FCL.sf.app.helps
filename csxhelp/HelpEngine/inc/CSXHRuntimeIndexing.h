@@ -74,14 +74,14 @@ public:
      * Since Z based helps must exist
      * Usage: to determine Help was launched before
      */
-    TBool IndexFileExists();
+    TBool IndexFileExistsL();
     
     /*
      * create temporary index file
      * this file will be saved to C:\\private\\<help-uid>\\<aDrive>\\<lang-id>\\
      * @param: aDrive Drive information
      */
-    void BeginIndexFile( const TChar& aDrive );
+    void BeginIndexFileL( const TChar& aDrive );
     
     /*
      * close the temporary index file, and rename it to index.xml formally
@@ -102,7 +102,7 @@ public:
      *   please refer to BaflUtils::GetDowngradePathL
      * @param aDir[out] append proper locale
      */
-    void AppendLocale( TDes& aDir );
+    void AppendLocaleL( TDes& aDir );
     
     /*
      * Delete master index file, particular in C: or E: or F: (user disk)
@@ -110,7 +110,7 @@ public:
      *   in this case, custom index mustn't exist.
      * @param aDrive the file to be deleted
      */
-    void DeleteIndexFile( const TChar& aDrive );
+    void DeleteIndexFileL( const TChar& aDrive );
     
     /*
      * Check if helps folder changed
@@ -121,7 +121,7 @@ public:
      *        D: user restored the cell phone
      * @param aName[out] return help app private path in C
      */
-    TInt CheckDirChange( const TChar& aDrive );
+    TInt CheckDirChangeL( const TChar& aDrive );
     
 private:
 

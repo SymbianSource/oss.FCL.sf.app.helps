@@ -21,8 +21,8 @@
 // ---------------------------------------------------------
 // Items commented in header.
 // ---------------------------------------------------------
-CCSXHGenericTOC1::CCSXHGenericTOC1(const TDesC& aName):
-                    CCSXHHelpContentBase(aName),iChildList(NULL)
+CCSXHGenericTOC1::CCSXHGenericTOC1(const TDesC& aName, const TInt32 aPriority):
+                    CCSXHHelpContentBase(aName, aPriority), iChildList(NULL)
     {//No Implementation required
     }
     
@@ -108,6 +108,20 @@ TBool aDeleteObject)
     return ETrue;           
     }
 
+TBool CCSXHGenericTOC1::InsertChildWithPriority(CCSXHHelpContentBase* aChild, TBool aDeleteObject)
+    {
+    ConstructChildList();
+    TLinearOrder<CCSXHHelpContentBase> anOrder(OrdererWithPriority<CCSXHHelpContentBase>);  
+    if (KErrNone != iChildList->InsertInOrder(aChild,anOrder))
+        {
+        if(aDeleteObject)
+            delete aChild;
+        
+        return EFalse;
+        }
+    return ETrue;              
+    }
+
 // ---------------------------------------------------------
 // Items commented in header.
 // ---------------------------------------------------------    
@@ -115,12 +129,15 @@ void CCSXHGenericTOC1::CopyChildListL(CDesCArray* aArray)
     {
     TInt count =    iChildList->Count();
     CCSXHHelpContentBase* child;
-    for(TInt i=0;i<count;++i )
+    for(TInt i = 0; i < count; ++i)
         {
         child = (*iChildList)[i];
-        TBuf<KMaxFileName> toc2Entry(KTabSpace);
-        toc2Entry.Append(child->GetName());
-        aArray->AppendL(toc2Entry);
+        if (child && child->GetName().Length() != 0)
+        	{
+            TBuf<KMaxFileName> toc2Entry(KTabSpace);
+            toc2Entry.Append(child->GetName());
+            aArray->AppendL(toc2Entry);
+            }
         }       
     }
 

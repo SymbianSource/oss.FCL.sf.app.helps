@@ -251,8 +251,8 @@ void CCSXHHtmlTopicView::DoDeactivate()
     {   
     if(iBCContainer)
         {
-        TRAP_IGNORE(iBCContainer->CancelFetchL());
         iBCContainer->MakeVisible(EFalse);
+        TRAP_IGNORE(iBCContainer->CancelFetchL());
         AppUi()->RemoveFromStack(iBCContainer);
         }
     }
@@ -351,7 +351,7 @@ void CCSXHHtmlTopicView::ResourceChangeHdl(TInt aType)
 // CCSXHAppUi::LaunchTutorial
 // Lauch tutorial if exist, else popup a error message.
 // --------------------------------------------------------------------------
-void CCSXHHtmlTopicView::LaunchTutorial()
+void CCSXHHtmlTopicView::LaunchTutorialL()
     {
     CCSXHDocument *doc = static_cast<CCSXHDocument*>(AppUi()->Document());
     CCSXHHtmlTOC2 *displayTopic = STATIC_CAST(CCSXHHtmlTOC2*,doc->GetDisplayTopic());

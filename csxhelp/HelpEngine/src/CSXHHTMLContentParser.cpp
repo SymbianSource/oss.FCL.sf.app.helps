@@ -23,6 +23,7 @@
 #include "CSXHHelpDataBase.h"
 #include "csxhconstants.h"
 #include "CSXHRuntimeIndexing.h"
+#include "csxhviewids.h"
 
 #include <eikenv.h> 
 #include <utf.h>
@@ -108,7 +109,7 @@ void CCSXHHTMLContentParser::GenerateTOC1ListL(CCSXHHelpDataBase* aDataBase)
     //   
     iIndexing = CCSXHRuntimeIndexing::NewL();
     TInt driveListSize = DirList.Length();
-    TBool dirExists = iIndexing->IndexFileExists();
+    TBool dirExists = iIndexing->IndexFileExistsL();
     CDirScan* scanner=CDirScan::NewLC(FileSession);
 #ifdef _DEBUG
     RDebug::Print(_L("runtime indexing object successfully build"));
@@ -124,7 +125,7 @@ void CCSXHHTMLContentParser::GenerateTOC1ListL(CCSXHHelpDataBase* aDataBase)
                 (DirList[dir] && info.iType != EMediaNotPresent))
             {
             RFs::DriveToChar( dir, driveLetter );
-            TInt dirChanged = iIndexing->CheckDirChange( driveLetter );
+            TInt dirChanged = iIndexing->CheckDirChangeL( driveLetter );
             rootDir->Delete( 0, rootDir->Length() );//Clear the previous contents                  
             rootDir->Append( driveLetter );
 
@@ -150,7 +151,7 @@ void CCSXHHTMLContentParser::GenerateTOC1ListL(CCSXHHelpDataBase* aDataBase)
 #ifdef _DEBUG
                     RDebug::Print( _L("no resource folder, delete index.xml if exists") );
 #endif
-                    iIndexing->DeleteIndexFile( driveLetter );
+                    iIndexing->DeleteIndexFileL( driveLetter );
                     }
                 }
             else
@@ -162,7 +163,7 @@ void CCSXHHTMLContentParser::GenerateTOC1ListL(CCSXHHelpDataBase* aDataBase)
 #ifdef _DEBUG
                     RDebug::Print( _L("No index, scan folder for parsing, drive letter: %d"), dir );
 #endif
-                    iIndexing->BeginIndexFile( driveLetter );
+                    iIndexing->BeginIndexFileL( driveLetter );
                     scanner->SetScanDataL(*rootDir
                                     ,KEntryAttDir|KEntryAttMatchExclusive,
                                     ESortByName|EAscending, CDirScan::EScanDownTree);
@@ -236,7 +237,7 @@ TBool CCSXHHTMLContentParser::HandleMasterMetaFileL(CCSXHHelpDataBase* aDataBase
     iIndexing->GetPrivatePath( masterFile );
     masterFile.Append( aDrive );
     masterFile.Append( KFwdSlash );
-    iIndexing->AppendLocale( masterFile );
+    iIndexing->AppendLocaleL( masterFile );
     masterFile.Append( KMasterMetaFile );
     if(BaflUtils::FileExists( FileSession,masterFile ) )
         {
@@ -257,6 +258,41 @@ TBool CCSXHHTMLContentParser::HandleMasterMetaFileL(CCSXHHelpDataBase* aDataBase
         }
 
     return ETrue;
+    }
+
+TBool CCSXHHTMLContentParser::IsRedirectedL(CCSXHHelpDataBase *aDataBase, 
+		                      const TDesC &aPath, TUid &aUid, TCoeContextName &aContextName)											   
+    {
+    RFs& FileSession = iCoeEnv->FsSession();
+    TBuf<KMaxFileName> redirectFile( aPath );
+    redirectFile.Append( KRedirectFile );
+    TBool result = EFalse;
+    
+    if ( BaflUtils::FileExists( FileSession, redirectFile ) )
+        {
+        CCSXHXMLParseHandler_RedirectFile* XMLParser = 
+                     CCSXHXMLParseHandler_RedirectFile::NewL(iCoeEnv, aUid, aContextName);
+        XMLParser->SetDataBasePtr( aDataBase );
+     
+        CleanupStack::PushL( XMLParser );      
+        InitializeReaderL( XMLParser );
+        // ParseL is not in async
+        iXmlReader->ParseL( FileSession, redirectFile );
+        if ( XMLParser->IsTargetPathFound() )
+        	{
+            TBuf<KMaxFileName>& targetContextName = XMLParser->TargetContextName();
+            if ( targetContextName.Length() <= aContextName.MaxLength() )
+            	{
+        	    aUid = XMLParser->TargetUid();
+        	    aContextName = targetContextName;
+        	    result = ETrue;
+                }
+        	}
+        CleanupStack::PopAndDestroy( XMLParser );
+        ClearReader();
+        }
+
+    return result;
     }
     
 void CCSXHHTMLContentParser::GenerateTOC2ListL(CCSXHGenericTOC1& 
@@ -315,7 +351,7 @@ void CCSXHHTMLContentParser::ScanAndParseXMLfileToCreateTOC1ObjectL(RFs& FileSes
                                                                  CDirScan* scanner,
                                                                  CCSXHHelpDataBase* aDataBase,
                                                                  const TInt& aDrive,
-                                                                 CCSXHXMLParseHandler* XMLParser
+                                                                 CCSXHXMLParseHandler_MetaFile* XMLParser
                                                                   )
     {
      CDir* entryList = NULL;
@@ -325,8 +361,9 @@ void CCSXHHTMLContentParser::ScanAndParseXMLfileToCreateTOC1ObjectL(RFs& FileSes
  
     CleanupStack::PushL(entryList);
     TInt entryCount = entryList->Count();           
-     
-    TLinearOrder<CCSXHHelpContentBase> anOrder(Orderer<CCSXHHelpContentBase>); 
+         
+    TInt ROMDrive;
+    RFs::CharToDrive( PathInfo::RomRootPath()[0], ROMDrive );
     
     TBuf<KMaxFileName> lookup;
     
@@ -354,44 +391,136 @@ void CCSXHHTMLContentParser::ScanAndParseXMLfileToCreateTOC1ObjectL(RFs& FileSes
             	{            
             	if(!IsAppUIdPresentAlready(entry.iName))
 					{
-		            CCSXHHtmlTOC1* CategoryObj = CCSXHHtmlTOC1::NewL(
-		                                        XMLParser->GetApplicationName(),entry.iName,aDrive);
-		            if ( !CategoryObj )
+					CCSXHHtmlTOC1* CategoryObj = NULL;
+		            TBool duplicateToc = EFalse;
+		            
+		            TInt32 priority = XMLParser->Priority();
+		            // Now we take a walk if it's application helps (priority == 0)
+		           
+		            if ( (priority != 0) 
+		            	&& ( ( aDrive == ROMDrive ) || IsRomBasedContentL( FileSession, entry.iName ) ) )
 		                {
-		                continue;
+		                if ( priority < KHighestPriority )
+		                	{
+		                    priority = KHighestPriority;
+		                	}
+		                else if ( priority > KLowestPriority )
+		                	{
+		                    priority = KLowestPriority;
+		                	}
+		                
+		                CategoryObj = CCSXHHtmlTOC1::NewL(
+		                		           XMLParser->GetApplicationName(),entry.iName,aDrive, 
+		                		           KCSXHToc2ViewID, priority);
+		                if(CategoryObj && aDataBase->GetMainTopics()->InsertChildWithPriority(CategoryObj,EFalse))
+		            	    iHtmlTOC1List.Append(CategoryObj);//Keep a local copy 
+		                else
+		                    duplicateToc = ETrue;
 		                }
-		            iIndexing->RuntimeGenerateIndexL( *CategoryObj, XMLParser->GetFeatureIds() );
-		            if(CategoryObj && aDataBase->GetMainTopics()->InsertChild(CategoryObj,EFalse))
-		            	iHtmlTOC1List.Append(CategoryObj);//Keep a local copy*/ 
-					else
-						{
-						if(CategoryObj)  
-		            		iDuplicateHelpTopicList.Append(CategoryObj);	
-						}			            	
-					}
+		            else 
+		           		{
+		           		CategoryObj = CCSXHHtmlTOC1::NewL(
+		           		                    XMLParser->GetApplicationName(),entry.iName, aDrive, 
+		           		                    KCSXHToc2AppHelpsViewID, 0);
+		           		               
+		           		if(CategoryObj && aDataBase->GetAppHelpsTopics()->InsertChild(CategoryObj,EFalse))
+		                                    iHtmlTOC1List.Append(CategoryObj);//Keep a local copy 
+		           		else
+		           		    duplicateToc = ETrue;
+		           		}
+		            if ( CategoryObj )
+		            	{
+		                iIndexing->RuntimeGenerateIndexL( *CategoryObj, XMLParser->GetFeatureIds() );
+
+                        if( duplicateToc )
+                        	{
+                            iDuplicateHelpTopicList.Append(CategoryObj);
+                        	}
+		            	}
+		            }
             	}         
             }
         }       
 
     CleanupStack::PopAndDestroy(entryList);
     }
+TBool CCSXHHTMLContentParser::IsRomBasedContentL( RFs& FileSession, const TDesC &aUid )
+    {
+#ifdef __WINSCW__
+    return ETrue;
+#endif
+    
+	TBool result = EFalse;
+	CDirScan* scanner=CDirScan::NewLC(FileSession);
+	TBuf<KMaxFileName> rootDir;
+	rootDir.Append( 'z' );
+	        	
+	if( GetHTMLContentPathForDriveL( &rootDir,iCoeEnv ) )
+		{
+	    scanner->SetScanDataL(rootDir,KEntryAttDir|KEntryAttMatchExclusive,
+	                                    ESortByName|EAscending, CDirScan::EScanDownTree);
+        CDir* entryList = NULL;
+        scanner->NextL(entryList);
+    
+        if ( !entryList )
+        	{
+            CleanupStack::PopAndDestroy( scanner );
+            return EFalse;
+        	}
+ 
+        TInt entryCount = entryList->Count();           
+    
+        while ( entryCount-- )
+            {
+            TEntry entry=(*entryList)[entryCount]; 
+            if ( ( entry.iName ).CompareC(aUid) == 0 )
+        	    {
+                result = ETrue;
+            	break;
+        	    }
+            }
+        delete entryList;
+		}
+    
+    CleanupStack::PopAndDestroy( scanner );
+ 
+    return result;
+    }
     
 void CCSXHHTMLContentParser::InsertHTMLToc1L(
             const TDesC &appUidName,const TDesC &appName, 
-            const TInt& aDrive , CCSXHHelpDataBase* aDataBase, const TDesC &FeatureIds)
+            const TInt& aDrive , CCSXHHelpDataBase* aDataBase, 
+            const TDesC &FeatureIds, TInt32 aPriority )
     {
 	if(CheckFeatureIDL(FeatureIds))
 	    {
 	    if(!IsAppUIdPresentAlready(appUidName)) 
-		    {    
-			CCSXHHtmlTOC1* CategoryObj = CCSXHHtmlTOC1::NewL(appName,appUidName,aDrive);
-		    if(CategoryObj && aDataBase->GetMainTopics()->InsertChild(CategoryObj,EFalse))
-		    	iHtmlTOC1List.Append(CategoryObj);//Keep a local copy*/ 
-		    else
-		    	{
-		    	if(CategoryObj)  
-	           		iDuplicateHelpTopicList.Append(CategoryObj);			    	
-		    	}
+            {    
+            CCSXHHtmlTOC1* CategoryObj = NULL;
+            TBool duplicateToc = EFalse;
+            // Now we take a walk if it's application helps (priority == 0)
+            if ( aPriority == 0 )
+                {
+                CategoryObj = CCSXHHtmlTOC1::NewL(appName,appUidName,aDrive,
+                		                          KCSXHToc2AppHelpsViewID,aPriority);
+                // Hardcode EDriveZ as ROM drive, need to be runtime check?
+                if(CategoryObj && aDataBase->GetAppHelpsTopics()->InsertChild(CategoryObj,EFalse))
+                    iHtmlTOC1List.Append(CategoryObj);//Keep a local copy 
+                else
+                    duplicateToc = ETrue;
+                }
+            else
+                {
+                CategoryObj = CCSXHHtmlTOC1::NewL(appName,appUidName,aDrive,
+                		                          KCSXHToc2ViewID,aPriority);
+                if(CategoryObj && aDataBase->GetMainTopics()->InsertChildWithPriority(CategoryObj,EFalse))
+                    iHtmlTOC1List.Append(CategoryObj);//Keep a local copy*/ 
+                else
+                    duplicateToc = ETrue;
+                }
+
+            if( CategoryObj && duplicateToc )  
+                iDuplicateHelpTopicList.Append(CategoryObj);			    	
 		    }
 	    }	
     }
@@ -573,31 +702,80 @@ void CCSXHHTMLContentParser::GenerateTOC2ListForKeywordSearchL
     ClearReader();
     }
     
-CCSXHHelpContentBase* CCSXHHTMLContentParser::GetContextTopic
-(const TUid& aUid, const TDesC& contextName)
+CCSXHHelpContentBase* CCSXHHTMLContentParser::GetContextTopicL( 
+		CCSXHHelpDataBase *aDataBase, 
+		TUid &aUid, 
+		TCoeContextName &aContextName
+		)
     {
-    int toc1Count = iHtmlTOC1List.Count();
-    CCSXHHtmlTOC1* toc1,*temptoc1;
+    TBuf<KMaxFileName> path;
+    TInt32 toc1Count = iHtmlTOC1List.Count();
+    TInt32 dupToc1Count = iDuplicateHelpTopicList.Count();
+    CCSXHHtmlTOC1 *toc1 = NULL;
+    CCSXHHtmlTOC1 *temptoc1 = NULL;
+    TBool redirected = EFalse;
     
-    for(int i = 0; i < toc1Count; ++i)
+    for ( TInt32 i = 0; i < toc1Count; ++i )
         {
         toc1 = iHtmlTOC1List[i];
-        if(aUid == toc1->GetAppUid())
+        if ( aUid == toc1->GetAppUid() )
             {
-            return toc1->GetContextTopic(contextName);      
+            toc1->GetHelpFileL( path );
+            if ( IsRedirectedL( aDataBase, path, aUid, aContextName ) )
+            	{
+                redirected = ETrue;
+            	}
+            else
+            	{
+                return toc1->GetContextTopic( aContextName );
+            	}
+            break;
             }
         }
+    
+    if ( !redirected )
+        {
+        for ( TInt32 i = 0; i < dupToc1Count; ++i )
+            {
+    	    toc1 = iDuplicateHelpTopicList[i];
+    	    if ( aUid == toc1->GetAppUid() )
+    	        {
+    	        toc1->GetHelpFileL( path );
+    	        if ( IsRedirectedL( aDataBase, path, aUid, aContextName ) )
+    	            {
+    	            redirected = ETrue;
+    	            }
+    	        else
+    	            {
+    	            temptoc1 = GetCorrespondingTOC1FromMainArray(toc1->GetName());        		
+    	            return temptoc1->GetContextTopic( aContextName );
+    	            }
+    	        }
+            }
+        }
+    	
+    if ( redirected )
+    	{
+    	for ( TInt32 i = 0; i < toc1Count; ++i )
+    	    {
+    	    toc1 = iHtmlTOC1List[i];
+    	    if ( aUid == toc1->GetAppUid() )
+    	        {    
+    	        return toc1->GetContextTopic( aContextName );
+    	        }
+    	    }
+    	
+    	for ( TInt32 i = 0; i < dupToc1Count; ++i )
+    	    {
+    	    toc1 = iDuplicateHelpTopicList[i];
+    	    if ( aUid == toc1->GetAppUid() )
+    	        {
+    	    	temptoc1 = GetCorrespondingTOC1FromMainArray( toc1->GetName() );        		
+    	    	return temptoc1->GetContextTopic( aContextName );
+    	    	}
+    	    }
+    	}
         
-    toc1Count = iDuplicateHelpTopicList.Count();
-	for(int i = 0; i < toc1Count; ++i)
-		{
-		toc1 = iDuplicateHelpTopicList[i];
-        if(aUid == toc1->GetAppUid())
-        	{
-    		temptoc1 = GetCorrespondingTOC1FromMainArray(toc1->GetName());        		
-    		return temptoc1->GetContextTopic(contextName);
-        	}
-		}    
     return NULL;
     }
     

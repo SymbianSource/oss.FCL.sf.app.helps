@@ -70,6 +70,13 @@ const TInt KFileUrlPrefixLength = 7;
 #endif
 
 const TInt KHexPrefixLength = 2;
+const TInt KHexUidLength = 8;
+const TInt KOffsetFromUidToContext = 11;
+
+const TInt KHighestPriority = 1;
+const TInt KLowestPriority = 20000;
+
+const TInt KMaxContextName = 30;
 
 //xhtml folder name
 //#define	qtn_app_xhtml_folder_text ":\\resource\\xhtml\\"
@@ -81,6 +88,9 @@ _LIT(KMasterKywdFile,"keywords.xml");
 //mastermeta.xml file name
 _LIT(KMasterMetaFile,"index.xml"); 
 
+//redirect.xml file name
+_LIT(KRedirectFile,"redirect.xml"); 
+
 //meta.xml file name
 //#define	qtn_app_meta_file_text "meta.xml"
 _LIT(KMetaFile,"meta.xml"); 
@@ -89,9 +99,16 @@ _LIT(KMetaFile,"meta.xml");
 //#define	qtn_app_index_file_text	"index.xml"
 _LIT(KIndexFile,"index.xml"); 
 
+_LIT(KRomAppUidFile, "appuid.dat");
 //Application name tag in meta.xml
 //#define	qtn_app_application_name_tag_text "title"
 _LIT(KAppNameTag,"title"); 
+
+_LIT(KPriorityTag, "priority");
+
+_LIT(KFromTag, "from");
+
+_LIT(KToTag, "to");
 
 // toc1 drive information in master index.xml
 //
