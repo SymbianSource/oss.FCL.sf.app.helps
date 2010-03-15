@@ -420,20 +420,22 @@ void CCSXHHtmlTopicContainer::HandleBrowserLoadEventL(TBrCtlDefs::TBrCtlLoadEven
     {
     if(aLoadEvent == TBrCtlDefs::EEventLoadFinished)
         {
-        
-        HBufC* title = iBrCtrl->PageInfoLC(TBrCtlDefs::EPageInfoTitle);
-        if(!title)
-            {
-            CleanupStack::PopAndDestroy(title);
-            return;
-            }
-        
-        //Update the title bar
-        CEikStatusPane* sp = CCSXHAppUi::GetInstance()->StatusPane();
-        CAknTitlePane* titlePane = STATIC_CAST(CAknTitlePane*, 
-        sp->ControlL(TUid::Uid(EEikStatusPaneUidTitle)));
-        titlePane->SetTextL(*title);
-        CleanupStack::PopAndDestroy(title);
+        if ( IsVisible() )
+             {
+               HBufC* title = iBrCtrl->PageInfoLC(TBrCtlDefs::EPageInfoTitle);
+               if(!title)
+                   {
+                   CleanupStack::PopAndDestroy(title);
+                   return;
+                   }
+               
+               //Update the title bar
+               CEikStatusPane* sp = CCSXHAppUi::GetInstance()->StatusPane();
+               CAknTitlePane* titlePane = STATIC_CAST(CAknTitlePane*, 
+               sp->ControlL(TUid::Uid(EEikStatusPaneUidTitle)));
+               titlePane->SetTextL(*title);
+               CleanupStack::PopAndDestroy(title);
+             }
         
         //For the context sensitive view, the softkey texts need to be changed.
         //add label iLoadHtml for ESNN-7N9CLN.If the html is opened by 
