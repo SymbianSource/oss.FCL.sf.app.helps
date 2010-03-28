@@ -293,7 +293,7 @@ class CCSXHHTMLContentParser : public CBase
 *		  aUrl			   	   - html file path
 */		
 
-		CCSXHHelpContentBase* CCSXHHTMLContentParser::GetObjectBasedonUrlL(RPointerArray<CCSXHHtmlTOC1>& aTOC1ObjectsArray,
+		CCSXHHelpContentBase* GetObjectBasedonUrlL(RPointerArray<CCSXHHtmlTOC1>& aTOC1ObjectsArray,
 							  const TDesC& aUrl,TBool aMainArrayList);    
 		
 /** 
