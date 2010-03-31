@@ -118,7 +118,7 @@ RESOURCE AVKON_VIEW r_TopicList
 RESOURCE AVKON_VIEW r_KywdTOC1List
     {
     menubar = r_CSXH_menubar_KywdTOC1List;
-    cba = r_cshelp_softkeys_options_exit_find;
+    cba = r_cshelp_softkeys_options_back_find;
     }
 
 RESOURCE AVKON_VIEW r_KywdTOC2List
@@ -332,6 +332,28 @@ RESOURCE CBA r_cshelp_softkeys_options_exit_find
             {
             id = EAknSoftkeyExit;
             txt = text_softkey_exit;
+            },
+        AVKON_CBA_BUTTON
+            {
+            id = ECSXHOpenTopicText;
+            txt = qtn_help_msk_find;
+            }
+        };
+    }
+
+RESOURCE CBA r_cshelp_softkeys_options_back_find
+    {
+    buttons =
+        {
+        AVKON_CBA_BUTTON
+            {
+            id = EAknSoftkeyOptions;
+            txt = text_softkey_option;
+            },
+        AVKON_CBA_BUTTON
+            {
+            id = EAknSoftkeyBack;
+            txt = text_softkey_back;
             },
         AVKON_CBA_BUTTON
             {

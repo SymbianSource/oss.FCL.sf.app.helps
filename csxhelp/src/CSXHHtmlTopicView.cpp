@@ -33,7 +33,7 @@
 
 #include <avkon.hrh>
 #include <aknnotewrappers.h> 
-#include <BrCtlDefs.h>
+#include <brctldefs.h>
 #include <f32file.h>
 #include <apgcli.h>
 #include <akntitle.h>

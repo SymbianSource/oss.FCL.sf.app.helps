@@ -23,7 +23,7 @@
 #include "CSXHHelpDataBase.h"
 #include "csxhconstants.h"
 #include "CSXHRuntimeIndexing.h"
-#include "csxhviewids.h"
+#include "CSXHViewIDs.h"
 
 #include <eikenv.h> 
 #include <utf.h>

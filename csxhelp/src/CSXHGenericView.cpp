@@ -87,13 +87,26 @@ void CCSXHGenericView::HandleCommandL(TInt aCommand)
             {
             CCSXHDocument* doc = static_cast<CCSXHDocument*>(AppUi()->Document());
             if(iUid == KCSXHToc2ViewID)
+            	{
                 doc->SetDisplayAndPrevTopic(doc->GetHelpDataBase()->GetMainTopics());
+            	}
             else if(iUid == KCSXHKywdToc2ViewID)
+            	{
                 doc->SetDisplayAndPrevTopic(doc->GetHelpDataBase()->GetKywdTopics());
+            	}
             else if ( iUid == KCSXHToc1AppHelpsViewID )
+            	{
                 doc->SetDisplayAndPrevTopic( doc->GetHelpDataBase()->GetMainTopics() );
+            	}
             else if ( iUid == KCSXHToc2AppHelpsViewID )
+            	{
                 doc->SetDisplayAndPrevTopic( doc->GetHelpDataBase()->GetAppHelpsTopics() );
+            	}
+            else if ( iUid == KCSXHKywdToc1ViewID )
+            	{
+                doc->SetDisplayAndPrevTopic( doc->GetHelpDataBase()->GetMainTopics() );
+            	}
+            	
             
             AppUi()->HandleCommandL(ECSXHOpenItem); 
             }
