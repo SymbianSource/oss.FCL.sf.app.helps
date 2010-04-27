@@ -42,7 +42,7 @@
 #include <AiwCommon.h>
 #include <AiwServiceHandler.h>
 #include <AknGlobalNote.h>
-TInt CCSXHHtmlTopicView::iFontSize = TBrCtlDefs::EFontSizeLevelNormal;
+TInt CCSXHHtmlTopicView::iFontSize = TBrCtlDefs::EFontSizeLevelLarger;
 
 CCSXHHtmlTopicView* CCSXHHtmlTopicView::NewL(const TUid& aUid, const TInt& aFlags,const 
 TRect& aRect)
@@ -253,6 +253,9 @@ void CCSXHHtmlTopicView::DoDeactivate()
         {
         iBCContainer->MakeVisible(EFalse);
         TRAP_IGNORE(iBCContainer->CancelFetchL());
+        // FEP causes crash if it still hold the observer.
+        // fix as FEP suggested.
+        iBCContainer->SetFocus( EFalse );
         AppUi()->RemoveFromStack(iBCContainer);
         }
     }
@@ -306,7 +309,7 @@ void CCSXHHtmlTopicView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
         {    
         TInt CurrentFontSize = iBCContainer->GetCurrentValueL(TBrCtlDefs::ESettingsFontSize);
         
-        if(CurrentFontSize == TBrCtlDefs::EFontSizeLevelAllSmall)
+        if(CurrentFontSize == TBrCtlDefs::EFontSizeLevelNormal)
             {
             aMenuPane->SetItemDimmed(ECsHelpCmdFontSmall,ETrue);
             }
