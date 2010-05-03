@@ -15,8 +15,7 @@
 *
 */
 
-#include <hbstringutil.h>
-
+#include "HelpUtils.h"
 #include "HelpCommon.h"
 #include "HelpStandardItem.h"
 
@@ -34,7 +33,7 @@ bool HelpStandardItem::operator<(const QStandardItem & other) const
 	switch(role)
 	{
 	case Qt::DisplayRole:
-		if(HbStringUtil::compareC(text(), other.text()) < 0)
+		if(HelpUtils::compareStr(text(), other.text()) < 0)
 		{
 			return true;
 		}

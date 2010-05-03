@@ -44,16 +44,18 @@ private:
 	void createHelpCategory();
 	void createBuiltInCategory(const QString& path);
 	void constructAppHelp(const QString& path);
-	void constructKeywordModel(const QString& path);
+	void constructKeywordModel(const QString& title, const QString& uid, const QString& href);
+//	void searchInAllData(HelpStandardItem* item, const QString& key=QString());
+//	void searchInResult(const QString& key=QString());
 	HelpStandardItem* constructCategory2(const QString& title, const QString& uid);
 	HelpStandardItem* findItemWithHref(HelpStandardItem* itemParent, const QString& href);
 
 private:
-	QStandardItemModel*    mHelpModel;         //category tree model
-	QStandardItemModel*    mKeywordModel;      //keyword list model
-	HelpProxyModel*        mSearhResultModel;  //search result proxy model of keyword model
-	
-	QString                mHelpContentRoot;
+	QStandardItemModel*		mHelpModel;         //category tree model
+	QStandardItemModel*		mKeywordModel;      //keyword list model
+	HelpProxyModel*		mSearhResultModel;  //search result proxy model of keyword model	
+	QString					mHelpContentRoot;
+	QString					mLastSrhKey;
 
 };
 

@@ -3,11 +3,11 @@
 	<qresource prefix="/xml">
 		<file alias="categoryView.docml">xml/categoryView.docml</file>
 		<file alias="contentsView.docml">xml/contentsView.docml</file>
-	</qresource>
+    <file alias="toolbar.docml">xml/toolbar.docml</file>    
+  </qresource>
 	
 	<qresource prefix= "/images">
 		<file alias="show_all.svg">images/qtg_mono_show_all.svg</file>
-		<file alias="search.svg">images/qtg_mono_search.svg</file>
 		<file alias="link_nokia.svg">images/qtg_mono_link_nokia.svg</file>
 	</qresource>
 

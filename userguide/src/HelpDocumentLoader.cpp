@@ -24,28 +24,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-class HelpDocumentLoader : public HbDocumentLoader
-{
-private:
-    virtual QObject* createObject(const QString& type, const QString& name);
-};
-    
 QObject* HelpDocumentLoader::createObject(const QString& type, const QString& name)
 {
-    if(type == HelpCategoryView::staticMetaObject.className())
-    {
-        QObject* object = new HelpCategoryView;
-        object->setObjectName(name);
-        return object;
-    }
-
-    if(type == HelpContentsView::staticMetaObject.className())
-    {
-        QObject* object = new HelpContentsView;
-        object->setObjectName(name);
-        return object;
-    }
-    
     if(type == BrowserWrapper::staticMetaObject.className())    
     {
         QObject* object = new BrowserWrapper;
@@ -58,29 +38,15 @@ QObject* HelpDocumentLoader::createObject(const QString& type, const QString& na
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-
-HbDocumentLoader* gHelpUIBuilderInstance = NULL;
-
-HbDocumentLoader* HelpUIBuilder::instance()
+void HelpUIBuilder::setObjectTree(QObjectList roots)
 {
-    if(!gHelpUIBuilderInstance)
-    {
-        gHelpUIBuilderInstance = new HelpDocumentLoader();
-    }
-
-    return gHelpUIBuilderInstance;
-}
-
-void HelpUIBuilder::destroyInstance()
-{
-    delete gHelpUIBuilderInstance;
-    gHelpUIBuilderInstance = NULL;
+	mDocLoader.setObjectTree(roots);
 }
 
 QObjectList HelpUIBuilder::load(const QString& fileName)
 { 
     bool ok = false;
-    QObjectList list = instance()->load(fileName, &ok);
+    QObjectList list = mDocLoader.load(fileName, &ok);
     Q_ASSERT_X(ok, "Help", "HelpUIBuilder load file");
     return list;
 }
@@ -88,22 +54,20 @@ QObjectList HelpUIBuilder::load(const QString& fileName)
 QObjectList HelpUIBuilder::load(const QString& fileName, const QString& section)
 {
     bool ok = false;
-    QObjectList list = instance()->load(fileName, section, &ok);
+    QObjectList list = mDocLoader.load(fileName, section, &ok);
     Q_ASSERT_X(ok, "Help", "HelpUIBuilder load section");
     return list;
 }
 
 QGraphicsWidget* HelpUIBuilder::findWidget(const QString& name)
 {
-    return instance()->findWidget(name);
+    return mDocLoader.findWidget(name);
 }
 
 QObject* HelpUIBuilder::findObject(const QString& name)
 {
-    return instance()->findObject(name);
+    return mDocLoader.findObject(name);
 }
-
-
 
 // end of file
 

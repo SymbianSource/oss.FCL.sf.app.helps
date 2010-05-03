@@ -34,7 +34,8 @@ HelpDataProvider::HelpDataProvider()
 {
 	mHelpModel = new QStandardItemModel();
 	mKeywordModel = new QStandardItemModel();
-	mSearhResultModel = NULL;
+	mSearhResultModel = new HelpProxyModel();
+	mSearhResultModel->setSourceModel(mKeywordModel);
 }
 
 HelpDataProvider::~HelpDataProvider()
@@ -80,14 +81,30 @@ QAbstractItemModel* HelpDataProvider::getCategoryData()
 
 QAbstractItemModel* HelpDataProvider::getSearchData(const QString& key)
 {
-    delete mSearhResultModel;
-    mSearhResultModel = NULL;
-    
-    mSearhResultModel = new HelpProxyModel();;
-    mSearhResultModel->setSourceModel(mKeywordModel);
-    mSearhResultModel->setFilterRole(KeywordRole);
+/*    if(key.isEmpty())
+    {
+        return mKeywordModel;
+    }*/
+
+	if(key == mLastSrhKey)
+	{
+		return mSearhResultModel;
+	}
+/*
+	if(!mLastSrhKey.isEmpty() && HelpUtils::findStr(key, mLastSrhKey) != -1)
+	{
+		searchInResult(key);
+	}
+	else
+	{
+		mSearhResultModel->removeRows(0, mSearhResultModel->rowCount());
+		searchInAllData((HelpStandardItem*)mKeywordModel->invisibleRootItem(), key);
+	}*/
+
+	mLastSrhKey = key;
     mSearhResultModel->setFilterRegExp(key);
 
+	
     return mSearhResultModel;
 }
 
@@ -157,6 +174,7 @@ void HelpDataProvider::createHelpCategory()
 			constructAppHelp(path);
 		}
 	}
+	mKeywordModel->sort(0, HelpUtils::sortOrder());
 }
 
 void HelpDataProvider::createBuiltInCategory(const QString& path)
@@ -199,7 +217,7 @@ void HelpDataProvider::createBuiltInCategory(const QString& path)
 		if(item)
 		{
 			mHelpModel->appendRow(item);
-			constructKeywordModel(uid);
+//			constructKeywordModel(uid);
 		}
 	}
 	file.close();
@@ -249,6 +267,7 @@ HelpStandardItem* HelpDataProvider::constructCategory2(const QString& title, con
 		HelpStandardItem* item = new HelpStandardItem(temp[1]);
 		item->setData(temp[0], HrefRole);
 		itemParent->appendRow(item);
+		constructKeywordModel(temp[1], uid, temp[0]);
 	}
 
 	file.close();
@@ -306,7 +325,7 @@ void HelpDataProvider::constructAppHelp(const QString& path)
 				itemApp = new HelpStandardItem("Applications");
 			}
 			itemApp->appendRow(item);
-			constructKeywordModel(pathTemp);
+//			constructKeywordModel(pathTemp);
 		}
 		file.close();
 	}
@@ -318,56 +337,50 @@ void HelpDataProvider::constructAppHelp(const QString& path)
 	}
 }
 
-void HelpDataProvider::constructKeywordModel(const QString& path)
+/*
+void HelpDataProvider::searchInAllData(HelpStandardItem* item, const QString& key)
 {
-	QString pathKeyword(path);
-	pathKeyword.append(BACKSLASH);
-	pathKeyword.append(KEYWORDXML);
-
-	QFile file(pathKeyword);
-	if (!file.open(QIODevice::ReadOnly)) {
-		return;
-	}
-
-	//construct keyword model, title and keyword is one to more
-	QXmlStreamReader reader(&file);
-	QString keyword;
-	QString title;
-
-	while (!reader.atEnd()) {
-		if (!reader.readNextStartElement()) 
-		{	
-			continue;
+	if(item->rowCount() > 0)
+	{
+		for(int i = 0; i < item->rowCount(); i++)
+		{		
+			searchInAllData((HelpStandardItem*)item->child(i),key);
 		}
-		if (reader.name() == "text")
-		{
-			keyword = reader.readElementText();
-		}
-		else if (reader.name() == "target")
-		{
-			QString href = reader.attributes().value("href").toString();
-			HelpStandardItem* item = findItemWithHref((HelpStandardItem *)(mKeywordModel->invisibleRootItem()), href);
-			QStringList keywordLst;
-			if(item)
-			{
-				keywordLst = item->data(KeywordRole).toStringList();
-				keywordLst.append(keyword);
-				item->setData(keywordLst,KeywordRole);
-			}
-			else
-			{
-				item = new HelpStandardItem(reader.readElementText());
-				item->setData(path, UidRole);
-				item->setData(href, HrefRole);
-
-				keywordLst.append(keyword);
-				item->setData(keywordLst,KeywordRole);
-				mKeywordModel->appendRow(item);
-			}				
-		}			
 	}
-	file.close();
-	mKeywordModel->sort(0, HelpUtils::sortOrder());
+	else
+	{
+		if(HelpUtils::findStr(item->text(), key) != -1)
+		{
+			HelpStandardItem* itemSearch = new HelpStandardItem(item->text());
+			itemSearch->setData(item->data(UidRole), UidRole);
+			itemSearch->setData(item->data(HrefRole), HrefRole);
+			mSearhResultModel->appendRow(itemSearch);
+		}
+	}
+}
+
+void HelpDataProvider::searchInResult(const QString& key)
+{
+	for(int i = 0; i < mSearhResultModel->rowCount();)
+	{
+		QStandardItem* item = mSearhResultModel->item(i);
+		if(HelpUtils::findStr(item->text(), key) == -1)
+		{
+			mSearhResultModel->removeRow(i);
+		}
+		else
+		{
+			i++;
+		}
+	}
+}
+*/
+void HelpDataProvider::constructKeywordModel(const QString& title, const QString& uid, const QString& href)
+{
+	HelpStandardItem* itemTemp = new HelpStandardItem(title);
+	itemTemp->setData(uid, UidRole);
+	itemTemp->setData(href, HrefRole);
+	mKeywordModel->appendRow(itemTemp);
 }
 
 HelpStandardItem* HelpDataProvider::findItemWithHref(HelpStandardItem* itemParent, const QString& href)

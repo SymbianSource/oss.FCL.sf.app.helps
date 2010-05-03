@@ -21,9 +21,11 @@
 #include <hbmainwindow.h>
 
 #include "HelpCommon.h"
+#include "HelpDocumentLoader.h"
 
 class HelpCategoryView;
 class HelpContentsView;
+class HbToolBar;
 
 class HelpMainWindow : public HbMainWindow
 {
@@ -39,7 +41,8 @@ private slots:
 private: // activate views
 	void activateCategoryView();
 	void activateContentsView();
-	void initBackAction();
+	void initToolbar();
+	void RefreshToolbarText(Qt::Orientation orientation);
 	
 private:
 	void connectViewSignal(const QObject *object);
@@ -47,14 +50,19 @@ private:
 signals:
 	void backActionSignal();
 	
-private slots: // handle view event
-    void onShowAllList();
-    void onShowFindList();
-    void onShowOnlineSupport();
+private slots: // handle tollbar event
+    void onToolbarAll();
+    void onToolbarFind();
+    void onToolbarOnlineSupport();
+
+private slots:
+	void onOrientationChanged(Qt::Orientation orientation);
 
 private:
 	HelpCategoryView* mCategoryView;
 	HelpContentsView* mContentsView;
+	HbToolBar*         mToolBar;
+	HelpUIBuilder mBuilder;
 
 };
 

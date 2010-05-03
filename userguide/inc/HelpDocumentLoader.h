@@ -20,21 +20,27 @@
 
 #include <hbdocumentloader.h>
 
+class HelpDocumentLoader : public HbDocumentLoader
+{
+private:
+    virtual QObject* createObject(const QString& type, const QString& name);
+};
+
 class HelpUIBuilder
 {
 public:
-    static void destroyInstance();
-    static QObjectList load(const QString& fileName);
-    static QObjectList load(const QString& fileName, const QString& section);
-    static QGraphicsWidget* findWidget(const QString& name);
-    static QObject* findObject(const QString& name);
+	void setObjectTree(QObjectList roots);
+    QObjectList load(const QString& fileName);
+    QObjectList load(const QString& fileName, const QString& section);
+    QGraphicsWidget* findWidget(const QString& name);
+    QObject* findObject(const QString& name);
 
 public:
-    template<class T> static T findWidget(const QString& name) { return qobject_cast<T>(findWidget(name)); }
-    template<class T> static T findObject(const QString& name) { return qobject_cast<T>(findObject(name)); }
+    template<class T> T findWidget(const QString& name) { return qobject_cast<T>(findWidget(name)); }
+    template<class T> T findObject(const QString& name) { return qobject_cast<T>(findObject(name)); }
     
 private:
-    static HbDocumentLoader* instance();
+    HelpDocumentLoader mDocLoader;
 };
 
 

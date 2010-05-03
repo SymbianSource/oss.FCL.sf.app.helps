@@ -29,6 +29,8 @@ public:
 	static QString UILocaleFromQtToSymbian();
 	static Qt::Orientation defaultOrientation();
 	static Qt::SortOrder sortOrder();
+	static int findStr(const QString& strFrom, const QString& strToFind);
+	static int compareStr(const QString& str1, const QString& str2);
 };
 
 #endif //HELPUTILS_H

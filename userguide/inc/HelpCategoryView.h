@@ -21,10 +21,14 @@
 #include <hbview.h>
 
 #include "HelpCommon.h"
+#include "HelpDocumentLoader.h"
 
 class HbTreeView;
-class HbToolBar;
+class HbListView;
 class HbSearchPanel;
+class QStandardItem;
+class HbStaticVkbHost;
+class HbGroupBox;
 
 class HelpCategoryView : public HbView
 {
@@ -36,12 +40,17 @@ public:
 	void init();
 
 private:
+	void initDocMl();
 	void initAllList();
 	void initSearchList();
 	void initSearchPanel();
-	void initToolbar();
 	void initBackAction();
+	void initEmptyLabel();
+	void initVirtualKeyboard();
 	
+private:
+	HbGroupBox* groupBox();
+
 public:
     enum ViewMode
     {
@@ -54,28 +63,19 @@ public:
 signals:
     void activateView(HelpViewName viewName);
     
-signals: // from tollbar event
-    void showAllList();
-    void showFindList();
-    void showOnlineSupport();
+private:
+	void updateVisibleItems(bool visible);
+	void ResetSearchPanel();	
 
 private:
-	void RefreshToolbarText(bool isLandscape);
-	void RefreshTitlebarVisibility();
-	void ResetSearchPanel();
-	
+	void expandCollapseAllList(QStandardItem* item, bool expand);
+
 private slots: // handle system event
     void onCurrentViewChanged(HbView *view);
-    void onOrientationChanged(Qt::Orientation orientation);
 
 private slots: // handle button action
     void onBackAction();
     
-private slots: // handle tollbar event
-    void onToolbarAll()             { emit showAllList(); };
-    void onToolbarFind()            { emit showFindList(); };
-    void onToolbarOnlineSupport()   { emit showOnlineSupport(); };
-
 private slots: // handle list event
     void onAllListActivated(const QModelIndex& index);
     void onSearchListActivated(const QModelIndex& index);
@@ -84,13 +84,22 @@ private slots: // handle search panel event
 	void onSearchPanelExitClicked();
 	void onSearchPanelCriteriaChanged(const QString &criteria);
 
+private slots:
+	void onExpandAll();
+	void onCollapseAll();
+
+private slots: // handle virtual keyboard event
+    void onHandleKeypadOpen();
+    void onHandleKeypadClose();
+
 private:
-    ViewMode           mViewMode;
-	HbTreeView*        mListAll;
-	HbTreeView*        mListSearch;
-	HbSearchPanel*     mSearchPanel;
-	HbToolBar*         mToolBar;
-	HbAction* mSoftKeyAction;
+    ViewMode			mViewMode;
+	HbTreeView*			mListAll;
+	HbListView*			mListSearch;
+	HbSearchPanel*		mSearchPanel;
+	HbAction*			mSoftKeyAction;
+	HbStaticVkbHost*	mVirtualKeyboard;
+	HelpUIBuilder		mBuilder;
 };
 
 #endif //HELPCATEGORYVIEW_H

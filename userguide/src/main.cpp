@@ -17,7 +17,7 @@
 
 #include <QTranslator>
 #include <QtGlobal>
-#include <qlocale.h>
+#include <QLocale>
 
 #include <hbapplication.h>
 
@@ -38,8 +38,6 @@ int main(int argc, char *argv[])
     QTranslator* translatorSelf = new QTranslator();    
     translatorSelf->load("userguide_"+lang, PATH_TRANSLATIONS);
     qApp->installTranslator(translatorSelf);
-
-	app.setApplicationName(hbTrId(TXT_TITLE));
 
 	HelpMainWindow mainWindow;
 	mainWindow.show();

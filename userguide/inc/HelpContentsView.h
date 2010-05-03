@@ -18,11 +18,12 @@
 #ifndef HELPCONTENTSVIEW_H
 #define HELPCONTENTSVIEW_H
 
-#include <QUrl.h>
+#include <QUrl>
 
 #include <hbview.h>
 
 #include "HelpCommon.h"
+#include "HelpDocumentLoader.h"
 
 class BrowserWrapper;
 
@@ -38,16 +39,12 @@ public:
 	void init();
 	
 private:
+	void initDocMl();
     void initBackAction();
 	
 signals:
     void activateView(HelpViewName viewName);
     
-signals: // from tollbar event
-    void showAllList();
-    void showFindList();
-    void showOnlineSupport();
-
 private:
 	bool openApplication(const QUrl& url);
 	bool openExternalLink(const QUrl& url);
@@ -59,11 +56,6 @@ private slots: // handle system event
 private slots: // handle button action
     void onBackAction();
     
-private slots: // handle tollbar event
-    void onToolbarAll()             { emit showAllList(); };
-    void onToolbarFind()            { emit showFindList(); };
-    void onToolbarOnlineSupport()   { emit showOnlineSupport(); };
-
 private slots: // handle browser event
 	void onLinkClicked(const QUrl& url);
 	void onUrlChanged(const QUrl& url);
@@ -71,6 +63,7 @@ private slots: // handle browser event
 private:
     BrowserWrapper*     mBrowser;
     HbAction* mSoftKeyAction;
+	HelpUIBuilder mBuilder;
 };
 
 #endif //HELPCONTENTSVIEW_H

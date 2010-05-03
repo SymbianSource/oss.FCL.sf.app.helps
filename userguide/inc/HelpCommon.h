@@ -24,7 +24,7 @@
 const char* const BACKSLASH = "/";
 const char* const SPECIALCHAR = "+";
 const char* const HASHMARK = "#";
-
+const char* const COLON = ":";
 // help content file name
 const char* const XHTMLPATH = "resource/xhtml/";
 const char* const CONTENTSZIP = "contents.zip";
@@ -45,14 +45,16 @@ const char* const URL_HEADER_LOCAL = "file:///";
 const char* const URL_LINK_SUPPORT= "Link to Nokia.com/support";
 
 // text
-const char* const TXT_TITLE = "txt_user_guide_title_user_guide";
 const char* const TXT_BUTTON_ALL = "txt_common_button_all";
 const char* const TXT_BUTTON_FIND = "txt_common_button_find";
 const char* const TXT_BUTTON_LINK_SUPPORT = "txt_user_guide_button_link_to_nokiacomsupport";
+const char* const TXT_SETLABEL_SEARCH = "txt_user_guide_setlabel_search";
+const char* const TXT_SETLABEL_SEARCH_RESULTS = "txt_user_guide_setlabel_search_results";
 
 // docml
 const char* const QRC_DOCML_CATEGORY = ":/xml/categoryView.docml";
 const char* const QRC_DOCML_CONTENTS = ":/xml/contentsView.docml";
+const char* const QRC_DOCML_TOOLBAR = ":/xml/toolbar.docml";
 const char* const DOCML_ACTION_ALL = "action_all";
 const char* const DOCML_ACTION_SEARCH = "action_find";
 const char* const DOCML_ACTION_LINK_NOKIA = "action_online_support";
@@ -67,6 +69,10 @@ const char* const DOCML_BROWSER = "browser";
 const char* const DOCML_LAYOUT_CATEGORY_ALL = "layout_category_all";
 const char* const DOCML_LAYOUT_CATEGORY_SEARCH = "layout_category_find";
 const char* const DOCML_LAYOUT_CATEGORY_SEARCH_NO_SRHPAL = "layout_category_find_no_searchpanel";
+const char* const DOCML_GROUPBOX = "groupBox";
+const char* const DOCML_LAYOUT_CATEGORY_SEARCH_NO_MATCH = "layout_category_find_no_match";
+const char* const DOCML_LAYOUT_CATEGORY_SEARCH_NO_SRHPAL_NO_MATCH = "layout_category_find_no_searchpanel_no_match";
+const char* const DOCML_NO_MATCH_LABEL = "no_match_label";
 
 
 // enum

@@ -24,6 +24,7 @@
 
 file=ABI_DIR\BUILD_DIR\Userguide.exe             SHARED_LIB_DIR\Userguide.exe
 
+data = DATAZ_\APP_RESOURCE_DIR\Userguide.mif                    APP_RESOURCE_DIR\Userguide.mif
 HB_UPGRADABLE_APP_REG_RSC(Userguide)
 S60_APP_RESOURCE(Userguide)
 

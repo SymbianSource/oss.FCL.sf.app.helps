@@ -25,7 +25,6 @@
 #include <hbmenu.h>
 
 #include "BrowserWrapper.h"
-#include "HelpDocumentLoader.h"
 #include "HelpDataProvider.h"
 #include "HelpUtils.h"
 #include "HelpContentsView.h"
@@ -40,13 +39,29 @@ HelpContentsView::~HelpContentsView()
 
 void HelpContentsView::init()
 {
+	initDocMl();
     initBackAction();
-    mBrowser = HelpUIBuilder::findWidget<BrowserWrapper*>(DOCML_BROWSER_CONTENTS);
+    mBrowser = mBuilder.findWidget<BrowserWrapper*>(DOCML_BROWSER_CONTENTS);
     mBrowser->init();
 
     connect(mBrowser, SIGNAL(linkClicked(const QUrl&)), this, SLOT(onLinkClicked(const QUrl&)));
     connect(mBrowser, SIGNAL(urlChanged(const QUrl&)), this, SLOT(onUrlChanged(const QUrl&)));
     connect(mainWindow(), SIGNAL(currentViewChanged(HbView*)), this, SLOT(onCurrentViewChanged(HbView*)));
+}
+
+void HelpContentsView::initDocMl()
+{
+ // Create widget hierarchy
+    setObjectName( DOCML_VIEW_CONTENTS );
+
+    // List existing root elements - this allows us to refer to objects in the XML 
+    // which are created outside the document.
+    QObjectList roots;
+    roots.append( this );
+
+	mBuilder.setObjectTree(roots);
+
+    mBuilder.load(QRC_DOCML_CONTENTS);
 }
 
 void HelpContentsView::initBackAction()
@@ -119,16 +134,13 @@ void HelpContentsView::onCurrentViewChanged(HbView *view)
 
 void HelpContentsView::onBackAction()
 {
-	if(this == mainWindow()->currentView())
+	if(mBrowser->canGoBack())
 	{
-		if(mBrowser->canGoBack())
-		{
-			mBrowser->back();
-		}
-		else
-		{
-			emit activateView(HelpViewCategory);
-		}
+		mBrowser->back();
+	}
+	else
+	{
+		emit activateView(HelpViewCategory);
 	}
 }
 

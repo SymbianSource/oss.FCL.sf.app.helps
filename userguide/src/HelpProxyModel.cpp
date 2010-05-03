@@ -18,8 +18,7 @@
 #include <QStringList>
 #include <QDebug>
 
-#include <hbstringutil.h>
-
+#include "HelpUtils.h"
 #include "HelpCommon.h"
 #include "HelpProxyModel.h"
 
@@ -44,10 +43,19 @@ bool HelpProxyModel::filterAcceptsRow(int sourceRow,
 
 			foreach(QString str, keywordLst)
 			{
-				if(HbStringUtil::findC(str, filterRegExp().pattern()) != -1)
+				if(HelpUtils::findStr(str, filterRegExp().pattern()) != -1)
 				{
 					return true;
 				}
+			}
+			return false;
+		}
+	case Qt::DisplayRole:
+		{
+			QString title = sourceModel()->data(index, Qt::DisplayRole).toString();
+			if(HelpUtils::findStr(title, filterRegExp().pattern()) != -1)
+			{
+				return true;
 			}
 			return false;
 		}

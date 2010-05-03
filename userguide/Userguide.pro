@@ -49,10 +49,6 @@ SOURCES += 	src/main.cpp \
 			src/HelpProxyModel.cpp \
 			src/HelpStandardItem.cpp
 
-win32 {
-    SOURCES += src/HelpUtils_win.cpp
-}
-
 symbian {
 	TARGET.UID3 = 0x10005234
   	TARGET.CAPABILITY = CAP_APPLICATION
@@ -62,6 +58,7 @@ symbian {
   	include(rom/userguide.pri)
 }
 				
+ICON = resources/qtg_large_help.svg
 RESOURCES += resources/Userguide.qrc
 
 debug: DESTDIR = ./debug

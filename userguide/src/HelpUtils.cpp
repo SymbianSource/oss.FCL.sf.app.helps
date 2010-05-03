@@ -19,6 +19,8 @@
 #include <QMap>
 #include <QLocale>
 
+#include <hbstringutil.h>
+
 #include "HelpUtils.h"
 
 
@@ -28,7 +30,7 @@
 
 #include <e32const.h>
 #include <xqappmgr.h>
-#include <EikEnv.h>
+#include <eikenv.h>
 #include <zipfile.h>
 
 void LoadFileFromZipL(const TDesC& aZipName, const TDesC& aFileName, QString& desBuffer)
@@ -88,7 +90,14 @@ void HelpUtils::loadHtmlFromZipFile(const QString& path, const QString& htmlFile
 
     QT_TRAP_THROWING(LoadFileFromZipL(zipNameDes, subFileDes, htmlContent));
     }
-
+#else
+void HelpUtils::loadHtmlFromZipFile(const QString& path, const QString& htmlFile, QString& htmlContent)
+{
+	Q_UNUSED(path);
+	Q_UNUSED(htmlFile);
+	Q_UNUSED(htmlContent);
+	return;
+}
 #endif
 
 QString HelpUtils::rootPath()
@@ -234,6 +243,8 @@ int HelpUtils::launchApplication(const QString& appUid)
     {
         return req5->lastError();
     }
+#else
+	Q_UNUSED(appUid);
 #endif
     return 0;
 }
@@ -246,6 +257,16 @@ Qt::Orientation HelpUtils::defaultOrientation()
 Qt::SortOrder HelpUtils::sortOrder()
 {
 	return Qt::AscendingOrder;
+}
+
+int HelpUtils::findStr(const QString& strFrom, const QString& strToFind)
+{
+	return HbStringUtil::findC(strFrom, strToFind);
+}
+
+int HelpUtils::compareStr(const QString& str1, const QString& str2)
+{
+	return HbStringUtil::compareC(str1, str2);
 }
 
 // end of file
