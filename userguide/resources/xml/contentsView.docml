@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hbdocument version="0.9">	
+	<widget name="view_contents" type="HbView">
+      <string locid="txt_user_guide_title_user_guide" name="title"/>
+	    <widget name="browser_contents" type="BrowserWrapper" />
+	    <layout type="linear">
+	      <linearitem itemname="browser_contents" />
+	      <contentsmargins bottom="0un" left="0un" right="0un" top="0un"/>
+	    </layout>
+	</widget>
+</hbdocument>

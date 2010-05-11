@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hbdocument version="0.9">
+  <object name="help_config" type="QObject">
+    <object name="action_expand_all" type="HbAction">
+      <string name="text" locid="txt_user_guide_opt_expand_all" />
+    </object>
+    <object name="action_collapse_all" type="HbAction">
+      <string name="text" locid="txt_user_guide_opt_collapse_all" />
+    </object>
+  </object>
+  
+  <widget name="view_category" type="HbView">
+    <string locid="txt_user_guide_title_user_guide" name="title"/>
+    <widget name="list_category_all" type="HbTreeView" />
+    <widget name="list_category_search" type="HbListView" />
+    <widget name="search_panel_category" type="HbSearchPanel">
+      <bool name="visible" value="FALSE"/>
+      <bool name="progressive" value="TRUE"/>
+    </widget>
+    <widget name="menu" type="HbMenu" role="HbView:menu">
+      <ref object="action_expand_all" role="HbMenu:addAction" />
+      <ref object="action_collapse_all" role="HbMenu:addAction" />
+    </widget>
+    <widget name="groupBox" type="HbGroupBox">
+      <string locid="txt_user_guide_setlabel_search" name="heading"/>
+      <bool name="collapsable" value="FALSE"/>
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="no_match_label" type="HbLabel">
+      <string name="plainText" locid="txt_user_guide_opt_no_match" />
+      <sizepolicy verticalPolicy="Expanding"/>
+      <enums name="alignment" value="AlignVCenter|AlignHCenter"/>
+      <bool name="visible" value="FALSE"/>
+    </widget>
+  </widget>
+
+  <section name="layout_category_all">
+    <widget name="list_category_all" type="HbTreeView">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="list_category_search" type="HbListView">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="search_panel_category" type="HbSearchPanel">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="groupBox" type="HbGroupBox">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="no_match_label" type="HbLabel">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <layout type="linear" widget="view_category" orientation="Vertical">
+      <linearitem itemname="list_category_all" />
+    </layout>
+  </section>
+
+  <section name="layout_category_find">
+    <widget name="list_category_all" type="HbTreeView">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="list_category_search" type="HbListView">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="search_panel_category" type="HbSearchPanel">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="groupBox" type="HbGroupBox">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="no_match_label" type="HbLabel">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <layout type="linear" widget="view_category" orientation="Vertical">
+      <linearitem itemname="groupBox" />
+      <linearitem itemname="list_category_search" />
+      <linearitem itemname="search_panel_category" />
+    </layout>
+  </section>
+
+  <section name="layout_category_find_no_searchpanel">
+    <widget name="list_category_all" type="HbTreeView">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="list_category_search" type="HbListView">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="search_panel_category" type="HbSearchPanel">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="groupBox" type="HbGroupBox">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="no_match_label" type="HbLabel">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <layout type="linear" widget="view_category" orientation="Vertical">
+      <linearitem itemname="groupBox" />
+      <linearitem itemname="list_category_search" />
+    </layout>
+  </section>
+
+  <section name="layout_category_find_no_match">
+    <widget name="list_category_all" type="HbTreeView">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="list_category_search" type="HbListView">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="search_panel_category" type="HbSearchPanel">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="groupBox" type="HbGroupBox">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="no_match_label" type="HbLabel">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <layout type="linear" widget="view_category" orientation="Vertical">
+      <linearitem itemname="groupBox" />
+      <linearitem itemname="no_match_label" />
+      <linearitem itemname="search_panel_category" />
+    </layout>
+  </section>
+
+  <section name="layout_category_find_no_searchpanel_no_match">
+    <widget name="list_category_all" type="HbTreeView">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="list_category_search" type="HbListView">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="search_panel_category" type="HbSearchPanel">
+      <bool name="visible" value="FALSE"/>
+    </widget>
+    <widget name="groupBox" type="HbGroupBox">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <widget name="no_match_label" type="HbLabel">
+      <bool name="visible" value="TRUE"/>
+    </widget>
+    <layout type="linear" widget="view_category" orientation="Vertical">
+      <linearitem itemname="groupBox" />
+      <linearitem itemname="no_match_label" />
+    </layout>
+  </section>
+  
+  <connect sender="action_expand_all" signal="triggered(bool)" receiver="view_category" slot="onExpandAll()" />
+  <connect sender="action_collapse_all" signal="triggered(bool)" receiver="view_category" slot="onCollapseAll()" />
+  
+</hbdocument>
