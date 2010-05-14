@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hbdocument version="0.9">
+  <object name="help_config" type="QObject">
+	<object name="action_all" type="HbAction">
+		<icon name="icon" iconName=":/images/show_all.svg" />
+	</object>
+	<object name="action_find" type="HbAction">
+		<icon name="icon" iconName="qtg_mono_search" />
+	</object>
+    <object name="action_online_support" type="HbAction">
+      <icon name="icon" iconName=":/images/link_nokia.svg" />
+    </object>
+  </object>
+
+  <widget name="toolbar" type="HbToolBar">
+    <ref object="action_all" role="HbToolBar:addAction" />
+    <ref object="action_find" role="HbToolBar:addAction" />
+    <ref object="action_online_support" role="HbToolBar:addAction" />
+  </widget>
+
+</hbdocument>

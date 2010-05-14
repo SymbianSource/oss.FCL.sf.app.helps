@@ -36,6 +36,10 @@ void BrowserWrapper::init()
 	mWebView = new QGraphicsWebView();
     mWebView->setZoomFactor(1.5);
     mWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+	mWebView->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+	mWebView->settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
+    mWebView->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    mWebView->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
     connect(mWebView, SIGNAL(linkClicked(const QUrl&)), this, SIGNAL(linkClicked(const QUrl&)));
     
     QGraphicsLinearLayout* vLayout = new QGraphicsLinearLayout(this);

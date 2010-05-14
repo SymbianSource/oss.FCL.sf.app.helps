@@ -21,20 +21,12 @@
 #include <hbmainwindow.h>
 #include <hbapplication.h>
 #include <hbaction.h>
-#include <hbtoolbar.h>
-#include <hblabel.h>
 
 #include <hbtreeview.h>
-#include <hblistview.h>
-#include <hbsearchpanel.h>
 #include <hbscrollbar.h>
-#include <hblineedit.h>
 #include <hbmenu.h>
-#include <hbstaticvkbhost.h>
-#include <hbgroupbox.h>
 
 #include "HelpDataProvider.h"
-#include "HelpProxyModel.h"
 
 #include "HelpCategoryView.h"
 
@@ -42,10 +34,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 HelpCategoryView::HelpCategoryView() : 
-mViewMode(ViewModeNull), 
-mListAll(NULL), 
-mListSearch(NULL), 
-mSearchPanel(NULL)
+mListAll(NULL),
+mExpandCount(0)
 {
 }
 
@@ -59,37 +49,13 @@ HelpCategoryView::~HelpCategoryView()
 void HelpCategoryView::init()
 {
 	initDocMl();
-    initBackAction();
     initAllList();
-    initSearchList();
-    initSearchPanel();
-	initVirtualKeyboard();
-	initEmptyLabel();
-
-    switchViewMode(ViewModeAll);
-    
-    connect(mainWindow(), SIGNAL(currentViewChanged(HbView*)), this, SLOT(onCurrentViewChanged(HbView*)));
 }
 
 void HelpCategoryView::initDocMl()
 {
- // Create widget hierarchy
-    setObjectName( DOCML_VIEW_CATEGORY );
-
-    // List existing root elements - this allows us to refer to objects in the XML 
-    // which are created outside the document.
-    QObjectList roots;
-    roots.append( this );
-
-	mBuilder.setObjectTree(roots);
-
+	initBaseDocMl();
     mBuilder.load(QRC_DOCML_CATEGORY);
-}
-
-void HelpCategoryView::initBackAction()
-{
-    mSoftKeyAction = new HbAction(Hb::BackAction);
-    connect(mSoftKeyAction, SIGNAL(triggered()), this, SLOT(onBackAction()));
 }
 
 void HelpCategoryView::initAllList()
@@ -98,57 +64,6 @@ void HelpCategoryView::initAllList()
     mListAll->setHorizontalScrollBarPolicy(HbScrollArea::ScrollBarAlwaysOff);
     mListAll->setModel(HelpDataProvider::instance()->getCategoryData());
     connect(mListAll, SIGNAL(activated(const QModelIndex&)), this, SLOT(onAllListActivated(const QModelIndex&)));
-}
-
-void HelpCategoryView::initSearchList()
-{
-    mListSearch = mBuilder.findWidget<HbListView*>(DOCML_LIST_CATEGORY_SEARCH);
-    mListSearch->setHorizontalScrollBarPolicy(HbScrollArea::ScrollBarAlwaysOff);
-    mListSearch->setModel(HelpDataProvider::instance()->getSearchData());
-    connect(mListSearch, SIGNAL(activated(const QModelIndex&)), this, SLOT(onSearchListActivated(const QModelIndex&)));
-}
-void HelpCategoryView::initSearchPanel()
-{
-    mSearchPanel = mBuilder.findWidget<HbSearchPanel*>(DOCML_SEARCH_PANEL_CATEGORY);
-    connect(mSearchPanel, SIGNAL(exitClicked()), this, SLOT(onSearchPanelExitClicked()));
-    connect(mSearchPanel, SIGNAL(criteriaChanged(const QString&)), this, SLOT(onSearchPanelCriteriaChanged(const QString&)));
-}
-
-void HelpCategoryView::initVirtualKeyboard()
-{
-	mVirtualKeyboard = new HbStaticVkbHost(this);
-    connect(mVirtualKeyboard, SIGNAL(keypadOpened()), this, SLOT(onHandleKeypadOpen()));
-    connect(mVirtualKeyboard, SIGNAL(keypadClosed()), this, SLOT(onHandleKeypadClose()));
-}
-
-void HelpCategoryView::initEmptyLabel()
-{
-	HbLabel* label = mBuilder.findWidget<HbLabel*>(DOCML_NO_MATCH_LABEL);
-	label->setFontSpec(HbFontSpec(HbFontSpec::Primary));
-}
-
-HbGroupBox* HelpCategoryView::groupBox()
-{
-	return mBuilder.findWidget<HbGroupBox*>(DOCML_GROUPBOX);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////
-
-void HelpCategoryView::switchViewMode(ViewMode viewMode)
-{
-    if(ViewModeNull == viewMode) return;
-    
-    mViewMode = viewMode;
-    if(ViewModeAll == viewMode)
-    {
-        mBuilder.load(QRC_DOCML_CATEGORY, DOCML_LAYOUT_CATEGORY_ALL);
-		toolBar()->show();
-    }
-    else if(ViewModeSearch == viewMode)
-    {
-//        mBuilder.load(QRC_DOCML_CATEGORY, DOCML_LAYOUT_CATEGORY_SEARCH);
-		ResetSearchPanel();
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,64 +81,11 @@ void HelpCategoryView::expandCollapseAllList(QStandardItem* item, bool expand)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-
-void HelpCategoryView::updateVisibleItems(bool visible)
+void HelpCategoryView::updateExpandCollapseAction(bool expand)
 {
-	static Hb::SceneItems items = Hb::TitleBarItem | Hb::StatusBarItem;
-	if(visible)
-	{
-		showItems(items);
-	}
-	else
-	{
-		hideItems(items);
-	}
+	HbAction* allAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_EXPAND_COLLAPSE_ALL);
+	allAction->setText(expand ? hbTrId(TXT_EXPAND_ALL) : hbTrId(TXT_COLLAPSE_ALL));
 }
-
-void HelpCategoryView::ResetSearchPanel()
-{
-    foreach(QGraphicsItem *obj, mSearchPanel->childItems())
-    {
-        QGraphicsWidget *const widget = static_cast<QGraphicsWidget*>(obj);
-        if(widget != NULL)
-        {
-            HbLineEdit *const lineEdit = qobject_cast<HbLineEdit*>(widget);
-            if(lineEdit != NULL)
-            {
-                lineEdit->setText("");
-                break;
-            }
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////
-// handle system event
-
-void HelpCategoryView::onCurrentViewChanged(HbView *view)
-{
-    if(this == view)
-    {
-        setNavigationAction(mSoftKeyAction);        
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-// handle button back action
-
-void HelpCategoryView::onBackAction()
-{
-	if(ViewModeSearch == mViewMode)
-	{
-		switchViewMode(ViewModeAll);
-	}
-	else
-	{
-		HbApplication::exit();
-	}
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // handle list event
@@ -233,6 +95,20 @@ void HelpCategoryView::onAllListActivated(const QModelIndex& index)
     if(!index.isValid() ||          // invalid
        index.child(0,0).isValid())  // this is a node
     {
+		if(index.parent().isValid())
+		{
+			return;
+		}
+		
+		if(mListAll->isExpanded(index))
+		{
+			mExpandCount++;
+		}
+		else
+		{
+			mExpandCount--;
+		}
+		updateExpandCollapseAction(mExpandCount == 0);
         return;
     }
 
@@ -242,96 +118,15 @@ void HelpCategoryView::onAllListActivated(const QModelIndex& index)
     emit activateView(HelpViewContents);
 }
 
-void HelpCategoryView::onSearchListActivated(const QModelIndex& index)
-{
-    if(!index.isValid() ||          // invalid
-       index.child(0,0).isValid())  // this is a node
-    {
-        return;
-    }
-    
-    QString uid = mListSearch->model()->data(index, UidRole).toString();
-    QString href = mListSearch->model()->data(index, HrefRole).toString();
-    HelpDataProvider::instance()->setHelpContentUrl(uid, href);
-    emit activateView(HelpViewContents);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////
-// handle search panel event
-
-void HelpCategoryView::onSearchPanelExitClicked()
-{
-	if(mListSearch->model()->rowCount() == 0)
-	{
-		mBuilder.load(QRC_DOCML_CATEGORY, DOCML_LAYOUT_CATEGORY_SEARCH_NO_SRHPAL_NO_MATCH);
-	}
-	else
-	{
-		mBuilder.load(QRC_DOCML_CATEGORY, DOCML_LAYOUT_CATEGORY_SEARCH_NO_SRHPAL);
-	}
-	toolBar()->show();
-}
-
-void HelpCategoryView::onSearchPanelCriteriaChanged(const QString &criteria)
-{
-    HelpDataProvider::instance()->getSearchData(criteria);
-	if(mListSearch->model()->rowCount() == 0)
-	{
-		mBuilder.load(QRC_DOCML_CATEGORY, DOCML_LAYOUT_CATEGORY_SEARCH_NO_MATCH);
-	}
-	else
-	{
-		mBuilder.load(QRC_DOCML_CATEGORY, DOCML_LAYOUT_CATEGORY_SEARCH);
-	}
-
-	toolBar()->hide();
-
-	if(criteria.isEmpty())
-	{
-		groupBox()->setHeading(hbTrId(TXT_SETLABEL_SEARCH));
-	}
-	else
-	{
-		QString heading = qtTrId(TXT_SETLABEL_SEARCH_RESULTS);
-		heading.append(COLON);
-		heading.append(criteria);
-		groupBox()->setHeading(heading);
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////
-// handle virtual keyboard event
-
-void HelpCategoryView::onHandleKeypadOpen()
-{
-	updateVisibleItems(false);
-    qreal heightToSet = mainWindow()->layoutRect().height() - mVirtualKeyboard->keyboardArea().height();
-    this->setMaximumHeight(heightToSet);
-}
-
-void HelpCategoryView::onHandleKeypadClose()
-{	
-	updateVisibleItems(true);
-	qreal mainHeight  = mainWindow()->layoutRect().height();
-	qreal toolbarHeight = toolBar()->size().height();
-	qreal height = mainHeight - (toolBar()->isVisible() ? toolbarHeight : 0);
-	this->setMaximumHeight(height);
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 // handle menu event
-void HelpCategoryView::onExpandAll()
+void HelpCategoryView::onExpandOrCollapseAll()
 {
+	bool needExpand = (mExpandCount == 0);
 	QStandardItemModel* model = (QStandardItemModel*)(mListAll->model());
-	expandCollapseAllList(model->invisibleRootItem(),true);
+	expandCollapseAllList(model->invisibleRootItem(),needExpand);
+	mExpandCount = needExpand ?  model->invisibleRootItem()->rowCount() : 0;
+	updateExpandCollapseAction(mExpandCount == 0);
 }
-
-void HelpCategoryView::onCollapseAll()
-{
-	QStandardItemModel* model = (QStandardItemModel*)(mListAll->model());
-	expandCollapseAllList(model->invisibleRootItem(),false);
-}
-
 
 // end of file

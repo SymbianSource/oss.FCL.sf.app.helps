@@ -51,22 +51,13 @@ void HelpContentsView::init()
 
 void HelpContentsView::initDocMl()
 {
- // Create widget hierarchy
-    setObjectName( DOCML_VIEW_CONTENTS );
-
-    // List existing root elements - this allows us to refer to objects in the XML 
-    // which are created outside the document.
-    QObjectList roots;
-    roots.append( this );
-
-	mBuilder.setObjectTree(roots);
-
+	initBaseDocMl();
     mBuilder.load(QRC_DOCML_CONTENTS);
 }
 
 void HelpContentsView::initBackAction()
 {
-    mSoftKeyAction = new HbAction(Hb::BackAction);
+    mSoftKeyAction = new HbAction(Hb::BackNaviAction  );
     connect(mSoftKeyAction, SIGNAL(triggered()), this, SLOT(onBackAction()));
 }
 
@@ -112,7 +103,7 @@ void HelpContentsView::openHelpContent(const QUrl& url)
     QString html;
     QString baseUrl = url.toString();
     HelpDataProvider::instance()->getHelpContentData(html, baseUrl);
-    mBrowser->setHtml(html, baseUrl);
+	mBrowser->setHtml(html, baseUrl);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,6 +112,7 @@ void HelpContentsView::onCurrentViewChanged(HbView *view)
 {
     if(this == view)
     {
+		setVisible(true);
         setNavigationAction(mSoftKeyAction);
         openHelpContent();
     }
@@ -140,7 +132,7 @@ void HelpContentsView::onBackAction()
 	}
 	else
 	{
-		emit activateView(HelpViewCategory);
+		emit activateView(PreviousView);
 	}
 }
 

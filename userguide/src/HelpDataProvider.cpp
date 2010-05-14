@@ -217,7 +217,6 @@ void HelpDataProvider::createBuiltInCategory(const QString& path)
 		if(item)
 		{
 			mHelpModel->appendRow(item);
-//			constructKeywordModel(uid);
 		}
 	}
 	file.close();
@@ -322,10 +321,9 @@ void HelpDataProvider::constructAppHelp(const QString& path)
 		{
 			if(!itemApp)
 			{
-				itemApp = new HelpStandardItem("Applications");
+				itemApp = new HelpStandardItem(qtTrId(TXT_APPLICATIONS));
 			}
 			itemApp->appendRow(item);
-//			constructKeywordModel(pathTemp);
 		}
 		file.close();
 	}
