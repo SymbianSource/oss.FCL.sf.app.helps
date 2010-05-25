@@ -69,6 +69,7 @@ CCSXHHtmlTopicContainer* CCSXHHtmlTopicContainer::NewLC(const TRect& aRect,CCSXH
 CCSXHHtmlTopicContainer::CCSXHHtmlTopicContainer(CCSXHDocument &aDocument,CCSXHHtmlTopicView *aView)
         : iTopic(NULL),iDocument(aDocument),iView(aView)
         ,iAppLauncher(NULL), iLoadHtml(EFalse), iPrevPageCount(0), iBack(EFalse)
+        ,iContentLoading(ENoContent)
 
     {
     // no implementation required
@@ -165,6 +166,8 @@ void CCSXHHtmlTopicContainer::SetAndLoadInitialTopicL(CCSXHHtmlTOC2* aTopic)
 
 void CCSXHHtmlTopicContainer::LoadHtmlL()
     {
+    iBrCtrl->MakeVisible( EFalse );
+    SetContentLoadState( EContentLoading );
     HBufC8 *htmlBuffer = STATIC_CAST(HBufC8*,iTopic->GetTopicContentL());
     if(htmlBuffer)
         {
@@ -272,7 +275,23 @@ void CCSXHHtmlTopicContainer::SizeChanged()
     {
 #ifndef __SERIES60_30__ 
     if(iBrCtrl)
-        iBrCtrl->SetRect(Rect());
+        {
+        if ( iContentLoading != EContentLoading )
+            {
+            iBrCtrl->SetRect(Rect());
+            iBrCtrl->MakeVisible(ETrue);
+            }
+        else
+            {
+            //Update the title bar
+            CEikStatusPane* sp = CCSXHAppUi::GetInstance()->StatusPane();
+            CAknTitlePane* titlePane = STATIC_CAST(CAknTitlePane*, 
+            sp->ControlL(TUid::Uid(EEikStatusPaneUidTitle)));
+            titlePane->SetTextL(KNullDesC);
+            
+            iBrCtrl->SetRect(TRect(0,0,0,0));
+            }
+        }
 #endif  
     }
 
@@ -420,6 +439,7 @@ void CCSXHHtmlTopicContainer::HandleBrowserLoadEventL(TBrCtlDefs::TBrCtlLoadEven
     {
     if(aLoadEvent == TBrCtlDefs::EEventLoadFinished)
         {
+        SetContentLoadState( EContentLoadFinished );
         if ( IsVisible() )
              {
                HBufC* title = iBrCtrl->PageInfoLC(TBrCtlDefs::EPageInfoTitle);
@@ -593,4 +613,34 @@ TBool CCSXHHtmlTopicContainer::CheckForExternalLinkL(const TDesC& aUrl)
         
     return Result;
 	}
+
+void CCSXHHtmlTopicContainer::SetContentLoadState( TContentLoadState aLoadState )
+    {
+    if ( iContentLoading == aLoadState )
+        {
+        return;
+        }
+    else if ( NeedRefresh( aLoadState ) )
+        {
+        iContentLoading = aLoadState;
+        SizeChanged();
+        }
+    else
+        {
+        iContentLoading = aLoadState;
+        }
+    }
+
+TBool CCSXHHtmlTopicContainer::NeedRefresh( const TContentLoadState aNewLoadState ) const
+    {
+    if ( 
+            ( iContentLoading == EContentLoading && aNewLoadState != EContentLoading )
+            ||( iContentLoading != EContentLoading && aNewLoadState == EContentLoading )
+        )
+        return ETrue;
+    else
+        return EFalse;
+    }
+
+//end of the file
 

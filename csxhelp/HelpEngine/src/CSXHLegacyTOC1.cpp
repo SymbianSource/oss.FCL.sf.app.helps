@@ -43,7 +43,7 @@ CCSXHGenericTOC1(aName)
 
 TUid CCSXHLegacyTOC1::GetViewID() const
     {
-    return KCSXHToc2ViewID;
+    return KCSXHToc2AppHelpsViewID;
     }
     
 CCSXHHelpContentBase* CCSXHLegacyTOC1::GetContextTopic(const TDesC& aContextName)

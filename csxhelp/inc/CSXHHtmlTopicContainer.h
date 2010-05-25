@@ -394,13 +394,24 @@ public:  // from CCoeControl
  		CCSXHHelpContentBase* GetCurrActiveObject();
 
 private:
+ 		
+/**
+* The state type of browser content.
+* @see SetContentLoadState() and NeedRefresh.
+*/
+    enum TContentLoadState
+        {
+        ENoContent,
+        EContentLoading,
+        EContentLoadFinished
+        };
 
 /**
-  @function ConstructL
-  @since S60 3.2
-  Perform the second phase construction of a HtmlTopicContainer object
-  @param aRect the rectangle this view will be drawn to
-  */
+*  @function ConstructL
+*  @since S60 3.2
+*  @Perform the second phase construction of a HtmlTopicContainer object
+*  @param aRect the rectangle this view will be drawn to
+ */
     void ConstructL(const TRect& aRect);
 
 /** 
@@ -417,6 +428,18 @@ private:
 *  @return ETrue, if external hyperlink available, EFalse otherwise 
 */	
 	TBool CheckForExternalLinkL(const TDesC& aUrl);
+	
+/**
+* @function SetContentLoadingState
+* Set the state of content loading and refresh the UI id needed
+*/
+    void SetContentLoadState( const TContentLoadState aLoadState );
+        
+/**
+* @function NeedRefresh
+* Judge whether we need to refresh the browser control
+*/
+    TBool NeedRefresh( const TContentLoadState aNewLoadState ) const;
 	
 private:
 	CBrCtlInterface* iBrCtrl;    
@@ -435,6 +458,7 @@ private:
     TInt32 iPrevPageCount;
     TBool iBack;
     
+    TContentLoadState iContentLoading;
 	};
 
 
