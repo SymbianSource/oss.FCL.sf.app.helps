@@ -36,6 +36,10 @@ void BrowserWrapper::init()
 	mWebView = new QGraphicsWebView();
     mWebView->setZoomFactor(1.5);
     mWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+	mWebView->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+	mWebView->settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
+    mWebView->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    mWebView->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
     connect(mWebView, SIGNAL(linkClicked(const QUrl&)), this, SIGNAL(linkClicked(const QUrl&)));
     
     QGraphicsLinearLayout* vLayout = new QGraphicsLinearLayout(this);
@@ -45,13 +49,13 @@ void BrowserWrapper::init()
     setLayout(vLayout);
 }
 
-void BrowserWrapper::setHtml(const QString& html, const QUrl& baseUrl)
+void BrowserWrapper::setHtml(const QString& html, const QUrl& url)
 {
-    mWebView->setHtml(html, baseUrl);
+    mWebView->setHtml(html, url);
 
-    if(!mHistory.count() || mHistory.top()!=baseUrl)
+    if(!mHistory.count() || mHistory.top()!=url)
     {
-        mHistory.append(baseUrl);
+        mHistory.append(url);
     }
 }
 

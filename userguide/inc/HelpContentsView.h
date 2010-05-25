@@ -20,14 +20,13 @@
 
 #include <QUrl>
 
-#include <hbview.h>
+#include <HelpBaseView.h>
 
-#include "HelpCommon.h"
 #include "HelpDocumentLoader.h"
 
 class BrowserWrapper;
 
-class HelpContentsView : public HbView
+class HelpContentsView : public HelpBaseView
 {
 	Q_OBJECT
 	
@@ -40,18 +39,15 @@ public:
 	
 private:
 	void initDocMl();
-    void initBackAction();
-	
-signals:
-    void activateView(HelpViewName viewName);
-    
+    void initBackAction();	
+ 
 private:
 	bool openApplication(const QUrl& url);
 	bool openExternalLink(const QUrl& url);
 	void openHelpContent(const QUrl& url=QUrl());
 
 private slots: // handle system event
-    void onCurrentViewChanged(HbView *view);
+    void onViewReady();
     
 private slots: // handle button action
     void onBackAction();
@@ -63,7 +59,6 @@ private slots: // handle browser event
 private:
     BrowserWrapper*     mBrowser;
     HbAction* mSoftKeyAction;
-	HelpUIBuilder mBuilder;
 };
 
 #endif //HELPCONTENTSVIEW_H
