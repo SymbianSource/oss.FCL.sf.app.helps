@@ -18,8 +18,12 @@
 #include <hbtoolbar.h>
 #include <hbnotificationdialog.h>
 #include <hbaction.h>
+#include <hbapplication.h>
+#include <hbactivitymanager.h>
 
+#include "HelpBaseView.h"
 #include "HelpCategoryView.h"
+#include "HelpKeywordView.h"
 #include "HelpContentsView.h"
 
 #include "HelpMainWindow.h"
@@ -27,30 +31,16 @@
 
 HelpMainWindow::HelpMainWindow() : 
 mCategoryView(NULL),
+mKeywordView(NULL),
 mContentsView(NULL)
 {
-	connect(this, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(onOrientationChanged(Qt::Orientation)));
-	initToolbar();
+    QObject::connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveActivity()));
     activateCategoryView();
 }
 
 HelpMainWindow::~HelpMainWindow()
 {
     HelpDataProvider::destroyInstance();
-}
-
-void HelpMainWindow::initToolbar()
-{
-	mBuilder.load(QRC_DOCML_TOOLBAR);
-	mToolBar = mBuilder.findWidget<HbToolBar*>(DOCML_TOOLBAR);
-
-    HbAction* allAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_ALL);
-    HbAction* findAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_SEARCH);
-	HbAction* onLineSupportAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_LINK_NOKIA);
-
-	connect(allAction, SIGNAL(triggered()), this, SLOT(onToolbarAll()));
-	connect(findAction, SIGNAL(triggered()), this, SLOT(onToolbarFind()));
-	connect(onLineSupportAction, SIGNAL(triggered()), this, SLOT(onToolbarOnlineSupport()));
 }
 
 void HelpMainWindow::onActivateView(HelpViewName viewName)
@@ -60,11 +50,17 @@ void HelpMainWindow::onActivateView(HelpViewName viewName)
 	    case HelpViewCategory:
             activateCategoryView();
 			break;
-
+	    case HelpViewKeyword:
+            activateKeywordView();
+			break;
 	    case HelpViewContents:
             activateContentsView();
 			break;
-
+		case PreviousView:
+			{
+				onActivateView(mPreviousViewName);
+			}
+			break;
 	    default:
 	        break;
 	}
@@ -77,12 +73,26 @@ void HelpMainWindow::activateCategoryView()
         mCategoryView = new HelpCategoryView();
         addView(mCategoryView);
         mCategoryView->init();
-		mCategoryView->setToolBar(mToolBar);
         emit currentViewChanged(mCategoryView);
 		connectViewSignal(mCategoryView);
     }
 
+	mPreviousViewName = HelpViewCategory;
     setCurrentView(mCategoryView);
+}
+
+void HelpMainWindow::activateKeywordView()
+{
+    if(!mKeywordView)
+    {
+        mKeywordView = new HelpKeywordView();
+		addView(mKeywordView);
+        mKeywordView->init();
+		connectViewSignal(mKeywordView);
+    }
+
+	mPreviousViewName = HelpViewKeyword;	
+    setCurrentView(mKeywordView);	
 }
 
 void HelpMainWindow::activateContentsView()
@@ -90,61 +100,64 @@ void HelpMainWindow::activateContentsView()
     if(!mContentsView)
     {
 		mContentsView = new HelpContentsView();
-        addView(mContentsView);
+		addView(mContentsView);
         mContentsView->init();
-		mContentsView->setToolBar(mToolBar);
 
         connectViewSignal(mContentsView);
     }
-
     setCurrentView(mContentsView);
 }
 
-void HelpMainWindow::connectViewSignal(const QObject *object)
+void HelpMainWindow::connectViewSignal(const HelpBaseView *view)
 {
-    connect(object, SIGNAL(activateView(HelpViewName)), this, SLOT(onActivateView(HelpViewName)));
+	connect(this, SIGNAL(orientationChanged(Qt::Orientation)), view, SLOT(onOrientationChanged(Qt::Orientation)));
+    connect(view, SIGNAL(activateView(HelpViewName)), this, SLOT(onActivateView(HelpViewName)));
+    
+    connect(view, SIGNAL(showAllList()), this, SLOT(onShowAllList()));
+    connect(view, SIGNAL(showFindList()), this, SLOT(onShowFindList()));
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////
 // handle view event
 
-void HelpMainWindow::onToolbarAll()
+void HelpMainWindow::onShowAllList()
 {
     activateCategoryView();
-    mCategoryView->switchViewMode(HelpCategoryView::ViewModeAll);
 }
 
-void HelpMainWindow::onToolbarFind()
-{
-    activateCategoryView();
-    mCategoryView->switchViewMode(HelpCategoryView::ViewModeSearch);
+void HelpMainWindow::onShowFindList()
+{	
+    activateKeywordView();
+	mKeywordView->loadAllContent();
 }
 
-void HelpMainWindow::onToolbarOnlineSupport()
+void HelpMainWindow::saveActivity()
 {
-    HbNotificationDialog *notificationDialog = new HbNotificationDialog();
-    notificationDialog->setParent(this);
-    notificationDialog->setTitle(URL_LINK_SUPPORT);
-    notificationDialog->show();
-}
+  HbActivityManager* activityManager = qobject_cast<HbApplication*>(qApp)->activityManager();
 
-void HelpMainWindow::onOrientationChanged(Qt::Orientation orientation)
-{
-    RefreshToolbarText(orientation);
-}
+  // clean up any previous versions of this activity from the activity manager.
+  bool ok = activityManager->removeActivity("UserGuideMainView");
+  if ( !ok )
+      {
+      //qFatal("Remove failed" );
+      }
 
-void HelpMainWindow::RefreshToolbarText(Qt::Orientation orientation)
-{
-	bool isLandscape = (Qt::Horizontal==orientation);
-    HbAction* tollbarAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_ALL);
-    tollbarAction->setText(isLandscape ? qtTrId(TXT_BUTTON_ALL) : QString());
+  // get a screenshot for saving to the activity manager
+  QVariantHash metadata;
+  metadata.insert("screenshot", QPixmap::grabWidget(this, rect()));
 
-    tollbarAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_SEARCH);
-    tollbarAction->setText(isLandscape ? qtTrId(TXT_BUTTON_FIND) : QString());
+  // save any data necessary to save the state
+  QByteArray serializedActivity;
+  QDataStream stream(&serializedActivity, QIODevice::WriteOnly | QIODevice::Append);
+  stream << "whatever data you need to save the state adequately";
 
-    tollbarAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_LINK_NOKIA);
-    tollbarAction->setText(isLandscape ? qtTrId(TXT_BUTTON_LINK_SUPPORT) : QString());
+  // add the activity to the activity manager
+  ok = activityManager->addActivity("UserGuideMainView", serializedActivity, metadata);
+  if ( !ok )
+      {
+      qFatal("Add failed" );
+      }
 }
 
 // end of file

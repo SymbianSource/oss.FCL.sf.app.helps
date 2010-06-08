@@ -25,7 +25,7 @@
 class HbListView;
 class HbSearchPanel;
 class HbStaticVkbHost;
-class HbGroupBox;
+class HbLabel;
 
 class HelpKeywordView : public HelpBaseView
 {
@@ -42,15 +42,18 @@ private:
 	void initSearchList();
 	void initSearchPanel();
 	void initBackAction();
-	void initEmptyLabel();
 	void initVirtualKeyboard();
-	
+
 private:
-	HbGroupBox* groupBox();
+	void onOrientationChanged(Qt::Orientation orientation);
+
+private:
+	HbLabel* label();
     
 private:
 	void updateVisibleItems(bool visible);
 	void ResetSearchPanel();	
+	void updateLabelPos();
 
 private slots: // handle system event
     void onViewReady();

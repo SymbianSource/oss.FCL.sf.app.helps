@@ -36,7 +36,9 @@ HEADERS += 	inc/HelpMainWindow.h \
 			inc/HelpDataProvider.h \
 			inc/HelpUtils.h \
 			inc/HelpProxyModel.h \
-			inc/HelpStandardItem.h
+			inc/HelpStandardItem.h \
+			inc/HelpKeywordView.h \
+			inc/HelpBaseView.h
 
 SOURCES += 	src/main.cpp \
 			src/HelpMainWindow.cpp \
@@ -47,13 +49,17 @@ SOURCES += 	src/main.cpp \
 			src/HelpDataProvider.cpp \
 			src/HelpUtils.cpp \
 			src/HelpProxyModel.cpp \
-			src/HelpStandardItem.cpp
+			src/HelpStandardItem.cpp \
+			src/HelpKeywordView.cpp \
+			src/HelpBaseView.cpp
 
 symbian {
 	TARGET.UID3 = 0x10005234
   	TARGET.CAPABILITY = CAP_APPLICATION
   	TARGET.EPOCHEAPSIZE = 0x020000 0x1000000
 
+    CONFIG += mobility
+    MOBILITY = systeminfo
   	LIBS += -lezip -lxqservice -lxqserviceutil
   	include(rom/userguide.pri)
 }
