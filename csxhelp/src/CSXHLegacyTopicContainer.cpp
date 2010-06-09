@@ -33,6 +33,7 @@
 #include <aknlayoutscalable_apps.cdl.h>
 #include <aknappui.h>
 #include <txtfrmat.h> 
+#include <cshelp.rsg>
 
 CCSXHLegacyTopicContainer* CCSXHLegacyTopicContainer::NewL(const TRect& 
 aRect,CCSXHDocument &aDocument,CCSXHLegacyTOC2 *aTopic)
@@ -69,12 +70,18 @@ void CCSXHLegacyTopicContainer::ConstructL(const TRect& aRect/*, CRichText* aTex
     GetTextFormat();
 
     iEdwin = new(ELeave) CEikEdwin();
-    const TInt flags(CEikEdwin::EKeepDocument |
-                     CEikEdwin::EUserSuppliedText |
-                     CEikEdwin::ENoAutoSelection |
-                     CEikEdwin::EAvkonDisableCursor |
-                     CEikEdwin::EReadOnly |
-                     CEikEdwin::EDisplayOnly);
+    TInt flags(CEikEdwin::EKeepDocument |
+               CEikEdwin::EUserSuppliedText |
+               CEikEdwin::ENoAutoSelection |
+               CEikEdwin::EAvkonDisableCursor |
+               CEikEdwin::EReadOnly |
+               CEikEdwin::EDisplayOnly);
+
+    if ( iText == NULL )
+        {
+        flags = flags & ~CEikEdwin::EUserSuppliedText;
+        }
+
     iEdwin->SetContainerWindowL(*this);
 
     iEdwin->ConstructL(flags);
@@ -82,7 +89,10 @@ void CCSXHLegacyTopicContainer::ConstructL(const TRect& aRect/*, CRichText* aTex
                                                  CEikScrollBarFrame::EOff,
                                                  CEikScrollBarFrame::EAuto);
     SetTextL(iText);
-    FormatRichTextL(*iText);
+    if( iText != NULL )
+        {
+        FormatRichTextL(*iText);
+        }
     SetRect(aRect);
     ActivateL();
     }
@@ -98,15 +108,26 @@ void CCSXHLegacyTopicContainer::RefreshL(CCSXHLegacyTOC2 *aTopic)
     iTopic = aTopic;
     iText = STATIC_CAST(CRichText*,iTopic->GetTopicContentL());
     SetTextL(iText);
-    FormatRichTextL(*iText);
+    if( iText != NULL )
+        {
+        FormatRichTextL(*iText);
+        }
     SizeChanged();
     }
 
 void CCSXHLegacyTopicContainer::SetTextL(CRichText* aText)
     {
-    iEdwin->SetDocumentContentL(*aText, CEikEdwin::EUseText);
-    iEdwin->SetCursorPosL(0, EFalse);
-    
+    if( aText == NULL )
+        {
+        HBufC* errorMessage = iCoeEnv->AllocReadResourceLC( R_TYPE_NO_HELP_TOPICS );
+        iEdwin->SetTextL( errorMessage );
+        CleanupStack::PopAndDestroy( errorMessage ); 
+        }
+    else
+        {
+        iEdwin->SetDocumentContentL(*aText, CEikEdwin::EUseText);
+        iEdwin->SetCursorPosL(0, EFalse);
+        }    
     }
 
 void CCSXHLegacyTopicContainer::FocusChanged(TDrawNow aDrawNow)

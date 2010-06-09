@@ -156,6 +156,10 @@ TAny* CCSXHLegacyContentParser::GetTopicContentL(CCSXHGenericTOC2* aTopic)
         if(appName.Compare(aTopic->GetName())==0)
             break;
         }
+    if( nIndex == nCount )
+        {
+        return NULL;
+        }
     if(iTopic)
         {
         delete iTopic;

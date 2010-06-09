@@ -70,8 +70,6 @@ CCSXHHelpContentBase* CCSXHLegacyTOC1::GetContextTopic(const TDesC& aContextName
 
 void CCSXHLegacyTOC1::InitChildList()
     {
-    if(iChildList != NULL)
-        return;
     ConstructChildList();
     
     TRAP_IGNORE(CCSXHHelpDataBase::GetInstance()->
