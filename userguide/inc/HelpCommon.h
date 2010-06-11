@@ -20,6 +20,8 @@
 
 #include <Qt>
 
+//const
+const int APPPRIORITY = 2001;
 // words
 const char* const BACKSLASH = "/";
 const char* const SPECIALCHAR = "+";
@@ -92,6 +94,7 @@ enum HelpViewName
 enum HelpItemRole
 {
     UidRole = Qt::UserRole + 1,
+	PriorityRole,
 	HrefRole,
     KeywordRole
 };

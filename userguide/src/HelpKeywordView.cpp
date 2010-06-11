@@ -63,7 +63,7 @@ void HelpKeywordView::init()
 	initVirtualKeyboard();
 	initEmptyLabel();
     
-    connect(mainWindow(), SIGNAL(currentViewChanged(HbView*)), this, SLOT(onCurrentViewChanged(HbView*)));
+    connect(mainWindow(), SIGNAL(viewReady()), this, SLOT(onViewReady()));
 }
 
 void HelpKeywordView::initDocMl()
@@ -143,6 +143,7 @@ void HelpKeywordView::ResetSearchPanel()
             if(lineEdit != NULL)
             {
                 lineEdit->setText("");
+				lineEdit->setFocus();
                 break;
             }
         }
@@ -152,11 +153,10 @@ void HelpKeywordView::ResetSearchPanel()
 ////////////////////////////////////////////////////////////////////////////////////////////
 // handle system event
 
-void HelpKeywordView::onCurrentViewChanged(HbView *view)
+void HelpKeywordView::onViewReady()
 {
-	 if(this == view)
-    {
-		setVisible(true);
+	if(isVisible())
+	{
 		setNavigationAction(mSoftKeyAction);  
 	}
 }

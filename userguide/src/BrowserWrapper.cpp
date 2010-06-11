@@ -49,13 +49,13 @@ void BrowserWrapper::init()
     setLayout(vLayout);
 }
 
-void BrowserWrapper::setHtml(const QString& html, const QUrl& baseUrl)
+void BrowserWrapper::setHtml(const QString& html, const QUrl& url)
 {
-    mWebView->setHtml(html, baseUrl);
+    mWebView->setHtml(html, url);
 
-    if(!mHistory.count() || mHistory.top()!=baseUrl)
+    if(!mHistory.count() || mHistory.top()!=url)
     {
-        mHistory.append(baseUrl);
+        mHistory.append(url);
     }
 }
 
