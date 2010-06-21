@@ -113,7 +113,9 @@ class CCSXHHtmlTOC1 : public CCSXHGenericTOC1
 *  Get the file path
 *  @return  ETrue, if it part of ROMdrive, EFalse otherwise
 */     
-    TBool IsROMDrive();    
+    TBool IsROMDrive();
+    
+    TBool IsValid() const;
     
     protected:
 /** 
@@ -131,8 +133,6 @@ class CCSXHHtmlTOC1 : public CCSXHGenericTOC1
 *  Allocate Memory to the array
 */    
     void InitChildList();
-    
-    TBool IsValid() const;
     
     
     private:	

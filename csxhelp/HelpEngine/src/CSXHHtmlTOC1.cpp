@@ -38,11 +38,8 @@ const TInt KBufSize = 35;
 // ---------------------------------------------------------
 CCSXHHtmlTOC1* CCSXHHtmlTOC1::NewL(const TDesC& aName, const TDesC& aFolder,const TInt& aDrive, TUid aViewId, TInt32 aPriority)
     {
-    CCSXHHtmlTOC1* self = new(ELeave) CCSXHHtmlTOC1(aName,aFolder,aDrive, aViewId, aPriority);
-    if(self->IsValid())
-    	return self;	
-    delete self;
-    return NULL;
+    CCSXHHtmlTOC1* self = new (ELeave) CCSXHHtmlTOC1(aName, aFolder, aDrive, aViewId, aPriority);
+    return self;
     }
 
 // ---------------------------------------------------------

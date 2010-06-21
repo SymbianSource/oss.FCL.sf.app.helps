@@ -285,9 +285,15 @@ void CCSXHHtmlTopicContainer::SizeChanged()
             {
             //Update the title bar
             CEikStatusPane* sp = CCSXHAppUi::GetInstance()->StatusPane();
-            CAknTitlePane* titlePane = STATIC_CAST(CAknTitlePane*, 
-            sp->ControlL(TUid::Uid(EEikStatusPaneUidTitle)));
-            titlePane->SetTextL(KNullDesC);
+            CAknTitlePane* titlePane = NULL;
+            TRAPD( err, titlePane = STATIC_CAST(CAknTitlePane*, 
+                    sp->ControlL( TUid::Uid( EEikStatusPaneUidTitle ) ) ) );
+            if ( KErrNone == err )
+                {
+                //If can't set Null text to title, no other good way to do further, 
+                //so just ignore this leave
+                TRAP_IGNORE( titlePane->SetTextL( KNullDesC ) );
+                }
             
             iBrCtrl->SetRect(TRect(0,0,0,0));
             }

@@ -80,8 +80,8 @@ CCSXHHTMLContentParser::~CCSXHHTMLContentParser()
         delete toc1;
         }
     iDuplicateHelpTopicList.Reset();    
-	iDuplicateHelpTopicList.Close();
-	
+    iDuplicateHelpTopicList.Close();
+    
     // Closes the array and frees all memory allocated to the array.
    // iSupportedFeatures.Close();
     
@@ -186,25 +186,25 @@ void CCSXHHTMLContentParser::GenerateTOC1ListL(CCSXHHelpDataBase* aDataBase)
     }
 
 TBool CCSXHHTMLContentParser::GetHTMLContentPathForDriveL(TBuf<KMaxFileName>* aContentDrive,CCoeEnv *aCoeEnv)
-	{
+    {
     // get the path to language level
     // Input: aContentDrive == C or E or Z
     // Output: aContentDrive == C:\\resource\\xhtml\\01\\ (or Z:\\resource\\xhtml\\31\\)
     //
-	aContentDrive->Append(KXhtmlFolder);
-	TInt len = aContentDrive->Length();
-	RFs& FileSession = aCoeEnv->FsSession();
-	RArray<TLanguage> langs;
-   	BaflUtils::GetDowngradePathL(FileSession,User::Language(),langs);
-    		
+    aContentDrive->Append(KXhtmlFolder);
+    TInt len = aContentDrive->Length();
+    RFs& FileSession = aCoeEnv->FsSession();
+    RArray<TLanguage> langs;
+       BaflUtils::GetDowngradePathL(FileSession,User::Language(),langs);
+            
     for(int i = 0; i < langs.Count(); ++i)
-    	{
-    	TLanguage lang = langs[i];
-    	//TSW Error: UKAL-6YL72P
-    	//Tool chain uses full symbian language id in 
-    	//the directory name, which is not detected by help application.
-    	//
-    	if(lang < 10)
+        {
+        TLanguage lang = langs[i];
+        //TSW Error: UKAL-6YL72P
+        //Tool chain uses full symbian language id in 
+        //the directory name, which is not detected by help application.
+        //
+        if(lang < 10)
             {
             aContentDrive->AppendNumFixedWidth(lang,EDecimal,2);
             }
@@ -212,24 +212,24 @@ TBool CCSXHHTMLContentParser::GetHTMLContentPathForDriveL(TBuf<KMaxFileName>* aC
             {
             aContentDrive->AppendNum(lang);
             }
-    	
-    	aContentDrive->Append(KFwdSlash);
-    	if(BaflUtils::PathExists(FileSession,*aContentDrive))
-    		{
-    		langs.Reset();
-    		return ETrue;
-    		}
-    	else
-    		{
-    		aContentDrive->Delete((len-1),aContentDrive->Length()-len);
-    		}	
-    	}
-    	langs.Reset();
-    	return EFalse;
-	}
+        
+        aContentDrive->Append(KFwdSlash);
+        if(BaflUtils::PathExists(FileSession,*aContentDrive))
+            {
+            langs.Reset();
+            return ETrue;
+            }
+        else
+            {
+            aContentDrive->Delete((len-1),aContentDrive->Length()-len);
+            }    
+        }
+        langs.Reset();
+        return EFalse;
+    }
     
 TBool CCSXHHTMLContentParser::HandleMasterMetaFileL(CCSXHHelpDataBase* aDataBase, 
-                        TChar& aDrive, MSenContentHandlerClient *aPrevHandler)											   
+                        TChar& aDrive, MSenContentHandlerClient *aPrevHandler)                                               
     {
     RFs& FileSession = iCoeEnv->FsSession();
     TBuf<KMaxFileName> masterFile;
@@ -261,7 +261,7 @@ TBool CCSXHHTMLContentParser::HandleMasterMetaFileL(CCSXHHelpDataBase* aDataBase
     }
 
 TBool CCSXHHTMLContentParser::IsRedirectedL(CCSXHHelpDataBase *aDataBase, 
-		                      const TDesC &aPath, TUid &aUid, TCoeContextName &aContextName)											   
+                              const TDesC &aPath, TUid &aUid, TCoeContextName &aContextName)                                               
     {
     RFs& FileSession = iCoeEnv->FsSession();
     TBuf<KMaxFileName> redirectFile( aPath );
@@ -279,15 +279,15 @@ TBool CCSXHHTMLContentParser::IsRedirectedL(CCSXHHelpDataBase *aDataBase,
         // ParseL is not in async
         iXmlReader->ParseL( FileSession, redirectFile );
         if ( XMLParser->IsTargetPathFound() )
-        	{
+            {
             TBuf<KMaxFileName>& targetContextName = XMLParser->TargetContextName();
             if ( targetContextName.Length() <= aContextName.MaxLength() )
-            	{
-        	    aUid = XMLParser->TargetUid();
-        	    aContextName = targetContextName;
-        	    result = ETrue;
+                {
+                aUid = XMLParser->TargetUid();
+                aContextName = targetContextName;
+                result = ETrue;
                 }
-        	}
+            }
         CleanupStack::PopAndDestroy( XMLParser );
         ClearReader();
         }
@@ -314,25 +314,25 @@ aGenericTOC1Object, RPointerArray<CCSXHHelpContentBase>* GenericTOC2List)
  
     if(BaflUtils::FileExists(FileSession,lookupindexfile))
         iXmlReader->ParseL (FileSession,lookupindexfile);
-	
-	TBuf<KMaxFileName>HelpContentName(toc1->GetName());
-	int toc1Count = iDuplicateHelpTopicList.Count();
-	
- 	for(int i=0;i < toc1Count;i++)
-	    {    
-	    CCSXHHtmlTOC1* temptoc1 = iDuplicateHelpTopicList[i];
-	        
-	    if(temptoc1->GetName().CompareF(HelpContentName) == 0)
-		    {    
-		    TBuf<KMaxFileName> lookup;
-		    temptoc1->GetHelpFileL(lookup);
-		    XMLParser->SetPath(lookup);
-		    lookup.Append(KIndexFile);              
-		 
-		    if(BaflUtils::FileExists(FileSession,lookup))
-		        iXmlReader->ParseL (FileSession,lookup);
-		    }
-	    }
+    
+    TBuf<KMaxFileName>HelpContentName(toc1->GetName());
+    int toc1Count = iDuplicateHelpTopicList.Count();
+    
+     for(int i=0;i < toc1Count;i++)
+        {    
+        CCSXHHtmlTOC1* temptoc1 = iDuplicateHelpTopicList[i];
+            
+        if(temptoc1->GetName().CompareF(HelpContentName) == 0)
+            {    
+            TBuf<KMaxFileName> lookup;
+            temptoc1->GetHelpFileL(lookup);
+            XMLParser->SetPath(lookup);
+            lookup.Append(KIndexFile);              
+         
+            if(BaflUtils::FileExists(FileSession,lookup))
+                iXmlReader->ParseL (FileSession,lookup);
+            }
+        }
     
     CleanupStack::PopAndDestroy(XMLParser);
     ClearReader();
@@ -342,131 +342,144 @@ TAny* CCSXHHTMLContentParser::GetTopicContentL(CCSXHGenericTOC2* aTopic)
     {
     CCSXHHtmlTOC2* topic = STATIC_CAST(CCSXHHtmlTOC2*,aTopic);
     TBuf<KMaxFileName> htmlFile;
-	topic->GetHtmlFileName(htmlFile);
+    topic->GetHtmlFileName(htmlFile);
     return GetContentsFromFileL(htmlFile,iCoeEnv,iFeatureControl);
     }
     
 
-void CCSXHHTMLContentParser::ScanAndParseXMLfileToCreateTOC1ObjectL(RFs& FileSession,
-                                                                 CDirScan* scanner,
-                                                                 CCSXHHelpDataBase* aDataBase,
-                                                                 const TInt& aDrive,
-                                                                 CCSXHXMLParseHandler_MetaFile* XMLParser
-                                                                  )
+void CCSXHHTMLContentParser::ScanAndParseXMLfileToCreateTOC1ObjectL(
+        RFs& FileSession,
+        CDirScan* scanner,
+        CCSXHHelpDataBase* aDataBase,
+        const TInt& aDrive,
+        CCSXHXMLParseHandler_MetaFile* XMLParser
+        )
     {
-     CDir* entryList = NULL;
+    CDir* entryList = NULL;
     scanner->NextL(entryList);
-    if(!entryList)
+    if (!entryList)
+        {
         return;
+        }
  
     CleanupStack::PushL(entryList);
-    TInt entryCount = entryList->Count();           
-         
+    
+    TInt entryCount = entryList->Count();     
     TInt ROMDrive;
-    RFs::CharToDrive( PathInfo::RomRootPath()[0], ROMDrive );
-    
+    RFs::CharToDrive(PathInfo::RomRootPath()[0], ROMDrive);
     TBuf<KMaxFileName> lookup;
-    
 
-    while(entryCount--)
+    while (entryCount--)
         {
-        TEntry entry=(*entryList)[entryCount];
+        TEntry entry = (*entryList)[entryCount];
         
         //Clear the previous values
-        lookup.Delete(0,lookup.Length());
-        
+        lookup.Delete(0, lookup.Length());
         lookup.Append(scanner->FullPath());
         lookup.Append(entry.iName); 
         lookup.Append(KFwdSlash);
         lookup.Append(KMetaFile);
         
         //Check whether a file exists        
-        if(!BaflUtils::FileExists(FileSession,lookup))
+        if (!BaflUtils::FileExists(FileSession,lookup))
             continue;
         
-        TRAPD(parserResult,iXmlReader->ParseL (FileSession,lookup ));
-        if(parserResult == KErrNone)
+        TRAPD(parserResult, iXmlReader->ParseL(FileSession, lookup));
+        if (parserResult == KErrNone)
             {
-			if(CheckFeatureIDL(XMLParser->GetFeatureIds()))
-            	{            
-            	if(!IsAppUIdPresentAlready(entry.iName))
-					{
-					CCSXHHtmlTOC1* CategoryObj = NULL;
-		            TBool duplicateToc = EFalse;
-		            
-		            TInt32 priority = XMLParser->Priority();
-		            // Now we take a walk if it's application helps (priority == 0)
-		           
-		            if ( (priority != 0) 
-		            	&& ( ( aDrive == ROMDrive ) || IsRomBasedContentL( FileSession, entry.iName ) ) )
-		                {
-		                if ( priority < KHighestPriority )
-		                	{
-		                    priority = KHighestPriority;
-		                	}
-		                else if ( priority > KLowestPriority )
-		                	{
-		                    priority = KLowestPriority;
-		                	}
-		                
-		                CategoryObj = CCSXHHtmlTOC1::NewL(
-		                		           XMLParser->GetApplicationName(),entry.iName,aDrive, 
-		                		           KCSXHToc2ViewID, priority);
-		                if(CategoryObj && aDataBase->GetMainTopics()->InsertChildWithPriority(CategoryObj,EFalse))
-		            	    iHtmlTOC1List.Append(CategoryObj);//Keep a local copy 
-		                else
-		                    duplicateToc = ETrue;
-		                }
-		            else 
-		           		{
-		           		CategoryObj = CCSXHHtmlTOC1::NewL(
-		           		                    XMLParser->GetApplicationName(),entry.iName, aDrive, 
-		           		                    KCSXHToc2AppHelpsViewID, 0);
-		           		               
-		           		if(CategoryObj && aDataBase->GetAppHelpsTopics()->InsertChild(CategoryObj,EFalse))
-		                                    iHtmlTOC1List.Append(CategoryObj);//Keep a local copy 
-		           		else
-		           		    duplicateToc = ETrue;
-		           		}
-		            if ( CategoryObj )
-		            	{
-		                iIndexing->RuntimeGenerateIndexL( *CategoryObj, XMLParser->GetFeatureIds() );
-
-                        if( duplicateToc )
-                        	{
-                            iDuplicateHelpTopicList.Append(CategoryObj);
-                        	}
-		            	}
-		            }
-            	}         
+            if (CheckFeatureIDL(XMLParser->GetFeatureIds()))
+                {            
+                if (!IsAppUIdPresentAlready(entry.iName))
+                    {
+                    TBool isRomBased = EFalse;
+                    TInt32 priority = XMLParser->Priority();
+                    
+                    // Now we take a walk if it's application helps (priority == 0)
+                    if ((priority != 0) 
+                        && ((aDrive == ROMDrive) || IsRomBasedContentL(FileSession, entry.iName)))
+                        {
+                        if (priority < KHighestPriority)
+                            {
+                            priority = KHighestPriority;
+                            }
+                        else if (priority > KLowestPriority)
+                            {
+                            priority = KLowestPriority;
+                            }
+                        
+                        isRomBased = ETrue;
+                        }
+                    else 
+                        {
+                        priority = 0;
+                        }
+                    
+                    CCSXHHtmlTOC1* categoryObj = CCSXHHtmlTOC1::NewL(XMLParser->GetApplicationName(), entry.iName, aDrive, 
+                            isRomBased ? KCSXHToc2ViewID : KCSXHToc2AppHelpsViewID, priority);
+                    if (!categoryObj->IsValid())
+                        {
+                        delete categoryObj;
+                        }
+                    else
+                        {
+                        CleanupStack::PushL(categoryObj);
+                        if (isRomBased)
+                            {
+                            if (aDataBase->GetMainTopics()->InsertChildWithPriority(categoryObj, EFalse))
+                                {
+                                iHtmlTOC1List.AppendL(categoryObj);
+                                }
+                            else
+                                {
+                                iDuplicateHelpTopicList.AppendL(categoryObj);
+                                }
+                            }
+                        else
+                            {
+                            if (aDataBase->GetAppHelpsTopics()->InsertChild(categoryObj, EFalse))
+                                {
+                                iHtmlTOC1List.AppendL(categoryObj);
+                                }
+                            else
+                                {
+                                iDuplicateHelpTopicList.AppendL(categoryObj);
+                                }
+                            }
+                        
+                        iIndexing->RuntimeGenerateIndexL(*categoryObj, XMLParser->GetFeatureIds());
+                        CleanupStack::Pop(categoryObj);
+                        }
+                    }
+                }         
             }
         }       
 
     CleanupStack::PopAndDestroy(entryList);
     }
+
 TBool CCSXHHTMLContentParser::IsRomBasedContentL( RFs& FileSession, const TDesC &aUid )
     {
 #ifdef __WINSCW__
     return ETrue;
 #endif
     
-	TBool result = EFalse;
-	CDirScan* scanner=CDirScan::NewLC(FileSession);
-	TBuf<KMaxFileName> rootDir;
-	rootDir.Append( 'z' );
-	        	
-	if( GetHTMLContentPathForDriveL( &rootDir,iCoeEnv ) )
-		{
-	    scanner->SetScanDataL(rootDir,KEntryAttDir|KEntryAttMatchExclusive,
-	                                    ESortByName|EAscending, CDirScan::EScanDownTree);
+    TBool result = EFalse;
+    CDirScan* scanner=CDirScan::NewLC(FileSession);
+    TBuf<KMaxFileName> rootDir;
+    rootDir.Append( 'z' );
+                
+    if( GetHTMLContentPathForDriveL( &rootDir,iCoeEnv ) )
+        {
+        scanner->SetScanDataL(rootDir,KEntryAttDir|KEntryAttMatchExclusive,
+                                        ESortByName|EAscending, CDirScan::EScanDownTree);
         CDir* entryList = NULL;
         scanner->NextL(entryList);
     
         if ( !entryList )
-        	{
+            {
             CleanupStack::PopAndDestroy( scanner );
             return EFalse;
-        	}
+            }
  
         TInt entryCount = entryList->Count();           
     
@@ -474,13 +487,13 @@ TBool CCSXHHTMLContentParser::IsRomBasedContentL( RFs& FileSession, const TDesC 
             {
             TEntry entry=(*entryList)[entryCount]; 
             if ( ( entry.iName ).CompareC(aUid) == 0 )
-        	    {
+                {
                 result = ETrue;
-            	break;
-        	    }
+                break;
+                }
             }
         delete entryList;
-		}
+        }
     
     CleanupStack::PopAndDestroy( scanner );
  
@@ -488,45 +501,59 @@ TBool CCSXHHTMLContentParser::IsRomBasedContentL( RFs& FileSession, const TDesC 
     }
     
 void CCSXHHTMLContentParser::InsertHTMLToc1L(
-            const TDesC &appUidName,const TDesC &appName, 
-            const TInt& aDrive , CCSXHHelpDataBase* aDataBase, 
-            const TDesC &FeatureIds, TInt32 aPriority )
+        const TDesC& aAppUidName,
+        const TDesC& aAppName, 
+        const TInt& aDrive,
+        CCSXHHelpDataBase* aDataBase, 
+        const TDesC& aFeatureIds, 
+        TInt32 aPriority
+        )
     {
-	if(CheckFeatureIDL(FeatureIds))
-	    {
-	    if(!IsAppUIdPresentAlready(appUidName)) 
-            {    
-            CCSXHHtmlTOC1* CategoryObj = NULL;
-            TBool duplicateToc = EFalse;
+    if (CheckFeatureIDL(aFeatureIds))
+        {
+        if (!IsAppUIdPresentAlready(aAppUidName)) 
+            {
             // Now we take a walk if it's application helps (priority == 0)
-            if ( aPriority == 0 )
+            CCSXHHtmlTOC1* categoryObj = CCSXHHtmlTOC1::NewL(aAppName,aAppUidName, aDrive,
+                    aPriority == 0 ? KCSXHToc2AppHelpsViewID : KCSXHToc2ViewID, aPriority);
+            
+            if (categoryObj->IsValid())
                 {
-                CategoryObj = CCSXHHtmlTOC1::NewL(appName,appUidName,aDrive,
-                		                          KCSXHToc2AppHelpsViewID,aPriority);
-                // Hardcode EDriveZ as ROM drive, need to be runtime check?
-                if(CategoryObj && aDataBase->GetAppHelpsTopics()->InsertChild(CategoryObj,EFalse))
-                    iHtmlTOC1List.Append(CategoryObj);//Keep a local copy 
+                CleanupStack::PushL(categoryObj);
+                if (aPriority == 0)
+                    {
+                    if (aDataBase->GetAppHelpsTopics()->InsertChild(categoryObj, EFalse))
+                        {
+                        iHtmlTOC1List.AppendL(categoryObj);
+                        }
+                    else
+                        {
+                        iDuplicateHelpTopicList.AppendL(categoryObj);
+                        }
+                    }
                 else
-                    duplicateToc = ETrue;
+                    {
+                    if (aDataBase->GetMainTopics()->InsertChildWithPriority(categoryObj, EFalse))
+                        {
+                        iHtmlTOC1List.AppendL(categoryObj); //Keep a local copy*/
+                        }
+                    else
+                        {
+                        iDuplicateHelpTopicList.AppendL(categoryObj);
+                        }
+                    }
+                CleanupStack::Pop(categoryObj);
                 }
             else
                 {
-                CategoryObj = CCSXHHtmlTOC1::NewL(appName,appUidName,aDrive,
-                		                          KCSXHToc2ViewID,aPriority);
-                if(CategoryObj && aDataBase->GetMainTopics()->InsertChildWithPriority(CategoryObj,EFalse))
-                    iHtmlTOC1List.Append(CategoryObj);//Keep a local copy*/ 
-                else
-                    duplicateToc = ETrue;
-                }
-
-            if( CategoryObj && duplicateToc )  
-                iDuplicateHelpTopicList.Append(CategoryObj);			    	
-		    }
-	    }	
+                delete categoryObj;
+                }                    
+            }
+        }    
     }
     
 HBufC8* CCSXHHTMLContentParser::GetContentsFromFileL(const TDesC& htmlFile,CCoeEnv* aCoeEnv,
-			RFeatureControl& aFeatureControl) 
+            RFeatureControl& aFeatureControl) 
     {
     RFs& fileSession = aCoeEnv->FsSession();        
     TInt SlashPosition = htmlFile.LocateReverse('\\');    
@@ -561,27 +588,27 @@ HBufC8* CCSXHHTMLContentParser::GetContentsFromFileL(const TDesC& htmlFile,CCoeE
     CleanupStack::PushL(HtmlFileName); //4
     HtmlFileName->Copy(htmlFile.Mid(SlashPosition+1));
     for(nCount=0;member!=NULL;nCount++)
-    	{    	 
-    	 Fname = member->Name();    
-	     if(Fname->Compare(*HtmlFileName)==0 )
-	    	{
-	    	break;
-	    	}	    
-	    delete member;	
-    	member = members->NextL();    	
-    	}
+        {         
+         Fname = member->Name();    
+         if(Fname->Compare(*HtmlFileName)==0 )
+            {
+            break;
+            }        
+        delete member;    
+        member = members->NextL();        
+        }
 
-	if(NULL == member)
-		{
-		CleanupStack::PopAndDestroy(HtmlFileName);
-		CleanupStack::PopAndDestroy(members);
-	    CleanupStack::PopAndDestroy(zipFile);
-	    CleanupStack::PopAndDestroy(CompressedFile);
-	    
-	    HBufC8* buffer = GetContentsFromHTMLFileL(htmlFile,aCoeEnv);
-	    return MergeCssAndHTMLContentL(buffer,CssContent);
-	    }
-		
+    if(NULL == member)
+        {
+        CleanupStack::PopAndDestroy(HtmlFileName);
+        CleanupStack::PopAndDestroy(members);
+        CleanupStack::PopAndDestroy(zipFile);
+        CleanupStack::PopAndDestroy(CompressedFile);
+        
+        HBufC8* buffer = GetContentsFromHTMLFileL(htmlFile,aCoeEnv);
+        return MergeCssAndHTMLContentL(buffer,CssContent);
+        }
+        
     CleanupStack::PushL(member);//5
     RZipFileMemberReaderStream* stream;
     zipFile->GetInputStreamL(member, stream);
@@ -624,15 +651,15 @@ TBool CCSXHHTMLContentParser::HandleMasterKeywordFileL(CCSXHHelpDataBase* aDataB
     Master_kywdPath->Append(KMasterKywdFile);
     
     if(BaflUtils::FileExists(FileSession,*Master_kywdPath))
-    	{    	
+        {        
         TRAP_IGNORE(iXmlReader->ParseL(FileSession,*Master_kywdPath ));
         bMasterKeywordFilePresent = ETrue;
-    	}    
+        }    
     
     //KMasterKywdFile;
     CleanupStack::PopAndDestroy(Master_kywdPath);
     CleanupStack::PopAndDestroy(XMLParser_MasterKywd);
-    ClearReader();	
+    ClearReader();    
     
     return bMasterKeywordFilePresent;
     }
@@ -671,7 +698,7 @@ void CCSXHHTMLContentParser::GenerateTOC2ListForKeywordSearchL
     CCSXHXMLParseHandler_Kywd* XMLParser = CCSXHXMLParseHandler_Kywd::NewL(iCoeEnv);
     CleanupStack::PushL(XMLParser);      
     InitializeReaderL(XMLParser);
-	
+    
     int toc1Count = TOC1HtmlList->Count();
     CCSXHHtmlTOC1* toc1;
 
@@ -703,10 +730,10 @@ void CCSXHHTMLContentParser::GenerateTOC2ListForKeywordSearchL
     }
     
 CCSXHHelpContentBase* CCSXHHTMLContentParser::GetContextTopicL( 
-		CCSXHHelpDataBase *aDataBase, 
-		TUid &aUid, 
-		TCoeContextName &aContextName
-		)
+        CCSXHHelpDataBase *aDataBase, 
+        TUid &aUid, 
+        TCoeContextName &aContextName
+        )
     {
     TBuf<KMaxFileName> path;
     TInt32 toc1Count = iHtmlTOC1List.Count();
@@ -722,13 +749,13 @@ CCSXHHelpContentBase* CCSXHHTMLContentParser::GetContextTopicL(
             {
             toc1->GetHelpFileL( path );
             if ( IsRedirectedL( aDataBase, path, aUid, aContextName ) )
-            	{
+                {
                 redirected = ETrue;
-            	}
+                }
             else
-            	{
+                {
                 return toc1->GetContextTopic( aContextName );
-            	}
+                }
             break;
             }
         }
@@ -737,44 +764,44 @@ CCSXHHelpContentBase* CCSXHHTMLContentParser::GetContextTopicL(
         {
         for ( TInt32 i = 0; i < dupToc1Count; ++i )
             {
-    	    toc1 = iDuplicateHelpTopicList[i];
-    	    if ( aUid == toc1->GetAppUid() )
-    	        {
-    	        toc1->GetHelpFileL( path );
-    	        if ( IsRedirectedL( aDataBase, path, aUid, aContextName ) )
-    	            {
-    	            redirected = ETrue;
-    	            }
-    	        else
-    	            {
-    	            temptoc1 = GetCorrespondingTOC1FromMainArray(toc1->GetName());        		
-    	            return temptoc1->GetContextTopic( aContextName );
-    	            }
-    	        }
+            toc1 = iDuplicateHelpTopicList[i];
+            if ( aUid == toc1->GetAppUid() )
+                {
+                toc1->GetHelpFileL( path );
+                if ( IsRedirectedL( aDataBase, path, aUid, aContextName ) )
+                    {
+                    redirected = ETrue;
+                    }
+                else
+                    {
+                    temptoc1 = GetCorrespondingTOC1FromMainArray(toc1->GetName());                
+                    return temptoc1->GetContextTopic( aContextName );
+                    }
+                }
             }
         }
-    	
+        
     if ( redirected )
-    	{
-    	for ( TInt32 i = 0; i < toc1Count; ++i )
-    	    {
-    	    toc1 = iHtmlTOC1List[i];
-    	    if ( aUid == toc1->GetAppUid() )
-    	        {    
-    	        return toc1->GetContextTopic( aContextName );
-    	        }
-    	    }
-    	
-    	for ( TInt32 i = 0; i < dupToc1Count; ++i )
-    	    {
-    	    toc1 = iDuplicateHelpTopicList[i];
-    	    if ( aUid == toc1->GetAppUid() )
-    	        {
-    	    	temptoc1 = GetCorrespondingTOC1FromMainArray( toc1->GetName() );        		
-    	    	return temptoc1->GetContextTopic( aContextName );
-    	    	}
-    	    }
-    	}
+        {
+        for ( TInt32 i = 0; i < toc1Count; ++i )
+            {
+            toc1 = iHtmlTOC1List[i];
+            if ( aUid == toc1->GetAppUid() )
+                {    
+                return toc1->GetContextTopic( aContextName );
+                }
+            }
+        
+        for ( TInt32 i = 0; i < dupToc1Count; ++i )
+            {
+            toc1 = iDuplicateHelpTopicList[i];
+            if ( aUid == toc1->GetAppUid() )
+                {
+                temptoc1 = GetCorrespondingTOC1FromMainArray( toc1->GetName() );                
+                return temptoc1->GetContextTopic( aContextName );
+                }
+            }
+        }
         
     return NULL;
     }
@@ -784,13 +811,13 @@ CCSXHHelpContentBase* CCSXHHTMLContentParser::GetHtmlTopicForUrlL(const TDesC& a
     CCSXHHelpContentBase* tocobj = GetObjectBasedonUrlL(iHtmlTOC1List,aUrl,ETrue);
     
     if(NULL == tocobj)
-    	tocobj = GetObjectBasedonUrlL(iDuplicateHelpTopicList,aUrl,EFalse);
+        tocobj = GetObjectBasedonUrlL(iDuplicateHelpTopicList,aUrl,EFalse);
     
-	return tocobj;    	
+    return tocobj;        
     }
 
 CCSXHHelpContentBase* CCSXHHTMLContentParser::GetObjectBasedonUrlL(RPointerArray<CCSXHHtmlTOC1>& aTOC1ObjectsArray,
-		const TDesC& aUrl, TBool aMainArrayList)    
+        const TDesC& aUrl, TBool aMainArrayList)    
     {
         /*For URLs of form 
         file:://<Drive Name>:/system/xhtml/<Lang ID>/<App UID>/Html name
@@ -821,14 +848,14 @@ CCSXHHelpContentBase* CCSXHHTMLContentParser::GetObjectBasedonUrlL(RPointerArray
             i = aUrl.LocateReverseF('/');
             fileName = aUrl.Mid(i + 1);
             if(aMainArrayList)
-            	temptoc1 = toc1;
+                temptoc1 = toc1;
             else
-            	temptoc1 = GetCorrespondingTOC1FromMainArray(toc1->GetName());	
+                temptoc1 = GetCorrespondingTOC1FromMainArray(toc1->GetName());    
             
             return temptoc1->GetHtmlTopicForFile(fileName);
             }
         }
-    return NULL;	
+    return NULL;    
     }
 
 void CCSXHHTMLContentParser::GetHtmlFileL(CCoeEnv* coeEnv,const short& aDir,
@@ -893,113 +920,113 @@ TBool CCSXHHTMLContentParser::IsUidCategoryPresent(const TUid& aUid)
     }
 
 TBool CCSXHHTMLContentParser::GetHTMLToc1(const TDesC& aUid,CCSXHXMLParseHandler* aParser)
-	{
-	TUint AppId;
-	
-	if(!aUid.Length())
-		return EFalse;
+    {
+    TUint AppId;
+    
+    if(!aUid.Length())
+        return EFalse;
 
     TLex FolderUid(aUid.Mid(KOffset));
     FolderUid.Val(AppId,EHex);
     TUid ApplicationUid = TUid::Uid((TInt)AppId);
-	
-	int toc1Count = iHtmlTOC1List.Count();
-	
+    
+    int toc1Count = iHtmlTOC1List.Count();
+    
     CCSXHHtmlTOC1* toc1;    
     for(int i = 0; i < toc1Count; ++i)
         {
         toc1 = iHtmlTOC1List[i];
         if(ApplicationUid == toc1->GetAppUid())
-        	{
-        	STATIC_CAST(CCSXHXMLParseHandler_MasterKywd*,aParser)->SetCurrentHtmlToc1(toc1); 
-        	return ETrue;
-        	}            
+            {
+            STATIC_CAST(CCSXHXMLParseHandler_MasterKywd*,aParser)->SetCurrentHtmlToc1(toc1); 
+            return ETrue;
+            }            
         }
-	
-	toc1Count = iDuplicateHelpTopicList.Count();	        
-	for(int i = 0; i < toc1Count; ++i)
+    
+    toc1Count = iDuplicateHelpTopicList.Count();            
+    for(int i = 0; i < toc1Count; ++i)
         {
         toc1 = iDuplicateHelpTopicList[i];
         if(ApplicationUid == toc1->GetAppUid())
-        	{
-        	STATIC_CAST(CCSXHXMLParseHandler_MasterKywd*,aParser)->SetCurrentHtmlToc1(toc1); 
-        	return ETrue;
-        	}            
+            {
+            STATIC_CAST(CCSXHXMLParseHandler_MasterKywd*,aParser)->SetCurrentHtmlToc1(toc1); 
+            return ETrue;
+            }            
         }
                 
     return EFalse;  
-	}
+    }
 
 //To get Corresponding toc1 from main array.
 CCSXHHtmlTOC1* CCSXHHTMLContentParser::GetCorrespondingTOC1FromMainArray(const TDesC& aApplicationName)
-	{
-	TInt toc1Count = iHtmlTOC1List.Count();
-	CCSXHHtmlTOC1* toc1;
-	for(int i=0;i<toc1Count;++i)
-		{
-		toc1 = iHtmlTOC1List[i];
-		if(toc1->GetName().CompareF(aApplicationName) == 0)
-			return toc1;
-		}
-	
+    {
+    TInt toc1Count = iHtmlTOC1List.Count();
+    CCSXHHtmlTOC1* toc1;
+    for(int i=0;i<toc1Count;++i)
+        {
+        toc1 = iHtmlTOC1List[i];
+        if(toc1->GetName().CompareF(aApplicationName) == 0)
+            return toc1;
+        }
+    
     return NULL;
-	}
+    }
 
-//Check UId is already present in the list.	
+//Check UId is already present in the list.    
 TBool CCSXHHTMLContentParser::IsAppUIdPresentAlready(const TDesC& aUid)
-	{
-	TBool result = EFalse;
-	TInt toc1Count = iHtmlTOC1List.Count();
-	CCSXHHtmlTOC1* toc1;
-	
-	TUint AppId;
+    {
+    TBool result = EFalse;
+    TInt toc1Count = iHtmlTOC1List.Count();
+    CCSXHHtmlTOC1* toc1;
+    
+    TUint AppId;
     TLex FolderUid(aUid.Mid(KOffset));
     FolderUid.Val(AppId,EHex);
     TUid ApplicationUid = TUid::Uid((TInt)AppId);
-	
-	for(int i=0;i<toc1Count;++i)
-		{
-		toc1 = iHtmlTOC1List[i];
-		if(ApplicationUid == toc1->GetAppUid())
-			{
-			result = ETrue;
-			break;
-			}			
-		}
-		
-	toc1Count =    iDuplicateHelpTopicList.Count();	
-	for(int i=0;i<toc1Count;++i)
-		{
-		toc1 = iDuplicateHelpTopicList[i];
-		if(ApplicationUid == toc1->GetAppUid())
-			{
-			result = ETrue;
-			break;
-			}
-		}		
-		
-	return result;	
+    
+    for(int i=0;i<toc1Count;++i)
+        {
+        toc1 = iHtmlTOC1List[i];
+        if(ApplicationUid == toc1->GetAppUid())
+            {
+            result = ETrue;
+            break;
+            }            
+        }
+        
+    toc1Count =    iDuplicateHelpTopicList.Count();    
+    for(int i=0;i<toc1Count;++i)
+        {
+        toc1 = iDuplicateHelpTopicList[i];
+        if(ApplicationUid == toc1->GetAppUid())
+            {
+            result = ETrue;
+            break;
+            }
+        }        
+        
+    return result;    
 
-	}
-	
+    }
+    
 void CCSXHHTMLContentParser::ParseKeywdFileAndCreatekywdTOC1ObjectsL(
-		RPointerArray<CCSXHHtmlTOC1>& aTOC1ObjectsArray,
-		CCSXHXMLParseHandler_Kywd* XMLParser, TBool bMasterKeywordFilePresent)
-	{
-	int toc1Count = aTOC1ObjectsArray.Count();
+        RPointerArray<CCSXHHtmlTOC1>& aTOC1ObjectsArray,
+        CCSXHXMLParseHandler_Kywd* XMLParser, TBool bMasterKeywordFilePresent)
+    {
+    int toc1Count = aTOC1ObjectsArray.Count();
     CCSXHHtmlTOC1* toc1;
      
     TBuf<KMaxFileName>* lookup = new(ELeave)TBuf<KMaxFileName>;
     CleanupStack::PushL(lookup);//1
     
     RFs& FileSession = iCoeEnv->FsSession();
-	
-	    for(int i = 0; i < toc1Count; ++i)
+    
+        for(int i = 0; i < toc1Count; ++i)
         {
         toc1 = aTOC1ObjectsArray[i];
         
         if(bMasterKeywordFilePresent && toc1->IsROMDrive())
-        	continue;
+            continue;
         
         //Clear the previous values
         lookup->Delete(0,lookup->Length());
@@ -1016,377 +1043,377 @@ void CCSXHHTMLContentParser::ParseKeywdFileAndCreatekywdTOC1ObjectsL(
         }
 
     CleanupStack::PopAndDestroy(lookup);  
-	}
+    }
 
 //RUNTIME
 void CCSXHHTMLContentParser::GetSupportedFeatureListL()
-	{
-	RFeatureUidArray SupportedFeatures;	
-	TInt err = iFeatureControl.Connect();
-	if ( err == KErrNone )
-		{
+    {
+    RFeatureUidArray SupportedFeatures;    
+    TInt err = iFeatureControl.Connect();
+    if ( err == KErrNone )
+        {
          // ListSupportedFeatures() returns one of the Symbian error codes.
          err = iFeatureControl.ListSupportedFeatures( SupportedFeatures );
-		 	
+             
          // Remember to call CloseL after using RFeatureControl.
          // It disconnects the Feature Manager server.
          iFeatureControl.Close();  
-		}
-	//As per new req. add true, flase to id and create an array.
-	
-	iFeatureManager_FeatureIds = new (ELeave) CDesCArrayFlat(2); 
-	
-	TBuf<25>CurrFId;
-	
-	for(TInt i=0;i<SupportedFeatures.Count();i++)
-		{
-		CurrFId.Copy(KEmptyString);	
-		CurrFId.AppendNum(SupportedFeatures[i].iUid);
-		iFeatureManager_FeatureIds->AppendL(CurrFId);
-		
-		CurrFId.Copy(KTrue_StringtoAppend);	
-		CurrFId.AppendNum(SupportedFeatures[i].iUid);
-		iFeatureManager_FeatureIds->AppendL(CurrFId);
-		
-		CurrFId.Copy(KFalse_StringtoAppend);	
-		CurrFId.AppendNum(SupportedFeatures[i].iUid);
-		iFeatureManager_FeatureIds->AppendL(CurrFId);		
-		}
-		
-	//Input Language variation changes
-	//-----------------------------------------
-	//Create an array with supported input language		
-	CPtiEngine* ptiEngine = CPtiEngine::NewL();
+        }
+    //As per new req. add true, flase to id and create an array.
+    
+    iFeatureManager_FeatureIds = new (ELeave) CDesCArrayFlat(2); 
+    
+    TBuf<25>CurrFId;
+    
+    for(TInt i=0;i<SupportedFeatures.Count();i++)
+        {
+        CurrFId.Copy(KEmptyString);    
+        CurrFId.AppendNum(SupportedFeatures[i].iUid);
+        iFeatureManager_FeatureIds->AppendL(CurrFId);
+        
+        CurrFId.Copy(KTrue_StringtoAppend);    
+        CurrFId.AppendNum(SupportedFeatures[i].iUid);
+        iFeatureManager_FeatureIds->AppendL(CurrFId);
+        
+        CurrFId.Copy(KFalse_StringtoAppend);    
+        CurrFId.AppendNum(SupportedFeatures[i].iUid);
+        iFeatureManager_FeatureIds->AppendL(CurrFId);        
+        }
+        
+    //Input Language variation changes
+    //-----------------------------------------
+    //Create an array with supported input language        
+    CPtiEngine* ptiEngine = CPtiEngine::NewL();
     CleanupStack::PushL( ptiEngine );
     
     CArrayFix<TInt>* languageCodeArray = new(ELeave)CArrayFixFlat<TInt>(2);
     
     ptiEngine->GetAvailableLanguagesL( languageCodeArray );
-	
-	TInt nCount = languageCodeArray->Count();
-	
-	iSupportedInputLanguages = new (ELeave) CDesCArrayFlat(2); 
-	
-	//Codescanner gives error, if member variables are pushed.
-	//CleanupStack::PushL( iSupportedInputLanguages );
+    
+    TInt nCount = languageCodeArray->Count();
+    
+    iSupportedInputLanguages = new (ELeave) CDesCArrayFlat(2); 
+    
+    //Codescanner gives error, if member variables are pushed.
+    //CleanupStack::PushL( iSupportedInputLanguages );
     
     for(TInt i=0; i<nCount;i++)
-    	{
-    	TInt languageCode = languageCodeArray->At(i);
-    	TBuf<25>Currlang(_L("LANGUAGE_"));
-		if(languageCode < 10)
-			Currlang.AppendNumFixedWidth(languageCode,EDecimal,2);
-		else
-			Currlang.AppendNum(languageCode);
-		
-		iSupportedInputLanguages->AppendL(Currlang);
-    	}
+        {
+        TInt languageCode = languageCodeArray->At(i);
+        TBuf<25>Currlang(_L("LANGUAGE_"));
+        if(languageCode < 10)
+            Currlang.AppendNumFixedWidth(languageCode,EDecimal,2);
+        else
+            Currlang.AppendNum(languageCode);
+        
+        iSupportedInputLanguages->AppendL(Currlang);
+        }
     
-    //CleanupStack::Pop(iSupportedInputLanguages);	
+    //CleanupStack::Pop(iSupportedInputLanguages);    
     CleanupStack::PopAndDestroy( ptiEngine );
     
-    delete languageCodeArray;	
+    delete languageCodeArray;    
     //-----------------------------------------
     
     SupportedFeatures.Close();
-	}
-	
+    }
+    
 //RUNTIME
 TBool CCSXHHTMLContentParser::CheckFeatureIDL(const TDesC& aFeatureIds)
-	{
-	if(/*KHexPrefixLength == aFeatureIds.Length() &&*/ 
-		KErrNotFound != aFeatureIds.Find(KDefaultFeatureIdStringTemp))
-		{
-		return ETrue;
-		}
-			
-	HBufC* Ids = HBufC::NewLC(aFeatureIds.Length());	
-	TPtr CurrentFeatureIds = Ids->Des();	
-	CurrentFeatureIds.Copy(aFeatureIds);
-	CleanupStack::Pop(Ids);
-		
-	CDesCArray* FeatureIdList = new (ELeave) CDesCArrayFlat(2); ;
-	TInt EndPos = CurrentFeatureIds.Locate(' ');
-	
-	CleanupStack::PushL(FeatureIdList);
-				
+    {
+    if(/*KHexPrefixLength == aFeatureIds.Length() &&*/ 
+        KErrNotFound != aFeatureIds.Find(KDefaultFeatureIdStringTemp))
+        {
+        return ETrue;
+        }
+            
+    HBufC* Ids = HBufC::NewLC(aFeatureIds.Length());    
+    TPtr CurrentFeatureIds = Ids->Des();    
+    CurrentFeatureIds.Copy(aFeatureIds);
+    CleanupStack::Pop(Ids);
+        
+    CDesCArray* FeatureIdList = new (ELeave) CDesCArrayFlat(2); ;
+    TInt EndPos = CurrentFeatureIds.Locate(' ');
+    
+    CleanupStack::PushL(FeatureIdList);
+                
     while (KErrNotFound != EndPos)
         {
-				FeatureIdList->AppendL(CurrentFeatureIds.Mid(0,EndPos));// FId_Val);	        
+                FeatureIdList->AppendL(CurrentFeatureIds.Mid(0,EndPos));// FId_Val);            
         CurrentFeatureIds = CurrentFeatureIds.Mid(EndPos+1);
         EndPos = CurrentFeatureIds.Locate(' ') ;
         }
 
-	if(KErrNotFound == EndPos && 0!= CurrentFeatureIds.Length())
-		{
-		FeatureIdList->AppendL(CurrentFeatureIds);
-		}    
-	
-	CleanupStack::Pop(FeatureIdList); 
-	 
-	TInt position;		
-	if(KErrNone == FeatureIdList->Find(KDefaultFeatureIdString,position) || 
-	   KErrNone == FeatureIdList->Find(KDefaultFeatureIdStringTemp,position) )
-		{
-		delete FeatureIdList;
-		delete Ids;
-		return ETrue;
-		}
-		
-	TInt nCount = FeatureIdList->MdcaCount();
-	
-	
-	//FeatureManager list contains all enabled featureIds, appended with true, and false.
-	//New Req. text associated with true_featureId, should be displayed, if Id is enabled.
-	//else, if featureId is disabled, text associated with false_featureId should be displayed. 
-	// 1. if featureId string contains "false" and it is not in the list, return ETrue.
-	// 2. if featureId string does not contain "false" and it is present in the list, return ETrue.
-	// 3. if featureId is part of input language, return ETrue.
-	for(TInt j=0;j < nCount;j++)
-		{
-		if(
-			(KErrNotFound != FeatureIdList->MdcaPoint(j).Find(KFalseString) &&
-			KErrNone != iFeatureManager_FeatureIds->Find(FeatureIdList->MdcaPoint(j),position))||
-		
-			(KErrNotFound == FeatureIdList->MdcaPoint(j).Find(KFalseString) &&
-			KErrNone == iFeatureManager_FeatureIds->Find(FeatureIdList->MdcaPoint(j),position)) ||
-		
-			KErrNone == iSupportedInputLanguages->Find(FeatureIdList->MdcaPoint(j),position)
-		)						
-			{
-			delete FeatureIdList;
-			delete Ids;
-			return ETrue;
-			}		
-		}
-				
-	delete Ids;		
-	delete FeatureIdList;	
-	return EFalse;		
-	}	
-	
+    if(KErrNotFound == EndPos && 0!= CurrentFeatureIds.Length())
+        {
+        FeatureIdList->AppendL(CurrentFeatureIds);
+        }    
+    
+    CleanupStack::Pop(FeatureIdList); 
+     
+    TInt position;        
+    if(KErrNone == FeatureIdList->Find(KDefaultFeatureIdString,position) || 
+       KErrNone == FeatureIdList->Find(KDefaultFeatureIdStringTemp,position) )
+        {
+        delete FeatureIdList;
+        delete Ids;
+        return ETrue;
+        }
+        
+    TInt nCount = FeatureIdList->MdcaCount();
+    
+    
+    //FeatureManager list contains all enabled featureIds, appended with true, and false.
+    //New Req. text associated with true_featureId, should be displayed, if Id is enabled.
+    //else, if featureId is disabled, text associated with false_featureId should be displayed. 
+    // 1. if featureId string contains "false" and it is not in the list, return ETrue.
+    // 2. if featureId string does not contain "false" and it is present in the list, return ETrue.
+    // 3. if featureId is part of input language, return ETrue.
+    for(TInt j=0;j < nCount;j++)
+        {
+        if(
+            (KErrNotFound != FeatureIdList->MdcaPoint(j).Find(KFalseString) &&
+            KErrNone != iFeatureManager_FeatureIds->Find(FeatureIdList->MdcaPoint(j),position))||
+        
+            (KErrNotFound == FeatureIdList->MdcaPoint(j).Find(KFalseString) &&
+            KErrNone == iFeatureManager_FeatureIds->Find(FeatureIdList->MdcaPoint(j),position)) ||
+        
+            KErrNone == iSupportedInputLanguages->Find(FeatureIdList->MdcaPoint(j),position)
+        )                        
+            {
+            delete FeatureIdList;
+            delete Ids;
+            return ETrue;
+            }        
+        }
+                
+    delete Ids;        
+    delete FeatureIdList;    
+    return EFalse;        
+    }    
+    
 HBufC8* CCSXHHTMLContentParser::CreateBufferForCSSContentL(RFeatureControl& aFeatureControl)
-	{	
-	RFeatureUidArray SupportedFeatures;
-	TInt err = aFeatureControl.Connect();
-	if ( err == KErrNone )
-		{
+    {    
+    RFeatureUidArray SupportedFeatures;
+    TInt err = aFeatureControl.Connect();
+    if ( err == KErrNone )
+        {
          // ListSupportedFeatures() returns one of the Symbian error codes.
          err = aFeatureControl.ListSupportedFeatures( SupportedFeatures );
-		 	
+             
          // Remember to call CloseL after using RFeatureControl.
          // It disconnects the Feature Manager server.
          aFeatureControl.Close();                    
-		}
-	
-		//Input Language variation changes
-	//-----------------------------------------
+        }
+    
+        //Input Language variation changes
+    //-----------------------------------------
 
-	CPtiEngine* ptiEngine = CPtiEngine::NewL();
+    CPtiEngine* ptiEngine = CPtiEngine::NewL();
     CleanupStack::PushL( ptiEngine );
 
     CArrayFix<TInt>* languageCodeArray = new(ELeave)CArrayFixFlat<TInt>(2);
 
     ptiEngine->GetAvailableLanguagesL( languageCodeArray );
     
-	TInt nInputLangCount = languageCodeArray->Count();
-	TInt nCount = SupportedFeatures.Count();	
+    TInt nInputLangCount = languageCodeArray->Count();
+    TInt nCount = SupportedFeatures.Count();    
 
-	HBufC8* CssContent = HBufC8::NewLC(nCount * KMaxUnits * 6 + nInputLangCount * 3 + 400);
-	TPtr8 bufferPtr(CssContent->Des());
-	
-	AppendStyleSheetContent_listitem(bufferPtr,nCount,SupportedFeatures,*languageCodeArray);
-	AppendStyleSheetContent_paragraph(bufferPtr,nCount,SupportedFeatures,*languageCodeArray);
-	AppendStyleSheetContent_ahref(bufferPtr,nCount,SupportedFeatures,*languageCodeArray);
-	AppendStyleSheetContent_none(bufferPtr,nCount,SupportedFeatures);	
-		
-	SupportedFeatures.Close();				
-	
-	CleanupStack::Pop(CssContent);	
-	
-	//Input Language variation changes
-	//-----------------------------------------
-	CleanupStack::PopAndDestroy( ptiEngine );	
-
-	delete languageCodeArray;
-	//-----------------------------------------
-
-	return CssContent;
-	}
-	
-HBufC8* CCSXHHTMLContentParser::GetContentsFromHTMLFileL(const TDesC& htmlFile,CCoeEnv* aCoeEnv)
-	{
-	RFs& fsSession = aCoeEnv->FsSession();             
-	RFile file; 
+    HBufC8* CssContent = HBufC8::NewLC(nCount * KMaxUnits * 6 + nInputLangCount * 3 + 400);
+    TPtr8 bufferPtr(CssContent->Des());
+    
+    AppendStyleSheetContent_listitem(bufferPtr,nCount,SupportedFeatures,*languageCodeArray);
+    AppendStyleSheetContent_paragraph(bufferPtr,nCount,SupportedFeatures,*languageCodeArray);
+    AppendStyleSheetContent_ahref(bufferPtr,nCount,SupportedFeatures,*languageCodeArray);
+    AppendStyleSheetContent_none(bufferPtr,nCount,SupportedFeatures);    
         
-	TInt err = file.Open(fsSession,htmlFile,EFileRead|EFileShareReadersOrWriters);
+    SupportedFeatures.Close();                
+    
+    CleanupStack::Pop(CssContent);    
+    
+    //Input Language variation changes
+    //-----------------------------------------
+    CleanupStack::PopAndDestroy( ptiEngine );    
+
+    delete languageCodeArray;
+    //-----------------------------------------
+
+    return CssContent;
+    }
+    
+HBufC8* CCSXHHTMLContentParser::GetContentsFromHTMLFileL(const TDesC& htmlFile,CCoeEnv* aCoeEnv)
+    {
+    RFs& fsSession = aCoeEnv->FsSession();             
+    RFile file; 
+        
+    TInt err = file.Open(fsSession,htmlFile,EFileRead|EFileShareReadersOrWriters);
     if(KErrNone == err)
-	    {
-	    TInt FileSize;
-	    HBufC8* htmlFileContent = NULL;
-	    if(KErrNone == file.Size(FileSize))
-		    {
-		    htmlFileContent = HBufC8::NewLC(FileSize);
-			TPtr8 PtrContent = htmlFileContent->Des();
-	        
-		    file.Read(PtrContent);	
-		    CleanupStack::Pop(htmlFileContent);			    
-		    }		
-	    file.Close();
-		return htmlFileContent;
-		}
-	else
-		{		
-		return NULL;
-		}
-	}
-	
+        {
+        TInt FileSize;
+        HBufC8* htmlFileContent = NULL;
+        if(KErrNone == file.Size(FileSize))
+            {
+            htmlFileContent = HBufC8::NewLC(FileSize);
+            TPtr8 PtrContent = htmlFileContent->Des();
+            
+            file.Read(PtrContent);    
+            CleanupStack::Pop(htmlFileContent);                
+            }        
+        file.Close();
+        return htmlFileContent;
+        }
+    else
+        {        
+        return NULL;
+        }
+    }
+    
 HBufC8* CCSXHHTMLContentParser::MergeCssAndHTMLContentL(HBufC8* aHTMLBuffer, HBufC8* aCssContent)
-	{
+    {
     TInt BufferLength=0;
     if(aHTMLBuffer)
-    	BufferLength = aHTMLBuffer->Size();
+        BufferLength = aHTMLBuffer->Size();
     
     if(aCssContent)
-    	BufferLength += aCssContent->Size();
+        BufferLength += aCssContent->Size();
     
     HBufC8* Htmlbuffer = HBufC8::NewLC(BufferLength);
     
     TPtr8 HtmlbufferPtr(Htmlbuffer->Des());
     
     if(aCssContent)
-    	{
-    	HtmlbufferPtr.Copy(aCssContent->Des());
-    	delete aCssContent;
-    	}
-    	
+        {
+        HtmlbufferPtr.Copy(aCssContent->Des());
+        delete aCssContent;
+        }
+        
     if(aHTMLBuffer)
-	    {
-	    HtmlbufferPtr.Append(aHTMLBuffer->Des());
-	    delete aHTMLBuffer;	
-	    }
+        {
+        HtmlbufferPtr.Append(aHTMLBuffer->Des());
+        delete aHTMLBuffer;    
+        }
     
     if(Htmlbuffer)
-    	CleanupStack::Pop(Htmlbuffer);
+        CleanupStack::Pop(Htmlbuffer);
     
-    return Htmlbuffer;	
-	}
+    return Htmlbuffer;    
+    }
 
 void CCSXHHTMLContentParser::AppendStyleSheetContent_listitem(TPtr8& abufferptr,TInt aFeatureIdCount,
-													RFeatureUidArray& aSupportedFeatures,
-													CArrayFix<TInt>& alanguageCodeArray)
-	{
-	//List Items
-	//---------------------------------------------------------
-	abufferptr.Copy(KCsstext_First);
-	
-	for(TInt i=0;i<aFeatureIdCount;++i)
-		{
-		TBuf<KMaxFileName> FeatureId;
-		FeatureId.Format(KtextFormat_true_l,aSupportedFeatures[i].iUid);
-		//FeatureId.Append(KComma);
-		abufferptr.Append(FeatureId);		
-		}
-		
-	for(TInt i=0;i<alanguageCodeArray.Count();++i)
-		{
-		TBuf<KMaxFileName> FeatureId;
-		if(alanguageCodeArray[i] < 10)
-			FeatureId.Format(KtextFormat_lang_0l,alanguageCodeArray[i]);
-		else
-			FeatureId.Format(KtextFormat_lang_l,alanguageCodeArray[i]);
-		
-		abufferptr.Append(FeatureId);		
-		}
-		
-	abufferptr.Append(KDefaultFeatureId);		
-	abufferptr.Append(KCsstext_displayp_li);		
-	abufferptr.Append(KCsstext_Last);
-	//---------------------------------------------------------
-	}
+                                                    RFeatureUidArray& aSupportedFeatures,
+                                                    CArrayFix<TInt>& alanguageCodeArray)
+    {
+    //List Items
+    //---------------------------------------------------------
+    abufferptr.Copy(KCsstext_First);
+    
+    for(TInt i=0;i<aFeatureIdCount;++i)
+        {
+        TBuf<KMaxFileName> FeatureId;
+        FeatureId.Format(KtextFormat_true_l,aSupportedFeatures[i].iUid);
+        //FeatureId.Append(KComma);
+        abufferptr.Append(FeatureId);        
+        }
+        
+    for(TInt i=0;i<alanguageCodeArray.Count();++i)
+        {
+        TBuf<KMaxFileName> FeatureId;
+        if(alanguageCodeArray[i] < 10)
+            FeatureId.Format(KtextFormat_lang_0l,alanguageCodeArray[i]);
+        else
+            FeatureId.Format(KtextFormat_lang_l,alanguageCodeArray[i]);
+        
+        abufferptr.Append(FeatureId);        
+        }
+        
+    abufferptr.Append(KDefaultFeatureId);        
+    abufferptr.Append(KCsstext_displayp_li);        
+    abufferptr.Append(KCsstext_Last);
+    //---------------------------------------------------------
+    }
 
 void CCSXHHTMLContentParser::AppendStyleSheetContent_paragraph(TPtr8& abufferptr,TInt aFeatureIdCount,
-													RFeatureUidArray& aSupportedFeatures,
-													CArrayFix<TInt>& alanguageCodeArray)
-	{
-	//Paragraph
-	//---------------------------------------------------------
-	abufferptr.Append(KCsstext_First);
-	for(TInt i=0;i<aFeatureIdCount;++i)
-		{
-		TBuf<KMaxFileName> FeatureId;
-		FeatureId.Format(KtextFormat_true_b,aSupportedFeatures[i].iUid);
-		//FeatureId.Append(KComma);
-		
-		abufferptr.Append(FeatureId);		
-		}
-		
-	for(TInt i=0;i<alanguageCodeArray.Count();++i)
-		{
-		TBuf<KMaxFileName> FeatureId;
-		if(alanguageCodeArray[i] < 10)
-			FeatureId.Format(KtextFormat_lang_0b,alanguageCodeArray[i]);
-		else
-			FeatureId.Format(KtextFormat_lang_b,alanguageCodeArray[i]);
-		
-		abufferptr.Append(FeatureId);		
-		}
-		
-	abufferptr.Append(KDefaultFeatureId);
-	abufferptr.Append(KCsstext_displayp_p);		
-	abufferptr.Append(KCsstext_Last);
-	
-	//---------------------------------------------------------
-	}
+                                                    RFeatureUidArray& aSupportedFeatures,
+                                                    CArrayFix<TInt>& alanguageCodeArray)
+    {
+    //Paragraph
+    //---------------------------------------------------------
+    abufferptr.Append(KCsstext_First);
+    for(TInt i=0;i<aFeatureIdCount;++i)
+        {
+        TBuf<KMaxFileName> FeatureId;
+        FeatureId.Format(KtextFormat_true_b,aSupportedFeatures[i].iUid);
+        //FeatureId.Append(KComma);
+        
+        abufferptr.Append(FeatureId);        
+        }
+        
+    for(TInt i=0;i<alanguageCodeArray.Count();++i)
+        {
+        TBuf<KMaxFileName> FeatureId;
+        if(alanguageCodeArray[i] < 10)
+            FeatureId.Format(KtextFormat_lang_0b,alanguageCodeArray[i]);
+        else
+            FeatureId.Format(KtextFormat_lang_b,alanguageCodeArray[i]);
+        
+        abufferptr.Append(FeatureId);        
+        }
+        
+    abufferptr.Append(KDefaultFeatureId);
+    abufferptr.Append(KCsstext_displayp_p);        
+    abufferptr.Append(KCsstext_Last);
+    
+    //---------------------------------------------------------
+    }
 
 void CCSXHHTMLContentParser::AppendStyleSheetContent_ahref(TPtr8& abufferptr,TInt aFeatureIdCount,
-												RFeatureUidArray& aSupportedFeatures,
-												CArrayFix<TInt>& alanguageCodeArray)
-	{
-	//A href
-	//---------------------------------------------------------
-	abufferptr.Append(KCsstext_First);
-	for(TInt i=0;i<aFeatureIdCount;++i)
-		{
-		TBuf<KMaxFileName> FeatureId;
-		FeatureId.Format(KtextFormat_true_a,aSupportedFeatures[i].iUid);		
-		abufferptr.Append(FeatureId);		
-		}
-	
-	for(TInt i=0;i<alanguageCodeArray.Count();++i)
-		{
-		TBuf<KMaxFileName> FeatureId;
-		if(alanguageCodeArray[i] < 10)
-			FeatureId.Format(KtextFormat_lang_0a,alanguageCodeArray[i]);
-		else
-			FeatureId.Format(KtextFormat_lang_a,alanguageCodeArray[i]);
-		abufferptr.Append(FeatureId);		
-		}
-		
-	abufferptr.Append(KDefaultFeatureId);
-	abufferptr.Append(KCsstext_displayp_a);		
-	abufferptr.Append(KCsstext_Last);
-	
-	//---------------------------------------------------------
-	}
+                                                RFeatureUidArray& aSupportedFeatures,
+                                                CArrayFix<TInt>& alanguageCodeArray)
+    {
+    //A href
+    //---------------------------------------------------------
+    abufferptr.Append(KCsstext_First);
+    for(TInt i=0;i<aFeatureIdCount;++i)
+        {
+        TBuf<KMaxFileName> FeatureId;
+        FeatureId.Format(KtextFormat_true_a,aSupportedFeatures[i].iUid);        
+        abufferptr.Append(FeatureId);        
+        }
+    
+    for(TInt i=0;i<alanguageCodeArray.Count();++i)
+        {
+        TBuf<KMaxFileName> FeatureId;
+        if(alanguageCodeArray[i] < 10)
+            FeatureId.Format(KtextFormat_lang_0a,alanguageCodeArray[i]);
+        else
+            FeatureId.Format(KtextFormat_lang_a,alanguageCodeArray[i]);
+        abufferptr.Append(FeatureId);        
+        }
+        
+    abufferptr.Append(KDefaultFeatureId);
+    abufferptr.Append(KCsstext_displayp_a);        
+    abufferptr.Append(KCsstext_Last);
+    
+    //---------------------------------------------------------
+    }
 
 void CCSXHHTMLContentParser::AppendStyleSheetContent_none(TPtr8& abufferptr,TInt aFeatureIdCount,
-													RFeatureUidArray& aSupportedFeatures
-													)
-	{
-	//False
-	//---------------------------------------------------------
-	abufferptr.Append(KCsstext_First);
-	for(TInt i=0;i<aFeatureIdCount;++i)
-		{
-		TBuf<KMaxFileName> FeatureId;
-		FeatureId.Format(KtextFormat_false,aSupportedFeatures[i].iUid,aSupportedFeatures[i].iUid,aSupportedFeatures[i].iUid);
-		abufferptr.Append(FeatureId);		
-		}
-		
-	abufferptr.Append(KDefaultFeatureId);
-	abufferptr.Append(KCsstext_displayp_n);		
-	abufferptr.Append(KCsstext_Last);
-	
-	//---------------------------------------------------------
-	}
+                                                    RFeatureUidArray& aSupportedFeatures
+                                                    )
+    {
+    //False
+    //---------------------------------------------------------
+    abufferptr.Append(KCsstext_First);
+    for(TInt i=0;i<aFeatureIdCount;++i)
+        {
+        TBuf<KMaxFileName> FeatureId;
+        FeatureId.Format(KtextFormat_false,aSupportedFeatures[i].iUid,aSupportedFeatures[i].iUid,aSupportedFeatures[i].iUid);
+        abufferptr.Append(FeatureId);        
+        }
+        
+    abufferptr.Append(KDefaultFeatureId);
+    abufferptr.Append(KCsstext_displayp_n);        
+    abufferptr.Append(KCsstext_Last);
+    
+    //---------------------------------------------------------
+    }

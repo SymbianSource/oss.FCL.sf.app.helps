@@ -103,15 +103,18 @@ void CCSXHLegacyContentParser::GenerateTOC1ListL(CCSXHHelpDataBase* aDataBase)
     CDesCArray* categoryList = new(ELeave) CDesCArrayFlat(twoColumnFlatArray);
     CleanupStack::PushL(categoryList);
     iModel->CategoryListL(categoryList);
-    CCSXHLegacyTOC1* CategoryObj;
+    CCSXHLegacyTOC1* categoryObj;
     TBuf<KMaxFileName> appName;
     TLinearOrder<CCSXHHelpContentBase> anOrder(Orderer<CCSXHHelpContentBase>);          
     for (TInt i(0); i < categoryList->Count(); i++)
         {           
         appName = categoryList->MdcaPoint(i);                           
-        CategoryObj = CCSXHLegacyTOC1::NewL(appName);
-        if ( aDataBase->GetAppHelpsTopics()->InsertChild(CategoryObj) )
-                iLegacyTOC1List.Append(CategoryObj);//Keep a local copy*/       
+        categoryObj = CCSXHLegacyTOC1::NewLC(appName);
+        if ( aDataBase->GetAppHelpsTopics()->InsertChild(categoryObj) )
+            {
+            iLegacyTOC1List.AppendL(categoryObj);//Keep a local copy*/
+            }
+        CleanupStack::Pop(categoryObj);
         }
     CleanupStack::Pop(categoryList);            
     delete categoryList;
