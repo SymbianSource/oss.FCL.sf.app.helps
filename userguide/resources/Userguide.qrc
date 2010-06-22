@@ -2,13 +2,8 @@
 
 	<qresource prefix="/xml">
 		<file alias="categoryView.docml">xml/categoryView.docml</file>
+		<file alias="keywordView.docml">xml/keywordView.docml</file>		
 		<file alias="contentsView.docml">xml/contentsView.docml</file>
-    <file alias="toolbar.docml">xml/toolbar.docml</file>    
+    <file alias="baseView.docml">xml/baseView.docml</file>    
   </qresource>
-	
-	<qresource prefix= "/images">
-		<file alias="show_all.svg">images/qtg_mono_show_all.svg</file>
-		<file alias="link_nokia.svg">images/qtg_mono_link_nokia.svg</file>
-	</qresource>
-
 </RCC>

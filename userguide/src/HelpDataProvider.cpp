@@ -72,11 +72,6 @@ void HelpDataProvider::destroyInstance()
 
 QAbstractItemModel* HelpDataProvider::getCategoryData()
 {
-    if(!mHelpModel->rowCount())
-    {
-        createHelpCategory();
-    }
-
     return mHelpModel;
 }
 
@@ -89,6 +84,7 @@ QAbstractItemModel* HelpDataProvider::getSearchData(const QString& key)
 
 	mLastSrhKey = key;
     mSearhResultModel->setFilterRegExp(key);
+
 	
     return mSearhResultModel;
 }
@@ -187,7 +183,6 @@ void HelpDataProvider::constructCategory()
 
 void HelpDataProvider::constructBuiltInCategory(const QString& path, const QStringList& uidList, const QStringList& titleList)
 {
-//	constructCategory2(title, uid);
 	if(uidList.count() != titleList.count())
 	{
 		//ToDo
@@ -363,7 +358,7 @@ void HelpDataProvider::parseCategoryIndexXml(const QString& path, QStringList& u
 		return;
 	}
 
-	for(int i = featureIdLst.count()  - 1; i <= 0; i--)
+	for(int i = featureIdLst.count()  - 1; i >= 0; i--)
 	{
 		int featureID = featureIdLst.at(i).toInt();
 		if(!HelpUtils::suppportFeatureID(featureID))
@@ -426,7 +421,7 @@ void HelpDataProvider::parseCategory2IndexXml(const QString& path, QStringList& 
 		return;
 	}
 
-	for(int i = featureIdLst.count()  - 1; i <= 0; i--)
+	for(int i = featureIdLst.count()  - 1; i >= 0; i--)
 	{
 		int featureID = featureIdLst.at(i).toInt();
 		if(!HelpUtils::suppportFeatureID(featureID))

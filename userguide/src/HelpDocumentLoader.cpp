@@ -32,7 +32,7 @@ QObject* HelpDocumentLoader::createObject(const QString& type, const QString& na
         object->setObjectName(name);
         return object;
     }
-        
+ 
     return HbDocumentLoader::createObject(type, name);
 }
 

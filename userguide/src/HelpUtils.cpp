@@ -232,9 +232,6 @@ int HelpUtils::launchApplication(const QString& appUid)
 
     QString uriStr("appto://");
     uriStr.append(appUid);
-  /*  uriStr.append("?");
-    uriStr.append("activityname");
-    uriStr.append("=MainView&key1=data1&key2=data2");*/
     QUrl uri(uriStr); 
     
     XQApplicationManager appmgr;

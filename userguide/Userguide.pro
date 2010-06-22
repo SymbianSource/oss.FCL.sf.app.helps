@@ -62,9 +62,9 @@ symbian {
     MOBILITY = systeminfo
   	LIBS += -lezip -lxqservice -lxqserviceutil
   	include(rom/userguide.pri)
+  	SKINICON = qtg_large_help
 }
-				
-ICON = resources/qtg_large_help.svg
+
 RESOURCES += resources/Userguide.qrc
 
 debug: DESTDIR = ./debug

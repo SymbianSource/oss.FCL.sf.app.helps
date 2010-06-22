@@ -104,7 +104,7 @@ HbLabel* HelpKeywordView::label()
 
 void HelpKeywordView::loadAllContent()
 {
-	toolBar()->hide();
+	showToolBar(false);
 	mBuilder.load(QRC_DOCML_KEYWORD, DOCML_LAYOUT_SEARCH);
 	ResetSearchPanel();
 	
@@ -172,6 +172,19 @@ void HelpKeywordView::updateLabelPos()
 	}
 }
 
+void HelpKeywordView::showToolBar(bool visible)
+{
+	Hb::SceneItems items = Hb::ToolBarItem;
+	if(visible)
+	{
+		showItems(items);
+	}
+	else
+	{
+		hideItems(items);
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // handle system event
 
@@ -223,7 +236,7 @@ void HelpKeywordView::onSearchPanelExitClicked()
 	{
 		mBuilder.load(QRC_DOCML_KEYWORD, DOCML_LAYOUT_SEARCH_NO_SRHPAL);
 	}	
-	toolBar()->show();
+	showToolBar(true);
 }
 
 void HelpKeywordView::onSearchPanelCriteriaChanged(const QString &criteria)
@@ -237,8 +250,7 @@ void HelpKeywordView::onSearchPanelCriteriaChanged(const QString &criteria)
 	{
 		mBuilder.load(QRC_DOCML_KEYWORD, DOCML_LAYOUT_SEARCH);
 	}
-
-	toolBar()->hide();
+	showToolBar(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -257,14 +269,14 @@ void HelpKeywordView::onHandleKeypadClose()
 	updateVisibleItems(true);
 	qreal mainHeight  = mainWindow()->layoutRect().height();
 	qreal toolbarHeight = toolBar()->size().height();
-	qreal height = mainHeight - (toolBar()->isVisible() ? toolbarHeight : 0);
+	qreal height = mainHeight - ( toolBar()->isVisible() ? toolbarHeight : 0);
 	this->setMaximumHeight(height);
 	updateLabelPos();
 }
 
 void HelpKeywordView::onOrientationChanged(Qt::Orientation orientation)
 {
-	HelpBaseView::onOrientationChanged(orientation);
+	Q_UNUSED(orientation);
 	updateLabelPos();
 }
 
