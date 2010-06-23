@@ -58,6 +58,8 @@ symbian {
   	TARGET.CAPABILITY = CAP_APPLICATION
   	TARGET.EPOCHEAPSIZE = 0x020000 0x1000000
 
+    CONFIG += mobility
+    MOBILITY = systeminfo
   	LIBS += -lezip -lxqservice -lxqserviceutil
   	include(rom/userguide.pri)
 }

@@ -31,7 +31,6 @@
 #include <hblineedit.h>
 #include <hbmenu.h>
 #include <hbstaticvkbhost.h>
-#include <hbgroupbox.h>
 
 #include "HelpDataProvider.h"
 #include "HelpProxyModel.h"
@@ -61,7 +60,6 @@ void HelpKeywordView::init()
     initSearchList();
     initSearchPanel();
 	initVirtualKeyboard();
-	initEmptyLabel();
     
     connect(mainWindow(), SIGNAL(viewReady()), this, SLOT(onViewReady()));
 }
@@ -99,22 +97,17 @@ void HelpKeywordView::initVirtualKeyboard()
     connect(mVirtualKeyboard, SIGNAL(keypadClosed()), this, SLOT(onHandleKeypadClose()));
 }
 
-void HelpKeywordView::initEmptyLabel()
+HbLabel* HelpKeywordView::label()
 {
-	HbLabel* label = mBuilder.findWidget<HbLabel*>(DOCML_NO_MATCH_LABEL);
-	label->setFontSpec(HbFontSpec(HbFontSpec::Primary));
+	return mBuilder.findWidget<HbLabel*>(DOCML_NO_MATCH_LABEL);
 }
 
 void HelpKeywordView::loadAllContent()
 {
+	toolBar()->hide();
 	mBuilder.load(QRC_DOCML_KEYWORD, DOCML_LAYOUT_SEARCH);
 	ResetSearchPanel();
-	toolBar()->hide();
-}
-
-HbGroupBox* HelpKeywordView::groupBox()
-{
-	return mBuilder.findWidget<HbGroupBox*>(DOCML_GROUPBOX);
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +141,35 @@ void HelpKeywordView::ResetSearchPanel()
             }
         }
     }
+}
+
+void HelpKeywordView::updateLabelPos()
+{
+	HbDeviceProfile profile = HbDeviceProfile::profile(mainWindow());
+	qreal unValue = profile.unitValue();
+	if(mainWindow()->orientation() == Qt::Vertical)
+	{
+		if(mVirtualKeyboard->keypadStatus() == HbVkbHost::HbVkbStatusClosed)
+		{
+			label()->setContentsMargins(0,30 * unValue,0,0);
+		}
+		else
+		{
+			label()->setContentsMargins(0,10 * unValue,0,0);
+		}
+	}
+	else
+	{
+		if(mVirtualKeyboard->keypadStatus() == HbVkbHost::HbVkbStatusClosed)
+		{
+			label()->setContentsMargins(0,10 * unValue,0,0);
+		}
+		else
+		{
+            label()->setContentsMargins(0,0,0,0);
+			label()->setAlignment(label()->alignment() | Qt::AlignVCenter);
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,18 +239,6 @@ void HelpKeywordView::onSearchPanelCriteriaChanged(const QString &criteria)
 	}
 
 	toolBar()->hide();
-
-	if(criteria.isEmpty())
-	{
-		groupBox()->setHeading(hbTrId(TXT_SETLABEL_SEARCH));
-	}
-	else
-	{
-		QString heading = qtTrId(TXT_SETLABEL_SEARCH_RESULTS);
-		heading.append(COLON);
-		heading.append(criteria);
-		groupBox()->setHeading(heading);
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,6 +249,7 @@ void HelpKeywordView::onHandleKeypadOpen()
 	updateVisibleItems(false);
     qreal heightToSet = mainWindow()->layoutRect().height() - mVirtualKeyboard->keyboardArea().height();
     this->setMaximumHeight(heightToSet);
+	updateLabelPos();
 }
 
 void HelpKeywordView::onHandleKeypadClose()
@@ -248,6 +259,13 @@ void HelpKeywordView::onHandleKeypadClose()
 	qreal toolbarHeight = toolBar()->size().height();
 	qreal height = mainHeight - (toolBar()->isVisible() ? toolbarHeight : 0);
 	this->setMaximumHeight(height);
+	updateLabelPos();
+}
+
+void HelpKeywordView::onOrientationChanged(Qt::Orientation orientation)
+{
+	HelpBaseView::onOrientationChanged(orientation);
+	updateLabelPos();
 }
 
 // end of file

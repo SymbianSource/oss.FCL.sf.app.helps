@@ -255,9 +255,8 @@ void HelpDataProvider::constructAppCategory(const QString& path, QStringList& ui
 
 void HelpDataProvider::constructBuiltInCategoryItem(const QString& uid, const QString& title)
 {
-	int featureId;
 	int priority;
-	parseBuiltInMetaxml(uid, featureId, priority);
+	parseBuiltInMetaxml(uid, priority);
 	
 	HelpStandardItem* item = NULL;
 	item = new HelpStandardItem(title);
@@ -346,6 +345,33 @@ void HelpDataProvider::parseCategoryIndexXml(const QString& path, QStringList& u
 	{
 		return;
 	}
+
+	QStringList featureIdLst;
+
+	query.setQuery("doc($inputdoc)/collections/collection/number(@FeatureId)");
+	if(!query.isValid())
+	{
+		return;
+	}
+	if(!query.evaluateTo(&featureIdLst))
+	{
+		return;
+	}
+
+	if(featureIdLst.count() != uidList.count())
+	{
+		return;
+	}
+
+	for(int i = featureIdLst.count()  - 1; i <= 0; i--)
+	{
+		int featureID = featureIdLst.at(i).toInt();
+		if(!HelpUtils::suppportFeatureID(featureID))
+		{
+			uidList.removeAt(i);
+			titleList.removeAt(i);
+		}
+	}
 }
 
 void HelpDataProvider::parseCategory2IndexXml(const QString& path, QStringList& hrefList, QStringList& titleList)
@@ -361,7 +387,6 @@ void HelpDataProvider::parseCategory2IndexXml(const QString& path, QStringList& 
 
 	//parse index xml to a stringlist, each string include href and navtitle and seperate by "specilchar"
 	QXmlQuery query;
-	QXmlItem xmlItem(SPECIALCHAR);
 	query.bindVariable("inputdoc", &file);
 
 	query.setQuery("doc($inputdoc)/topics/topicref/xs:string(@href)");	
@@ -383,15 +408,41 @@ void HelpDataProvider::parseCategory2IndexXml(const QString& path, QStringList& 
 	{
 		return;
 	}
+
+	QStringList featureIdLst;
+
+	query.setQuery("doc($inputdoc)/topics/topicref/number(@FeatureId)");
+	if(!query.isValid())
+	{
+		return;
+	}
+	if(!query.evaluateTo(&featureIdLst))
+	{
+		return;
+	}
+
+	if(featureIdLst.count() != hrefList.count())
+	{
+		return;
+	}
+
+	for(int i = featureIdLst.count()  - 1; i <= 0; i--)
+	{
+		int featureID = featureIdLst.at(i).toInt();
+		if(!HelpUtils::suppportFeatureID(featureID))
+		{
+			hrefList.removeAt(i);
+			titleList.removeAt(i);
+		}
+	}
 }
 
-void HelpDataProvider::parseBuiltInMetaxml(const QString& path, int& featureId, int& priority)
+void HelpDataProvider::parseBuiltInMetaxml(const QString& path, int& priority)
 {
 	QString pathMetaxml(path);
 	pathMetaxml.append(BACKSLASH);
 	pathMetaxml.append(METAXML);
 
-	featureId = -1;
 	priority = -1;
 
 	QFile file(pathMetaxml);
@@ -403,12 +454,6 @@ void HelpDataProvider::parseBuiltInMetaxml(const QString& path, int& featureId, 
 	QXmlQuery query;
 	QString str;
 	query.bindVariable("inputdoc", &file);
-
-	query.setQuery("doc($inputdoc)/meta/title/number(@FeatureId)");
-	if(query.isValid() && query.evaluateTo(&str))
-	{
-		featureId = str.toInt();
-	}
 
 	query.setQuery("doc($inputdoc)/meta/number(priority)");	
 	if(query.isValid() && query.evaluateTo(&str))

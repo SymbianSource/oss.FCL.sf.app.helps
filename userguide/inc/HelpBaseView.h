@@ -45,8 +45,8 @@ private slots: // handle tollbar event
     void onToolbarFind()	{ emit showFindList(); };
     void onToolbarOnlineSupport();
 
-private slots:
-	void onOrientationChanged(Qt::Orientation orientation);
+protected slots:
+	virtual void onOrientationChanged(Qt::Orientation orientation);
 
 protected:
 	void initBaseDocMl();

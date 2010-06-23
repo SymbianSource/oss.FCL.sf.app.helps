@@ -61,7 +61,7 @@ private:
 	//parse xml
 	void parseCategoryIndexXml(const QString& path, QStringList& uidList, QStringList& titleList);
 	void parseCategory2IndexXml(const QString& path, QStringList& hrefList, QStringList& titleList);
-	void parseBuiltInMetaxml(const QString& path, int& featureId, int& priority);
+	void parseBuiltInMetaxml(const QString& path, int& priority);
 	void parseAppMetaxml(const QString& path, QString& title);	
 
 private:

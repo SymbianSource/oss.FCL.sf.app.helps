@@ -18,6 +18,8 @@
 #include <hbtoolbar.h>
 #include <hbnotificationdialog.h>
 #include <hbaction.h>
+#include <hbapplication.h>
+#include <hbactivitymanager.h>
 
 #include "HelpBaseView.h"
 #include "HelpCategoryView.h"
@@ -32,6 +34,7 @@ mCategoryView(NULL),
 mKeywordView(NULL),
 mContentsView(NULL)
 {
+    QObject::connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveActivity()));
     activateCategoryView();
 }
 
@@ -127,6 +130,34 @@ void HelpMainWindow::onShowFindList()
 {	
     activateKeywordView();
 	mKeywordView->loadAllContent();
+}
+
+void HelpMainWindow::saveActivity()
+{
+  HbActivityManager* activityManager = qobject_cast<HbApplication*>(qApp)->activityManager();
+
+  // clean up any previous versions of this activity from the activity manager.
+  bool ok = activityManager->removeActivity("UserGuideMainView");
+  if ( !ok )
+      {
+      //qFatal("Remove failed" );
+      }
+
+  // get a screenshot for saving to the activity manager
+  QVariantHash metadata;
+  metadata.insert("screenshot", QPixmap::grabWidget(this, rect()));
+
+  // save any data necessary to save the state
+  QByteArray serializedActivity;
+  QDataStream stream(&serializedActivity, QIODevice::WriteOnly | QIODevice::Append);
+  stream << "whatever data you need to save the state adequately";
+
+  // add the activity to the activity manager
+  ok = activityManager->addActivity("UserGuideMainView", serializedActivity, metadata);
+  if ( !ok )
+      {
+      qFatal("Add failed" );
+      }
 }
 
 // end of file

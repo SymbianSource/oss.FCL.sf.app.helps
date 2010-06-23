@@ -28,8 +28,10 @@
 
 #ifdef Q_OS_SYMBIAN
 
-#include <e32const.h>
+#include <qsysteminfo.h>
 #include <xqappmgr.h>
+
+#include <e32const.h>
 #include <eikenv.h>
 #include <zipfile.h>
 
@@ -230,6 +232,9 @@ int HelpUtils::launchApplication(const QString& appUid)
 
     QString uriStr("appto://");
     uriStr.append(appUid);
+  /*  uriStr.append("?");
+    uriStr.append("activityname");
+    uriStr.append("=MainView&key1=data1&key2=data2");*/
     QUrl uri(uriStr); 
     
     XQApplicationManager appmgr;
@@ -247,6 +252,21 @@ int HelpUtils::launchApplication(const QString& appUid)
 	Q_UNUSED(appUid);
 #endif
     return 0;
+}
+
+bool HelpUtils::suppportFeatureID(int featureID)
+{
+#ifdef Q_OS_SYMBIAN
+	if(featureID == -1)
+	{
+		return true;
+	}
+    QtMobility::QSystemInfo sysInfo;
+	return sysInfo.hasFeatureSupported((QtMobility::QSystemInfo::Feature)featureID);
+#else
+	Q_UNUSED(featureID);
+	return true;
+#endif
 }
 
 Qt::Orientation HelpUtils::defaultOrientation()
