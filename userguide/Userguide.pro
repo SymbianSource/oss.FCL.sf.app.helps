@@ -54,13 +54,17 @@ SOURCES += 	src/main.cpp \
 			src/HelpBaseView.cpp
 
 symbian {
-	TARGET.UID3 = 0x10005234
+
+		TARGET.UID3 = 0x10005234
   	TARGET.CAPABILITY = CAP_APPLICATION
   	TARGET.EPOCHEAPSIZE = 0x020000 0x1000000
 
     CONFIG += mobility
     MOBILITY = systeminfo
-  	LIBS += -lezip -lxqservice -lxqserviceutil -lcone -leikcore -lmediaclientaudio -leikcoctl -leiksrv -lapparc -lavkon -lefsrv -lcharconv -lws32 -lhal -lgdi -lapgrfx
+    INCLUDEPATH += /sf/mw/webruntime/wrt/runtimecore
+		INCLUDEPATH += /sf/mw/webruntime/wrt
+		DEFINES += CWRT_BUILDING_TENONE
+  	LIBS += -lRuntimeCore -lezip -lxqservice -lxqserviceutil -lcone -leikcore -lmediaclientaudio -leikcoctl -leiksrv -lapparc -lavkon -lefsrv -lcharconv -lws32 -lhal -lgdi -lapgrfx
   	include(rom/userguide.pri)
   	SKINICON = qtg_large_help
 }

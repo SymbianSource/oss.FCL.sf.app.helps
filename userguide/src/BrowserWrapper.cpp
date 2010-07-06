@@ -18,10 +18,15 @@
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsLinearLayout>
+#include <QWebFrame>
 
 #include "HelpDocumentLoader.h"
 #include "HelpCommon.h"
 #include "BrowserWrapper.h"
+
+#ifdef Q_OS_SYMBIAN
+#include <wrtcontroller.h>
+#endif
 
 BrowserWrapper::BrowserWrapper()
 {
@@ -33,9 +38,15 @@ BrowserWrapper::~BrowserWrapper()
 
 void BrowserWrapper::init()
 {
+#ifdef Q_OS_SYMBIAN
+    WRT::WrtController* wrtController = new WRT::WrtController(this, WRT::GraphicsWebView);
+    mWebView = wrtController->graphicsWebView();
+#else
 	mWebView = new QGraphicsWebView();
-    mWebView->setZoomFactor(1.5);
+#endif
     mWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    mWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
+    mWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
 	mWebView->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
 	mWebView->settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
     mWebView->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);

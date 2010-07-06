@@ -21,9 +21,9 @@
 #include <QStack>
 #include <QGraphicsWebView>
 
-#include <hbwidget.h>
+#include <hbview.h>
 
-class BrowserWrapper : public HbWidget
+class BrowserWrapper : public HbView
 {
     Q_OBJECT
     
