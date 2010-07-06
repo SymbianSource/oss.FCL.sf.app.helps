@@ -35,14 +35,13 @@ public:
     static void destroyInstance();
 
 public:
+	void createHelpCategory();
 	QAbstractItemModel* getCategoryData();
 	QAbstractItemModel* getSearchData(const QString& key=QString());
 	void setHelpContentUrl(const QString& uid, const QString& href);
 	void getHelpContentData(QString& content, QString& url);
 
 private:
-	void createHelpCategory();
-
 	//construct 1st category
 	void constructCategory();
 	//construct help category in rom

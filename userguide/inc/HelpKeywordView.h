@@ -45,15 +45,16 @@ private:
 	void initVirtualKeyboard();
 
 private:
-	void onOrientationChanged(Qt::Orientation orientation);
-
-private:
 	HbLabel* label();
     
 private:
 	void updateVisibleItems(bool visible);
 	void ResetSearchPanel();	
 	void updateLabelPos();
+	void showToolBar(bool visible);
+
+private slots:
+	void onOrientationChanged(Qt::Orientation orientation);
 
 private slots: // handle system event
     void onViewReady();

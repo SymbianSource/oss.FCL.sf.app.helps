@@ -57,22 +57,5 @@ void HelpBaseView::onToolbarOnlineSupport()
     notificationDialog->show();
 }
 
-void HelpBaseView::onOrientationChanged(Qt::Orientation orientation)
-{
-    RefreshToolbarText(orientation);
-}
-
-void HelpBaseView::RefreshToolbarText(Qt::Orientation orientation)
-{
-	bool isLandscape = (Qt::Horizontal==orientation);
-    HbAction* tollbarAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_ALL);
-    tollbarAction->setText(isLandscape ? qtTrId(TXT_BUTTON_ALL) : QString());
-
-    tollbarAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_SEARCH);
-    tollbarAction->setText(isLandscape ? qtTrId(TXT_BUTTON_FIND) : QString());
-
-    tollbarAction = mBuilder.findObject<HbAction*>(DOCML_ACTION_LINK_NOKIA);
-    tollbarAction->setText(isLandscape ? qtTrId(TXT_BUTTON_LINK_SUPPORT) : QString());
-}
 
 // end of file

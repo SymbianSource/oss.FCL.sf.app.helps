@@ -35,6 +35,7 @@ mKeywordView(NULL),
 mContentsView(NULL)
 {
     QObject::connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveActivity()));
+	HelpDataProvider::instance()->createHelpCategory();
     activateCategoryView();
 }
 
@@ -62,6 +63,7 @@ void HelpMainWindow::onActivateView(HelpViewName viewName)
 			}
 			break;
 	    default:
+			HbApplication::exit();
 	        break;
 	}
 }
@@ -134,30 +136,29 @@ void HelpMainWindow::onShowFindList()
 
 void HelpMainWindow::saveActivity()
 {
-  HbActivityManager* activityManager = qobject_cast<HbApplication*>(qApp)->activityManager();
+	HbActivityManager* activityManager = qobject_cast<HbApplication*>(qApp)->activityManager();
 
-  // clean up any previous versions of this activity from the activity manager.
-  bool ok = activityManager->removeActivity("UserGuideMainView");
-  if ( !ok )
-      {
-      //qFatal("Remove failed" );
-      }
+	// clean up any previous versions of this activity from the activity manager.
+	bool ok = activityManager->removeActivity("UserGuideMainView");
+	if ( !ok )
+	{
+		//qFatal("Remove failed" );
+	}
 
-  // get a screenshot for saving to the activity manager
-  QVariantHash metadata;
-  metadata.insert("screenshot", QPixmap::grabWidget(this, rect()));
+	// get a screenshot for saving to the activity manager
+	QVariantHash metadata;
+	metadata.insert("screenshot", QPixmap::grabWidget(this, rect()));
 
-  // save any data necessary to save the state
-  QByteArray serializedActivity;
-  QDataStream stream(&serializedActivity, QIODevice::WriteOnly | QIODevice::Append);
-  stream << "whatever data you need to save the state adequately";
+	// save any data necessary to save the state
+	QByteArray serializedActivity;
+	QDataStream stream(&serializedActivity, QIODevice::WriteOnly | QIODevice::Append);
 
-  // add the activity to the activity manager
-  ok = activityManager->addActivity("UserGuideMainView", serializedActivity, metadata);
-  if ( !ok )
-      {
-      qFatal("Add failed" );
-      }
+	// add the activity to the activity manager
+	ok = activityManager->addActivity("UserGuideMainView", serializedActivity, metadata);
+	if ( !ok )
+	{
+		qFatal("Add failed" );
+	}
 }
 
 // end of file

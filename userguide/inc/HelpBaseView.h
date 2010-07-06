@@ -45,18 +45,12 @@ private slots: // handle tollbar event
     void onToolbarFind()	{ emit showFindList(); };
     void onToolbarOnlineSupport();
 
-protected slots:
-	virtual void onOrientationChanged(Qt::Orientation orientation);
-
 protected:
 	void initBaseDocMl();
 
 protected:
 	HelpUIBuilder	mBuilder;
 	HbToolBar*		mToolBar;
-	
-private:
-	void RefreshToolbarText(Qt::Orientation orientation);
 };
 
 #endif //HELPBATHVIEW_H

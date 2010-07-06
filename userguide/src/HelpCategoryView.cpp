@@ -25,6 +25,7 @@
 #include <hbtreeview.h>
 #include <hbscrollbar.h>
 #include <hbmenu.h>
+#include <hbtoolbar.h>
 
 #include "HelpDataProvider.h"
 
