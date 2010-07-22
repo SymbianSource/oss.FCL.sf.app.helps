@@ -47,7 +47,7 @@ private:
 	void openHelpContent(const QUrl& url=QUrl());
 
 private slots: // handle system event
-    void onCurrentViewChanged(HbView *view);
+    void onViewReady();
     
 private slots: // handle button action
     void onBackAction();

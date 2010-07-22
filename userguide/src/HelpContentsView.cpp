@@ -46,7 +46,7 @@ void HelpContentsView::init()
 
     connect(mBrowser, SIGNAL(linkClicked(const QUrl&)), this, SLOT(onLinkClicked(const QUrl&)));
     connect(mBrowser, SIGNAL(urlChanged(const QUrl&)), this, SLOT(onUrlChanged(const QUrl&)));
-    connect(mainWindow(), SIGNAL(currentViewChanged(HbView*)), this, SLOT(onCurrentViewChanged(HbView*)));
+    connect(mainWindow(), SIGNAL(viewReady()), this, SLOT(onViewReady()));
 }
 
 void HelpContentsView::initDocMl()
@@ -101,18 +101,17 @@ bool HelpContentsView::openExternalLink(const QUrl& url)
 void HelpContentsView::openHelpContent(const QUrl& url)
 {
     QString html;
-    QString baseUrl = url.toString();
-    HelpDataProvider::instance()->getHelpContentData(html, baseUrl);
-	mBrowser->setHtml(html, baseUrl);
+    QString urlStr = url.toString();
+    HelpDataProvider::instance()->getHelpContentData(html, urlStr);
+	mBrowser->setHtml(html, urlStr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-void HelpContentsView::onCurrentViewChanged(HbView *view)
+void HelpContentsView::onViewReady()
 {
-    if(this == view)
+    if(isVisible())
     {
-		setVisible(true);
         setNavigationAction(mSoftKeyAction);
         openHelpContent();
     }

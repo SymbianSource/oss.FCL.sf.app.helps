@@ -17,13 +17,7 @@
 
 symbian {
     HELP_IBY_DIR = $$section(PWD, ":", 1)
-
-    exists(/epoc32/include/platform_paths.hrh) {
-        BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>"
-    } else {
-        BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <domain\osextensions\platform_paths.hrh>"
-    }
-
+    BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>"
     BLD_INF_RULES.prj_exports += "$$HELP_IBY_DIR/userguide.iby CORE_APP_LAYER_IBY_EXPORT_PATH(userguide.iby)"
     BLD_INF_RULES.prj_exports += "$$HELP_IBY_DIR/userguide_resources.iby LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(userguide_resources.iby)"
 }

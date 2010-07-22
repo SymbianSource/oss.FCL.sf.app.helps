@@ -35,27 +35,42 @@ public:
     static void destroyInstance();
 
 public:
+	void createHelpCategory();
 	QAbstractItemModel* getCategoryData();
 	QAbstractItemModel* getSearchData(const QString& key=QString());
 	void setHelpContentUrl(const QString& uid, const QString& href);
 	void getHelpContentData(QString& content, QString& url);
 
 private:
-	void createHelpCategory();
-	void createBuiltInCategory(const QString& path);
-	void constructAppHelp(const QString& path);
+	//construct 1st category
+	void constructCategory();
+	//construct help category in rom
+	void constructBuiltInCategory(const QString& path, const QStringList& uidList, const QStringList& titleList);
+	//construct help category for 3rd party application
+	void constructAppCategory(const QString& path, QStringList& uidList);
+	void constructBuiltInCategoryItem(const QString& uid, const QString& title);
+
+	//construct 2nd category
+	void constructCategory2(HelpStandardItem* itemParent);
+	void constructCategory2Item(HelpStandardItem* itemParent);
+
+	//construct keyword list
 	void constructKeywordModel(const QString& title, const QString& uid, const QString& href);
-//	void searchInAllData(HelpStandardItem* item, const QString& key=QString());
-//	void searchInResult(const QString& key=QString());
-	HelpStandardItem* constructCategory2(const QString& title, const QString& uid);
-	HelpStandardItem* findItemWithHref(HelpStandardItem* itemParent, const QString& href);
+
+	//parse xml
+	void parseCategoryIndexXml(const QString& path, QStringList& uidList, QStringList& titleList);
+	void parseCategory2IndexXml(const QString& path, QStringList& hrefList, QStringList& titleList);
+	void parseBuiltInMetaxml(const QString& path, int& priority);
+	void parseAppMetaxml(const QString& path, QString& title);	
 
 private:
 	QStandardItemModel*		mHelpModel;         //category tree model
 	QStandardItemModel*		mKeywordModel;      //keyword list model
-	HelpProxyModel*		mSearhResultModel;  //search result proxy model of keyword model	
+	HelpProxyModel*			mSearhResultModel;  //search result proxy model of keyword model	
+	HelpStandardItem*		mAppItem;
 	QString					mHelpContentRoot;
 	QString					mLastSrhKey;
+	QStringList				mUpdateUidList;
 
 };
 

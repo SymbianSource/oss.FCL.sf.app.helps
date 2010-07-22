@@ -58,11 +58,13 @@ symbian {
   	TARGET.CAPABILITY = CAP_APPLICATION
   	TARGET.EPOCHEAPSIZE = 0x020000 0x1000000
 
-  	LIBS += -lezip -lxqservice -lxqserviceutil
+    CONFIG += mobility
+    MOBILITY = systeminfo
+  	LIBS += -lezip -lxqservice -lxqserviceutil -lcone -leikcore -lmediaclientaudio -leikcoctl -leiksrv -lapparc -lavkon -lefsrv -lcharconv -lws32 -lhal -lgdi -lapgrfx
   	include(rom/userguide.pri)
+  	SKINICON = qtg_large_help
 }
-				
-ICON = resources/qtg_large_help.svg
+
 RESOURCES += resources/Userguide.qrc
 
 debug: DESTDIR = ./debug

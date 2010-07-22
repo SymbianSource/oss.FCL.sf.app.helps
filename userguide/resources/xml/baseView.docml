@@ -2,13 +2,13 @@
 <hbdocument version="0.9">
   <object name="help_config" type="QObject">
 	  <object name="action_all" type="HbAction">
-		  <icon name="icon" iconName=":/images/show_all.svg" />
+		  <icon name="icon" iconName="qtg_mono_help_all" />
 	  </object>
 	  <object name="action_find" type="HbAction">
 		  <icon name="icon" iconName="qtg_mono_search" />
 	  </object>
     <object name="action_online_support" type="HbAction">
-      <icon name="icon" iconName=":/images/link_nokia.svg" />
+      <icon name="icon" iconName="qtg_mono_online_support" />
     </object>
   </object>
 

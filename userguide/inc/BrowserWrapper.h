@@ -35,7 +35,7 @@ public:
 	void init();
 	
 public:
-	void setHtml(const QString& html, const QUrl& baseUrl);
+	void setHtml(const QString& html, const QUrl& url);
 	void clearHistory();
 	bool canGoBack();
 	void back();

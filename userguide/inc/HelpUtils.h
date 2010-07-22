@@ -25,6 +25,7 @@ class HelpUtils
 public:
 	static void loadHtmlFromZipFile(const QString& path, const QString& htmlFile, QString& htmlContent);
 	static int launchApplication(const QString& appUid);
+	static bool suppportFeatureID(int featureID);
 	static QString rootPath();
 	static QString UILocaleFromQtToSymbian();
 	static Qt::Orientation defaultOrientation();

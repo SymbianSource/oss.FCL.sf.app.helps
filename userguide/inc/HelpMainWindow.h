@@ -38,6 +38,7 @@ public:
 
 private slots:
     void onActivateView(HelpViewName viewName);
+    void saveActivity();
 
 private: // activate views
 	void activateCategoryView();

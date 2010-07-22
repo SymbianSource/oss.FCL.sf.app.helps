@@ -36,6 +36,7 @@ HelpDataProvider::HelpDataProvider()
 	mKeywordModel = new QStandardItemModel();
 	mSearhResultModel = new HelpProxyModel();
 	mSearhResultModel->setSourceModel(mKeywordModel);
+	mAppItem = NULL;
 }
 
 HelpDataProvider::~HelpDataProvider()
@@ -71,35 +72,15 @@ void HelpDataProvider::destroyInstance()
 
 QAbstractItemModel* HelpDataProvider::getCategoryData()
 {
-    if(!mHelpModel->rowCount())
-    {
-        createHelpCategory();
-    }
-
     return mHelpModel;
 }
 
 QAbstractItemModel* HelpDataProvider::getSearchData(const QString& key)
 {
-/*    if(key.isEmpty())
-    {
-        return mKeywordModel;
-    }*/
-
 	if(key == mLastSrhKey)
 	{
 		return mSearhResultModel;
 	}
-/*
-	if(!mLastSrhKey.isEmpty() && HelpUtils::findStr(key, mLastSrhKey) != -1)
-	{
-		searchInResult(key);
-	}
-	else
-	{
-		mSearhResultModel->removeRows(0, mSearhResultModel->rowCount());
-		searchInAllData((HelpStandardItem*)mKeywordModel->invisibleRootItem(), key);
-	}*/
 
 	mLastSrhKey = key;
     mSearhResultModel->setFilterRegExp(key);
@@ -146,6 +127,24 @@ void HelpDataProvider::getHelpContentData(QString& content, QString& url)
 
 void HelpDataProvider::createHelpCategory()
 {
+	constructCategory();
+
+	mHelpModel->setSortRole(Qt::DisplayRole);
+
+	constructCategory2((HelpStandardItem*)mHelpModel->invisibleRootItem());
+
+	if(mAppItem)
+	{
+		mHelpModel->appendRow(mAppItem);
+		mAppItem->sortChildren(0, HelpUtils::sortOrder());
+		constructCategory2(mAppItem);
+	}	
+
+	mKeywordModel->sort(0, HelpUtils::sortOrder());
+}
+
+void HelpDataProvider::constructCategory()
+{
 	QFileInfoList driveList = QDir::drives();
 	QDir dir;
 	QString lang = HelpUtils::UILocaleFromQtToSymbian();
@@ -154,8 +153,9 @@ void HelpDataProvider::createHelpCategory()
 	path.append(XHTMLPATH);
 	path.append(lang);
 
-	//construct help in rom
-	createBuiltInCategory(path);
+	QStringList uidList;
+	QStringList titleList;
+	parseCategoryIndexXml(path, uidList, titleList);
 
 	//scan other root path and construct 3rd party help
 	foreach(QFileInfo fi, driveList)
@@ -171,13 +171,142 @@ void HelpDataProvider::createHelpCategory()
 			{
 				continue;
 			}
-			constructAppHelp(path);
+			constructAppCategory(path, uidList);
 		}
 	}
-	mKeywordModel->sort(0, HelpUtils::sortOrder());
+
+	constructBuiltInCategory(path, uidList, titleList);
+
+	mHelpModel->setSortRole(PriorityRole);
+	mHelpModel->sort(0, HelpUtils::sortOrder());
 }
 
-void HelpDataProvider::createBuiltInCategory(const QString& path)
+void HelpDataProvider::constructBuiltInCategory(const QString& path, const QStringList& uidList, const QStringList& titleList)
+{
+	if(uidList.count() != titleList.count())
+	{
+		//ToDo
+		return;
+	}
+
+	for(int i = 0; i < uidList.count(); i++)
+	{
+		if(mUpdateUidList.contains(uidList[i]))
+		{
+			continue;
+		}
+
+		QString uid(path);
+		uid.append(BACKSLASH);
+		uid.append(uidList[i]);
+
+		constructBuiltInCategoryItem(uid, titleList[i]);
+	}
+}
+
+void HelpDataProvider::constructAppCategory(const QString& path, QStringList& uidList)
+{
+	QDir dir(path);	
+	if(!dir.exists())
+	{
+		return;
+	}
+
+	QStringList uidDirList = dir.entryList();
+	QString pathUid;
+	foreach(QString uid, uidDirList)
+	{
+		pathUid.clear();
+		pathUid.append(path);
+		pathUid.append(BACKSLASH);
+		pathUid.append(uid);
+
+		QString titleStr;
+		parseAppMetaxml(pathUid, titleStr);
+		if(titleStr.isEmpty())
+		{
+			continue;
+		}
+
+		if(uidList.contains(uid))
+		{
+			mUpdateUidList.append(uid);
+			constructBuiltInCategoryItem(pathUid, titleStr);
+			continue;
+		}
+
+		HelpStandardItem* item = NULL;
+		item = new HelpStandardItem(titleStr);
+		item->setData(pathUid, UidRole);
+
+		if(!mAppItem)
+		{
+			mAppItem = new HelpStandardItem(qtTrId(TXT_APPLICATIONS));
+			mAppItem->setData(APPPRIORITY, PriorityRole);
+		}
+		mAppItem->appendRow(item);
+	}
+}
+
+void HelpDataProvider::constructBuiltInCategoryItem(const QString& uid, const QString& title)
+{
+	int priority;
+	parseBuiltInMetaxml(uid, priority);
+	
+	HelpStandardItem* item = NULL;
+	item = new HelpStandardItem(title);
+	item->setData(uid, UidRole);
+
+	if(item)
+	{
+		item->setData(priority, PriorityRole);
+		mHelpModel->appendRow(item);
+	}
+}
+
+void HelpDataProvider::constructCategory2(HelpStandardItem* itemParent)
+{
+	int count = itemParent->rowCount();
+	for(int i =0; i < count; i++)
+	{
+		HelpStandardItem* item = (HelpStandardItem*)itemParent->child(i);
+		constructCategory2Item(item);
+	}
+}
+
+void HelpDataProvider::constructCategory2Item(HelpStandardItem* itemParent)
+{
+	QStringList hrefList;
+	QStringList titleList;
+
+	QString uid = itemParent->data(UidRole).toString();
+	parseCategory2IndexXml(uid, hrefList, titleList);
+
+	if(hrefList.count() == 0 || hrefList.count() != titleList.count())
+	{
+		return;
+	}
+
+	for(int i = 0; i < hrefList.count(); i++)
+	{
+		HelpStandardItem* item = new HelpStandardItem(titleList[i]);
+		item->setData(hrefList[i], HrefRole);
+		itemParent->appendRow(item);
+		constructKeywordModel(titleList[i], uid, hrefList[i]);
+	}
+
+	itemParent->sortChildren(0, HelpUtils::sortOrder());
+}
+
+void HelpDataProvider::constructKeywordModel(const QString& title, const QString& uid, const QString& href)
+{
+	HelpStandardItem* itemTemp = new HelpStandardItem(title);
+	itemTemp->setData(uid, UidRole);
+	itemTemp->setData(href, HrefRole);
+	mKeywordModel->appendRow(itemTemp);
+}
+
+void HelpDataProvider::parseCategoryIndexXml(const QString& path, QStringList& uidList, QStringList& titleList)
 {
 	QString pathIndex(path);
 	pathIndex.append(BACKSLASH);
@@ -191,204 +320,164 @@ void HelpDataProvider::createBuiltInCategory(const QString& path)
 	//parse index xml to a stringlist, each string include id and navtitle and seperate by "specilchar"
 	QXmlQuery query;
 	query.bindVariable("inputdoc", &file);
-	QXmlItem xmlItem(SPECIALCHAR);
-	query.bindVariable("specilchar", xmlItem);
-	query.setQuery("doc($inputdoc)/collections/collection/ \
-					string-join((xs:string(@id), xs:string(@navtitle)), $specilchar)");
 
+	query.setQuery("doc($inputdoc)/collections/collection/xs:string(@id)");
 	if(!query.isValid())
 	{
 		return;
 	}
-	QStringList strLst;
-	if(!query.evaluateTo(&strLst))
+	if(!query.evaluateTo(&uidList))
 	{
 		return;
 	}
 
-	foreach(QString str, strLst)
+	query.setQuery("doc($inputdoc)/collections/collection/xs:string(@navtitle)");
+	if(!query.isValid())
 	{
-		QStringList temp;
-		temp = str.split(SPECIALCHAR);
-		QString uid(path);
-		uid.append(BACKSLASH);
-		uid.append(temp[0]);
-		HelpStandardItem* item = constructCategory2(temp[1], uid);
-		if(item)
+		return;
+	}
+	if(!query.evaluateTo(&titleList))
+	{
+		return;
+	}
+
+	QStringList featureIdLst;
+
+	query.setQuery("doc($inputdoc)/collections/collection/number(@FeatureId)");
+	if(!query.isValid())
+	{
+		return;
+	}
+	if(!query.evaluateTo(&featureIdLst))
+	{
+		return;
+	}
+
+	if(featureIdLst.count() != uidList.count())
+	{
+		return;
+	}
+
+	for(int i = featureIdLst.count()  - 1; i >= 0; i--)
+	{
+		int featureID = featureIdLst.at(i).toInt();
+		if(!HelpUtils::suppportFeatureID(featureID))
 		{
-			mHelpModel->appendRow(item);
+			uidList.removeAt(i);
+			titleList.removeAt(i);
 		}
 	}
-	file.close();
-	mHelpModel->sort(0, HelpUtils::sortOrder());
 }
 
-HelpStandardItem* HelpDataProvider::constructCategory2(const QString& title, const QString& uid)
+void HelpDataProvider::parseCategory2IndexXml(const QString& path, QStringList& hrefList, QStringList& titleList)
 {
-	QString pathIndex(uid);
+	QString pathIndex(path);
 	pathIndex.append(BACKSLASH);
 	pathIndex.append(INDEXXML);
 
 	QFile file(pathIndex);
 	if (!file.open(QIODevice::ReadOnly)) {
-		return NULL;
+		return;
 	}
 
 	//parse index xml to a stringlist, each string include href and navtitle and seperate by "specilchar"
 	QXmlQuery query;
-	QXmlItem xmlItem(SPECIALCHAR);
 	query.bindVariable("inputdoc", &file);
-	query.bindVariable("specilchar", xmlItem);
-	query.setQuery("doc($inputdoc)/topics/topicref/ \
-					string-join((xs:string(@href), xs:string(@navtitle)), $specilchar)");
+
+	query.setQuery("doc($inputdoc)/topics/topicref/xs:string(@href)");	
 	if(!query.isValid())
 	{
-		return NULL;
+		return;
 	}
-
-	QStringList strLst;
-	if(!query.evaluateTo(&strLst))
+	if(!query.evaluateTo(&hrefList))
 	{
-		return NULL;
+		return;
 	}	
-	if(strLst.count() <= 0)
+
+	query.setQuery("doc($inputdoc)/topics/topicref/xs:string(@navtitle)");
+	if(!query.isValid())
 	{
-		return NULL;
+		return;
 	}
-
-	HelpStandardItem* itemParent = NULL;
-	itemParent = new HelpStandardItem(title);
-	itemParent->setData(uid, UidRole);
-	foreach(QString str, strLst)
-	{
-		QStringList temp;
-		temp = str.split(SPECIALCHAR);
-		HelpStandardItem* item = new HelpStandardItem(temp[1]);
-		item->setData(temp[0], HrefRole);
-		itemParent->appendRow(item);
-		constructKeywordModel(temp[1], uid, temp[0]);
-	}
-
-	file.close();
-	itemParent->sortChildren(0, HelpUtils::sortOrder());
-	return itemParent;
-}
-
-void HelpDataProvider::constructAppHelp(const QString& path)
-{
-	QDir dir(path);	
-	if(!dir.exists())
+	if(!query.evaluateTo(&titleList))
 	{
 		return;
 	}
 
-	QStringList uidList = dir.entryList();
-	HelpStandardItem* itemApp = NULL;
-	QString pathTemp;
-	foreach(QString uid, uidList)
+	QStringList featureIdLst;
+
+	query.setQuery("doc($inputdoc)/topics/topicref/number(@FeatureId)");
+	if(!query.isValid())
 	{
-		pathTemp.clear();
-		pathTemp.append(path);
-		pathTemp.append(BACKSLASH);
-		pathTemp.append(uid);
-		pathTemp.append(BACKSLASH);
-		pathTemp.append(METAXML);
-		QFile file(pathTemp);
-		if (!file.open(QIODevice::ReadOnly)) {
-			continue;
-		}
-
-		//parse meta xml, get the title string
-		QXmlQuery query;
-		query.bindVariable("inputdoc", &file);
-		query.setQuery("doc($inputdoc)/meta/string(title)");
-		if(!query.isValid())
-		{
-			continue;
-		}
-		QString titleStr;
-		if(!query.evaluateTo(&titleStr))
-		{
-			continue;
-		}
-
-		pathTemp.clear();
-		pathTemp.append(path);
-		pathTemp.append(BACKSLASH);
-		pathTemp.append(uid);
-		HelpStandardItem* item = constructCategory2(titleStr, pathTemp);
-		if(item)
-		{
-			if(!itemApp)
-			{
-				itemApp = new HelpStandardItem(qtTrId(TXT_APPLICATIONS));
-			}
-			itemApp->appendRow(item);
-		}
-		file.close();
+		return;
+	}
+	if(!query.evaluateTo(&featureIdLst))
+	{
+		return;
 	}
 
-	if(itemApp)
+	if(featureIdLst.count() != hrefList.count())
 	{
-		itemApp->sortChildren(0, HelpUtils::sortOrder());
-		mHelpModel->appendRow(itemApp);
+		return;
 	}
-}
 
-/*
-void HelpDataProvider::searchInAllData(HelpStandardItem* item, const QString& key)
-{
-	if(item->rowCount() > 0)
+	for(int i = featureIdLst.count()  - 1; i >= 0; i--)
 	{
-		for(int i = 0; i < item->rowCount(); i++)
-		{		
-			searchInAllData((HelpStandardItem*)item->child(i),key);
-		}
-	}
-	else
-	{
-		if(HelpUtils::findStr(item->text(), key) != -1)
+		int featureID = featureIdLst.at(i).toInt();
+		if(!HelpUtils::suppportFeatureID(featureID))
 		{
-			HelpStandardItem* itemSearch = new HelpStandardItem(item->text());
-			itemSearch->setData(item->data(UidRole), UidRole);
-			itemSearch->setData(item->data(HrefRole), HrefRole);
-			mSearhResultModel->appendRow(itemSearch);
+			hrefList.removeAt(i);
+			titleList.removeAt(i);
 		}
 	}
 }
 
-void HelpDataProvider::searchInResult(const QString& key)
+void HelpDataProvider::parseBuiltInMetaxml(const QString& path, int& priority)
 {
-	for(int i = 0; i < mSearhResultModel->rowCount();)
+	QString pathMetaxml(path);
+	pathMetaxml.append(BACKSLASH);
+	pathMetaxml.append(METAXML);
+
+	priority = -1;
+
+	QFile file(pathMetaxml);
+	if (!file.open(QIODevice::ReadOnly))
 	{
-		QStandardItem* item = mSearhResultModel->item(i);
-		if(HelpUtils::findStr(item->text(), key) == -1)
-		{
-			mSearhResultModel->removeRow(i);
-		}
-		else
-		{
-			i++;
-		}
+		return;
 	}
-}
-*/
-void HelpDataProvider::constructKeywordModel(const QString& title, const QString& uid, const QString& href)
-{
-	HelpStandardItem* itemTemp = new HelpStandardItem(title);
-	itemTemp->setData(uid, UidRole);
-	itemTemp->setData(href, HrefRole);
-	mKeywordModel->appendRow(itemTemp);
+
+	QXmlQuery query;
+	QString str;
+	query.bindVariable("inputdoc", &file);
+
+	query.setQuery("doc($inputdoc)/meta/number(priority)");	
+	if(query.isValid() && query.evaluateTo(&str))
+	{
+		priority = str.toInt();
+	}
 }
 
-HelpStandardItem* HelpDataProvider::findItemWithHref(HelpStandardItem* itemParent, const QString& href)
+void HelpDataProvider::parseAppMetaxml(const QString& path, QString& title)
 {
-	for(int i = 0; i < itemParent->rowCount(); i++)
-	{
-		if(QString::compare(itemParent->child(i)->data(HrefRole).toString(), href, Qt::CaseInsensitive) == 0)
-		{
-			return (HelpStandardItem *)(itemParent->child(i));
-		}
+	QString pathMetaxml(path);
+	pathMetaxml.append(BACKSLASH);
+	pathMetaxml.append(METAXML);
+	QFile file(pathMetaxml);
+	if (!file.open(QIODevice::ReadOnly)) {
+		return;
 	}
-	return NULL;
+
+	//parse meta xml, get the title string
+	QXmlQuery query;
+	query.bindVariable("inputdoc", &file);
+	query.setQuery("doc($inputdoc)/meta/string(title)");
+	if(!query.isValid())
+	{
+		return;
+	}
+
+	if(!query.evaluateTo(&title))
+	{
+		return;
+	}
 }
