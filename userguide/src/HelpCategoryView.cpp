@@ -113,7 +113,7 @@ void HelpCategoryView::onAllListActivated(const QModelIndex& index)
         return;
     }
 
-    QString uid = mListAll->model()->data(index.parent(), UidRole).toString();
+	QString uid = mListAll->model()->data(index, UidRole).toString();
     QString href = mListAll->model()->data(index, HrefRole).toString();
     HelpDataProvider::instance()->setHelpContentUrl(uid, href);
     emit activateView(HelpViewContents);

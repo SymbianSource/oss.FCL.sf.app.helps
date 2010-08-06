@@ -228,7 +228,7 @@ void HelpDataProvider::constructAppCategory(const QString& path, QStringList& ui
 			continue;
 		}
 
-		if(uidList.contains(uid))
+		if(uidList.contains(uid) || mUpdateUidList.contains(uid))
 		{
 			mUpdateUidList.append(uid);
 			constructBuiltInCategoryItem(pathUid, titleStr);
@@ -237,11 +237,23 @@ void HelpDataProvider::constructAppCategory(const QString& path, QStringList& ui
 
 		HelpStandardItem* item = NULL;
 		item = new HelpStandardItem(titleStr);
+
+		if(!item)
+		{
+			//no memory
+			return;
+		}
+
 		item->setData(pathUid, UidRole);
 
 		if(!mAppItem)
 		{
 			mAppItem = new HelpStandardItem(qtTrId(TXT_APPLICATIONS));
+			if(!mAppItem)
+			{
+				//no memory
+				return;
+			}
 			mAppItem->setData(APPPRIORITY, PriorityRole);
 		}
 		mAppItem->appendRow(item);
@@ -255,13 +267,15 @@ void HelpDataProvider::constructBuiltInCategoryItem(const QString& uid, const QS
 	
 	HelpStandardItem* item = NULL;
 	item = new HelpStandardItem(title);
-	item->setData(uid, UidRole);
 
-	if(item)
+	if(!item)
 	{
-		item->setData(priority, PriorityRole);
-		mHelpModel->appendRow(item);
+		//no memory
+		return;
 	}
+	item->setData(uid, UidRole);
+	item->setData(priority, PriorityRole);
+	mHelpModel->appendRow(item);
 }
 
 void HelpDataProvider::constructCategory2(HelpStandardItem* itemParent)
@@ -289,8 +303,15 @@ void HelpDataProvider::constructCategory2Item(HelpStandardItem* itemParent)
 
 	for(int i = 0; i < hrefList.count(); i++)
 	{
-		HelpStandardItem* item = new HelpStandardItem(titleList[i]);
+		HelpStandardItem* item = NULL;
+		item = new HelpStandardItem(titleList[i]);
+		if(!item)
+		{
+			//no memory
+			return;
+		}
 		item->setData(hrefList[i], HrefRole);
+		item->setData(uid, UidRole);
 		itemParent->appendRow(item);
 		constructKeywordModel(titleList[i], uid, hrefList[i]);
 	}
@@ -300,10 +321,16 @@ void HelpDataProvider::constructCategory2Item(HelpStandardItem* itemParent)
 
 void HelpDataProvider::constructKeywordModel(const QString& title, const QString& uid, const QString& href)
 {
-	HelpStandardItem* itemTemp = new HelpStandardItem(title);
-	itemTemp->setData(uid, UidRole);
-	itemTemp->setData(href, HrefRole);
-	mKeywordModel->appendRow(itemTemp);
+	HelpStandardItem* item = NULL;
+	item = new HelpStandardItem(title);
+	if(!item)
+	{
+		//no memory
+		return;
+	}
+	item->setData(uid, UidRole);
+	item->setData(href, HrefRole);
+	mKeywordModel->appendRow(item);
 }
 
 void HelpDataProvider::parseCategoryIndexXml(const QString& path, QStringList& uidList, QStringList& titleList)
