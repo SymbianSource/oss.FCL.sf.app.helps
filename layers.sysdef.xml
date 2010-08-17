@@ -9,9 +9,6 @@
       <module name="helps">
         <unit name="helps" unitID="abs.helps" bldFile="&layer_real_source_path;/userguide" mrp="" proFile="Userguide.pro" />
       </module>
-      <module name="symhelp">
-        <unit name="symhelp" unitID="abs.symhelp" bldFile="&layer_real_source_path;/symhelp/helpmodel/group" mrp="" />
-      </module>
     </layer>
   </systemModel>
 </SystemDefinition>
