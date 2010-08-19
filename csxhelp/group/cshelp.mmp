@@ -106,13 +106,13 @@ SOURCE csxhruntimeappwatcher.cpp
 LIBRARY euser.lib apparc.lib cone.lib eikcore.lib
 LIBRARY apgrfx.lib charconv.lib 
 LIBRARY eikcoctl.lib eikctl.lib avkon.lib
-LIBRARY AknNotify.lib etext.lib
-LIBRARY AknSkins.lib
+LIBRARY aknnotify.lib etext.lib
+LIBRARY aknskins.lib
 LIBRARY ws32.lib 
 LIBRARY CdlEngine.lib   //dynamic ui 
 LIBRARY AknLayout2Scalable.lib
 LIBRARY gdi.lib HelpEngine.lib apmime.lib featmgr.lib
-LIBRARY ServiceHandler.lib // For the AiwServiceHandler
+LIBRARY servicehandler.lib // For the AiwServiceHandler
 LIBRARY efsrv.lib
 
 #ifdef FF_HELP_TUTORIAL_MERGE

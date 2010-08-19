@@ -44,6 +44,23 @@ typedef CBrCtlInterface* (*FuncPtr_CreateBrowserControlL) (CCoeControl* aParent,
     MBrCtlDialogsProvider* aBrCtlDialogsProvider = NULL,
     MBrCtlWindowObserver* aBrCtlWindowObserver = NULL,
 	MBrCtlDownloadObserver* aBrCtlDownloadObserver = NULL );
+
+// A container which draw white rectagle.
+NONSHARABLE_CLASS( CBlankContainer ): public CCoeControl
+    {
+public:
+    CBlankContainer();
+    ~CBlankContainer();
+    
+    /** 
+    *  From CoeControl class
+    *  @function Draw
+    *  Draw() for drawing the Background
+    */
+    void Draw( const TRect& aRect ) const;
+    
+    };
+
 /** 
 * @class CCSXHHtmlTopicContainer
 * This class provides Browser functionality
@@ -412,7 +429,7 @@ private:
 *  @Perform the second phase construction of a HtmlTopicContainer object
 *  @param aRect the rectangle this view will be drawn to
  */
-    void ConstructL(const TRect& aRect);
+    void ConstructL( const TRect& aRect );
 
 /** 
 *  @function LoadHtmlL
@@ -440,7 +457,24 @@ private:
 * Judge whether we need to refresh the browser control
 */
     TBool NeedRefresh( const TContentLoadState aNewLoadState ) const;
-	
+    
+/**
+ * @function HideBrowser
+ */    
+    void HideBrowser();
+    
+/**
+ * * @function ShowBrowser
+ */
+    void ShowBrowser();
+    
+/*
+ *  @function SetTopAndBottomContainer
+ *  To set top and Bottom container of browser and blank container
+ */
+    void SetTopAndBottomContainer( CCoeControl* aTopControl, 
+            CCoeControl* aBottomControl );
+
 private:
 	CBrCtlInterface* iBrCtrl;    
 	CCSXHHtmlTOC2* iTopic;
@@ -459,6 +493,14 @@ private:
     TBool iBack;
     
     TContentLoadState iContentLoading;
+    
+    // used to hide browser control if needed.
+    CCoeControl*    iBlankContainer;
+    
+    // Used to determine whether hide browser control or not.
+    CCoeControl*    iTopControl;
+    CCoeControl*    iBottomControl;
+    
 	};
 
 

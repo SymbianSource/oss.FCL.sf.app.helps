@@ -48,6 +48,24 @@
 _LIT(KContentType,"text/html");
 _LIT(KCsstextToRemovePathinfo,"<style>\n #APP_LAUNCH_LINK{display:none}\n</style>");
 
+
+CBlankContainer::CBlankContainer()
+    {
+    }
+
+CBlankContainer::~CBlankContainer()
+    {
+    }
+    
+
+void CBlankContainer::Draw( const TRect& aRect ) const
+    {
+    CWindowGc& gc = SystemGc();
+    TRect rect = Rect();
+    gc.Clear(rect);    
+    }
+
+
 // Standard construction sequence
 CCSXHHtmlTopicContainer* CCSXHHtmlTopicContainer::NewL(const TRect& aRect,CCSXHDocument 
 &aDocument,CCSXHHtmlTopicView *aView)
@@ -84,41 +102,42 @@ CCSXHHtmlTopicContainer::~CCSXHHtmlTopicContainer()
         delete iBrCtrl;
         iBrLibrary.Close();
         }
-    if(iAppLauncher)
-    	{
-    	delete iAppLauncher;
-    	}     
+
+    delete iAppLauncher;
+  
+    delete iBlankContainer;
+
     }
 
-void CCSXHHtmlTopicContainer::ConstructL(const TRect& aRect)
+void CCSXHHtmlTopicContainer::ConstructL( const TRect& aRect )
     {
     // Create a window for this application view
     CreateWindowL();
 
     // Set the windows size
     SetRect(aRect);
-    if(KErrNone != iBrLibrary.Load(_L("BrowserEngine.dll")))
+    if( KErrNone != iBrLibrary.Load( _L( "BrowserEngine.dll" ) ) )
     	{
        	HBufC* ErrorMessage = CCSXHAppUi::GetCoeEnv()->AllocReadResourceLC(
-    				R_CSHELP_RETRIEVE_NO_MEMORY_TEXT);      
+    				R_CSHELP_RETRIEVE_NO_MEMORY_TEXT );      
     	CAknGlobalNote* note = CAknGlobalNote::NewLC();
-    	note->ShowNoteL(EAknGlobalInformationNote, *ErrorMessage);
-    	CleanupStack::PopAndDestroy(note); 
-    	CleanupStack::PopAndDestroy(ErrorMessage); 
-    	iDocument.SetDisplayTopic(iDocument.GetPrevTopic());
-		CCSXHAppUi::GetInstance()->HandleCommandL(ECSXHOpenItem);
-		User::Leave(KErrNoMemory);
+    	note->ShowNoteL( EAknGlobalInformationNote, *ErrorMessage );
+    	CleanupStack::PopAndDestroy( note ); 
+    	CleanupStack::PopAndDestroy( ErrorMessage ); 
+    	iDocument.SetDisplayTopic( iDocument.GetPrevTopic() );
+		CCSXHAppUi::GetInstance()->HandleCommandL( ECSXHOpenItem );
+		User::Leave( KErrNoMemory );
     	}     
 
 #ifdef __WINS__    
-    TLibraryFunction result = iBrLibrary.Lookup(10); 
+    TLibraryFunction result = iBrLibrary.Lookup( 10 ); 
 #else
-    TLibraryFunction result = iBrLibrary.Lookup(1);   
+    TLibraryFunction result = iBrLibrary.Lookup( 1 );   
 #endif    
 		
-	FuncPtr_CreateBrowserControlL fptr  = (FuncPtr_CreateBrowserControlL)result;
+	FuncPtr_CreateBrowserControlL fptr  = ( FuncPtr_CreateBrowserControlL )result;
     
-    iBrCtrl = (*fptr)(
+    iBrCtrl = ( *fptr )(
                     this,aRect,
                     TBrCtlDefs::ECapabilityDisplayScrollBar|
                     TBrCtlDefs::ECapabilityClientResolveEmbeddedURL|
@@ -127,14 +146,19 @@ void CCSXHHtmlTopicContainer::ConstructL(const TRect& aRect)
                     TBrCtlDefs::ECapabilityWebKitLite|
 #endif                                  
                     TBrCtlDefs::ECapabilityClientNotifyURL,
-                    TBrCtlDefs::ECommandIdBase,this,this,NULL,this
+                    TBrCtlDefs::ECommandIdBase, this, this, NULL, this
                     );
-    iBrCtrl->SetBrowserSettingL(TBrCtlDefs::ESettingsCSSFetchEnabled,1);    
-    iBrCtrl->AddLoadEventObserverL(this);   
+    iBrCtrl->SetBrowserSettingL( TBrCtlDefs::ESettingsCSSFetchEnabled, 1 );    
+    iBrCtrl->AddLoadEventObserverL( this );   
     
     
-    SetSelectedFontSizeL(iView->GetCurrentFontSize());
-    iBrCtrl->MakeVisible(ETrue);
+    SetSelectedFontSizeL( iView->GetCurrentFontSize() );
+    iBrCtrl->MakeVisible( ETrue );
+    
+    iBlankContainer = new ( ELeave ) CBlankContainer();
+    iBlankContainer->SetRect( Rect() );
+    
+    ShowBrowser();
     
     ActivateL();
     }
@@ -166,7 +190,7 @@ void CCSXHHtmlTopicContainer::SetAndLoadInitialTopicL(CCSXHHtmlTOC2* aTopic)
 
 void CCSXHHtmlTopicContainer::LoadHtmlL()
     {
-    iBrCtrl->MakeVisible( EFalse );
+    iBrCtrl->MakeVisible( EFalse ); 
     SetContentLoadState( EContentLoading );
     HBufC8 *htmlBuffer = STATIC_CAST(HBufC8*,iTopic->GetTopicContentL());
     if(htmlBuffer)
@@ -230,7 +254,7 @@ aKeyEvent,TEventCode  aType )
 
 TInt CCSXHHtmlTopicContainer::CountComponentControls() const
     {
-    return 1; 
+    return 2; 
     }
 
 CCoeControl* CCSXHHtmlTopicContainer::ComponentControl(TInt aIndex) const
@@ -238,7 +262,9 @@ CCoeControl* CCSXHHtmlTopicContainer::ComponentControl(TInt aIndex) const
     switch (aIndex)
         {
         case 0:
-            return iBrCtrl;
+            return iBottomControl;
+        case 1:
+            return iTopControl;
         default:
             return NULL;
         }
@@ -274,19 +300,20 @@ void CCSXHHtmlTopicContainer::HandleResourceChangeImpl(TInt aType)
 void CCSXHHtmlTopicContainer::SizeChanged()
     {
 #ifndef __SERIES60_30__ 
-    if(iBrCtrl)
+    if( iBrCtrl )
         {
         if ( iContentLoading != EContentLoading )
             {
-            iBrCtrl->SetRect(Rect());
-            iBrCtrl->MakeVisible(ETrue);
+            iBlankContainer->SetRect( Rect() );
+            iBrCtrl->SetRect( Rect() );
+            iBrCtrl->MakeVisible( ETrue );
             }
         else
             {
             //Update the title bar
             CEikStatusPane* sp = CCSXHAppUi::GetInstance()->StatusPane();
             CAknTitlePane* titlePane = NULL;
-            TRAPD( err, titlePane = STATIC_CAST(CAknTitlePane*, 
+            TRAPD( err, titlePane = STATIC_CAST(CAknTitlePane*,
                     sp->ControlL( TUid::Uid( EEikStatusPaneUidTitle ) ) ) );
             if ( KErrNone == err )
                 {
@@ -294,8 +321,8 @@ void CCSXHHtmlTopicContainer::SizeChanged()
                 //so just ignore this leave
                 TRAP_IGNORE( titlePane->SetTextL( KNullDesC ) );
                 }
-            
-            iBrCtrl->SetRect(TRect(0,0,0,0));
+            iBlankContainer->SetRect( Rect() );
+            iBrCtrl->SetRect( Rect() );            
             }
         }
 #endif  
@@ -445,6 +472,7 @@ void CCSXHHtmlTopicContainer::HandleBrowserLoadEventL(TBrCtlDefs::TBrCtlLoadEven
     {
     if(aLoadEvent == TBrCtlDefs::EEventLoadFinished)
         {
+        ShowBrowser();
         SetContentLoadState( EContentLoadFinished );
         if ( IsVisible() )
              {
@@ -504,6 +532,12 @@ void CCSXHHtmlTopicContainer::HandleBrowserLoadEventL(TBrCtlDefs::TBrCtlLoadEven
             
         iNewTopic = iDocument.GetHtmlTopicForUrlL(iUrlNoAnchors);            
         CheckForMSK();
+        }
+    // Only when loadhtml is called, in that condition, last-displayed content may show;
+    // then we should hide browser.
+    else  if ( iContentLoading == EContentLoading )
+        {
+        HideBrowser();
         }
     }
     
@@ -648,5 +682,22 @@ TBool CCSXHHtmlTopicContainer::NeedRefresh( const TContentLoadState aNewLoadStat
         return EFalse;
     }
 
+void CCSXHHtmlTopicContainer::HideBrowser()
+    {
+    SetTopAndBottomContainer( iBlankContainer, iBrCtrl );
+    }
+
+void CCSXHHtmlTopicContainer::ShowBrowser()
+    {
+    SetTopAndBottomContainer( iBrCtrl, iBlankContainer );
+    }
+
+void CCSXHHtmlTopicContainer::SetTopAndBottomContainer( CCoeControl* aTopControl, 
+        CCoeControl* aBottomControl )
+    {
+    iTopControl = aTopControl;
+    iBottomControl = aBottomControl;
+    }
+    
 //end of the file
 
