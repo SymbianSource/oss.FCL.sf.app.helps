@@ -58,7 +58,8 @@ symbian {
 		TARGET.UID3 = 0x10005234
   	TARGET.CAPABILITY = CAP_APPLICATION
   	TARGET.EPOCHEAPSIZE = 0x020000 0x1000000
-
+  	
+  	MMP_RULES += SMPSAFE
     CONFIG += mobility
     MOBILITY = systeminfo
     INCLUDEPATH += /sf/mw/webruntime/wrt/runtimecore
