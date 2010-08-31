@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
-<!DOCTYPE SystemDefinition SYSTEM "sysdef_1_4_0.dtd" [
+<!DOCTYPE SystemDefinition SYSTEM "sysdef_1_5_1.dtd" [
   <!ENTITY layer_real_source_path "sf/app/helps" >
 ]>
 
-<SystemDefinition name="helps" schema="1.4.0">
+<SystemDefinition name="helps" schema="1.5.1">
   <systemModel>
     <layer name="app_layer">
       <module name="helps">
-        <unit unitID="abs.helps" mrp="" bldFile="&layer_real_source_path;/group" name="helps" />
+        <unit name="helps" unitID="abs.helps" bldFile="&layer_real_source_path;/userguide" mrp="" proFile="Userguide.pro" />
+      </module>
+      <module name="symhelp">
+        <unit name="symhelp" unitID="abs.symhelp" bldFile="&layer_real_source_path;/symhelp/helpmodel/group" mrp="" />
       </module>
     </layer>
   </systemModel>

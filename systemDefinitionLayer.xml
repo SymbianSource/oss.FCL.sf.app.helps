@@ -1,7 +1,0 @@
-<layer name="helps">
-  <module name="group_helps">
-    <component name="group_helps">
-      <unit unitID="helps" mrp="" bldFile="&layer_real_source_path;\group" name="helps" />
-    </component>
-  </module>
-</layer>
