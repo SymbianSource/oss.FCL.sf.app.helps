@@ -1,0 +1,70 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Project definition file for Help Engine Library
+*
+*/
+
+
+#include <platform_paths.hrh>
+
+TARGET        HelpEngine.dll
+TARGETTYPE    dll
+UID           0x10282350 0x0BC03CD8
+LANGUAGE_IDS
+
+CAPABILITY      CAP_CLIENT_DLL
+VENDORID        VID_DEFAULT
+
+SOURCEPATH    ../HelpEngine/src
+SOURCE        HelpEngine.cpp
+SOURCE            CSXHHelpContentBase.cpp
+SOURCE            CSXHHelpDataBase.cpp
+SOURCE            CSXHMainTopics.cpp
+SOURCE            CSXHKywdTopics.cpp
+SOURCE            CSXHGenericTOC1.cpp
+SOURCE            CSXHGenericTOC2.cpp
+SOURCE            CSXHHtmlTOC1.cpp
+SOURCE            CSXHHtmlTOC2.cpp
+SOURCE            CSXHLegacyTOC1.cpp
+SOURCE            CSXHLegacyTOC2.cpp
+SOURCE            CSXHContextTopic.cpp
+SOURCE            CSXHKywdTOC1.cpp
+SOURCE            CSXHXMLParseHandler.cpp
+SOURCE            CSXHHTMLContentParser.cpp
+SOURCE            CSXHLegacyContentParser.cpp
+SOURCE            CsHelpCmdLineParser.cpp
+SOURCE            CSXHRuntimeIndexing.cpp
+
+
+
+USERINCLUDE   ../HelpEngine/inc ../HelpEngine/rss
+
+// This is a SYSTEMINCLUDE macro containing the applications
+// layer specific include directories
+APP_LAYER_SYSTEMINCLUDE
+
+LIBRARY	cone.lib	euser.lib	bafl.lib
+LIBRARY efsrv.lib charconv.lib   eikctl.lib       
+LIBRARY	senxml.lib xmlframework.lib	ezip.lib
+LIBRARY hlpmodel.lib platformenv.lib
+LIBRARY featmgr.lib 
+LIBRARY ptiengine.lib //Input Language variation changes
+
+#if defined(WINS)
+    deffile ./HelpEnginewinscw.def
+#else // #elif defined(ARM)
+    deffile ./HelpEnginearm.def
+#endif
+nostrictdef
+

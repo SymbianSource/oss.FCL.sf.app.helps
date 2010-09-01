@@ -1,0 +1,23 @@
+EXPORTS
+	??1CCSXHHelpDataBase@@UAE@XZ @ 1 NONAME ; CCSXHHelpDataBase::~CCSXHHelpDataBase(void)
+	?ClearAllTOC1Contents@CCSXHHelpDataBase@@QAEXXZ @ 2 NONAME ; void CCSXHHelpDataBase::ClearAllTOC1Contents(void)
+	?FillChildDataL@CCSXHGenericTOC1@@UAEXPAVCDesC16Array@@@Z @ 3 NONAME ; void CCSXHGenericTOC1::FillChildDataL(class CDesC16Array *)
+	?GetChildL@CCSXHGenericTOC1@@UAEPAVCCSXHHelpContentBase@@ABVTDesC16@@@Z @ 4 NONAME ; class CCSXHHelpContentBase * CCSXHGenericTOC1::GetChildL(class TDesC16 const &)
+	?GetContentsFromUrlL@CCSXHHtmlTOC2@@SAPAVHBufC8@@ABVTDesC16@@PAVCCoeEnv@@AAVRFeatureControl@@@Z @ 5 NONAME ; class HBufC8 * CCSXHHtmlTOC2::GetContentsFromUrlL(class TDesC16 const &, class CCoeEnv *, class RFeatureControl &)
+	?GetContextTopic@CCSXHHelpDataBase@@QAEPAVCCSXHHelpContentBase@@ABVTDesC8@@@Z @ 6 NONAME ; class CCSXHHelpContentBase * CCSXHHelpDataBase::GetContextTopic(class TDesC8 const &)
+	?GetHelpContext@CCSXHHtmlTOC2@@QBEHAAVTCoeHelpContext@@@Z @ 7 NONAME ; int CCSXHHtmlTOC2::GetHelpContext(class TCoeHelpContext &) const
+	?GetHtmlTopicForUrlL@CCSXHHelpDataBase@@QAEPAVCCSXHHelpContentBase@@ABVTDesC16@@@Z @ 8 NONAME ; class CCSXHHelpContentBase * CCSXHHelpDataBase::GetHtmlTopicForUrlL(class TDesC16 const &)
+	?GetHtmlUrlL@CCSXHHtmlTOC2@@QBEXAAV?$TBuf@$0BAA@@@@Z @ 9 NONAME ; void CCSXHHtmlTOC2::GetHtmlUrlL(class TBuf<256> &) const
+	?GetKeywordSearchCount@CCSXHHelpDataBase@@QAEHXZ @ 10 NONAME ; int CCSXHHelpDataBase::GetKeywordSearchCount(void)
+	?GetKywdParent@CCSXHHtmlTOC2@@QAEPAVCCSXHKywdTOC1@@XZ @ 11 NONAME ; class CCSXHKywdTOC1 * CCSXHHtmlTOC2::GetKywdParent(void)
+	?GetKywdTopics@CCSXHHelpDataBase@@QAEPAVCCSXHGenericTOC1@@XZ @ 12 NONAME ; class CCSXHGenericTOC1 * CCSXHHelpDataBase::GetKywdTopics(void)
+	?GetLegacyParent@CCSXHLegacyTOC2@@QAEPAVCCSXHLegacyTOC1@@XZ @ 13 NONAME ; class CCSXHLegacyTOC1 * CCSXHLegacyTOC2::GetLegacyParent(void)
+	?GetMainTopics@CCSXHHelpDataBase@@QAEPAVCCSXHGenericTOC1@@XZ @ 14 NONAME ; class CCSXHGenericTOC1 * CCSXHHelpDataBase::GetMainTopics(void)
+	?GetName@CCSXHHelpContentBase@@QBE?AVTPtr16@@XZ @ 15 NONAME ; class TPtr16 CCSXHHelpContentBase::GetName(void) const
+	?GetParent@CCSXHGenericTOC2@@QAEPAVCCSXHGenericTOC1@@XZ @ 16 NONAME ; class CCSXHGenericTOC1 * CCSXHGenericTOC2::GetParent(void)
+	?GetTopic@CCSXHContextTopic@@QAEPAVCCSXHHelpContentBase@@XZ @ 17 NONAME ; class CCSXHHelpContentBase * CCSXHContextTopic::GetTopic(void)
+	?GetTopicContentL@CCSXHHtmlTOC2@@UAEPAXXZ @ 18 NONAME ; void * CCSXHHtmlTOC2::GetTopicContentL(void)
+	?GetTopicContentL@CCSXHLegacyTOC2@@UAEPAXXZ @ 19 NONAME ; void * CCSXHLegacyTOC2::GetTopicContentL(void)
+	?InitGenerateKeywordTOC2ListL@CCSXHHelpDataBase@@QAEHPAVCCSXHKywdTOC1@@@Z @ 20 NONAME ; int CCSXHHelpDataBase::InitGenerateKeywordTOC2ListL(class CCSXHKywdTOC1 *)
+	?NewL@CCSXHHelpDataBase@@SAPAV1@PAVCCoeEnv@@ABV?$TBuf@$0BAA@@@1@Z @ 21
+	?GetAppHelpsTopics@CCSXHHelpDataBase@@QAEPAVCCSXHGenericTOC1@@XZ @ 22

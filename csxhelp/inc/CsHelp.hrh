@@ -1,0 +1,90 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Declarations for resources of cshelp.
+*
+*/
+
+
+#ifndef CSHELP_HRH
+#define CSHELP_HRH
+
+enum TCSXHIds
+    {
+    ECSXHOpenItem = 1,  // start value must not be 0
+    ECSXHOpenItemPropagated , //Propagated from container
+    ECSXHTOC1ListView,
+    ECSXHKywdTOC1ListView,
+    ECSXHTOC2ListView,
+    ECSXHSearchText,
+    ECSXHOpenTopicView,
+    ECSXHOpenTopicText,
+    ECSXHOpenApplicationTopics,
+    ECsHelpCmdFontLarge,    
+    ECsHelpCmdFontSmall,
+    ECSXHOpenHyperLink,
+    ECSXHDummyMSK,
+    ECmdAiwPlaceHolder,
+    ECmdLast
+    };
+
+
+
+// Commands
+enum TCsHelpMenuCommands
+    {
+    ECsHelpCmdViewCategoryList = 0x6000,
+    ECsHelpCmdViewTopicList,
+    ECsHelpCmdViewTopic,
+    ECsHelpCmdViewTopicForContext,
+    ECsHelpCmdViewTopicForSearch,
+    ECsHelpCmdViewSearch,
+    ECsHelpCmdViewSearchResult,
+
+    ECsHelpCmdNextTopicList,
+    ECsHelpCmdPreviousTopicList,
+
+    ECsHelpCmdNextTopic,
+    ECsHelpCmdPreviousTopic,
+
+    ECsHelpCmdNextIndex,
+    ECsHelpCmdPreviousIndex
+    };
+
+// Tab ID for category list view and search view
+enum TCsHelpTabId
+    {
+    ECsHelpCategoryTab,
+    ECsHelpSearchTab
+    };
+
+ 
+// note id
+enum TCsHelpNoteId
+    {
+    EProgressNote = 1,
+    EInstallNote
+    };
+
+
+enum TTutorialAiwCommands {
+        KLaunchTutorial = 0x10208a86,  //Launches tutorial as embedded application
+        KPlayPresentation,         //Plays tutorial presentation
+        KPresentationExists,       //Tests if the given presentation exists
+        KPlayDefaultPresentation,  //Plays tutorial default presentation 
+        KDefaultPresentationExists //Tests if the default presentation exists
+    };
+
+#endif      //  CSHELP_HRH
+
+// End of File

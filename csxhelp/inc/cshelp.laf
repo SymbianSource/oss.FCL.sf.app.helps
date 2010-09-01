@@ -1,0 +1,41 @@
+/*
+* ============================================================================
+*  Name     : cshelp.laf
+*  Part of  : CsHelp
+*
+*  Description:
+*     This is the LAF specification file for the Cshelp app.
+*       
+*
+*  Version:
+*
+*  Copyright (C) 2002 Nokia Corporation.
+*  This material, including documentation and any related
+*  computer programs, is protected by copyright controlled by
+*  Nokia Corporation. All rights are reserved. Copying,
+*  including reproducing, storing,  adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia Corporation. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia Corporation.
+*
+* ============================================================================
+*/
+
+//d: laf data for Help application's topic view.
+// Edit 16 >>
+////l: main_pane_1
+//l:main_pane_1_help_item_text
+// <<
+//
+#define topic_view_font     ELatinPlain12
+#define topic_view_C        215 
+#define topic_view_l        4
+#define topic_view_r        5
+#define topic_view_B        21
+#define topic_view_W        167
+#define topic_view_J        ELayoutAlignBidi
+#define topic_view_lines    8
+#define topic_view_nextB    37
+
+// End of file

@@ -1,0 +1,123 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Project definition file for Csxhelp Application
+*
+*/
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+
+#ifndef RD_APPS_TO_EXES
+TARGETPATH  /System/Apps/Cshelp
+#endif
+
+//1. Cshelp resources
+START RESOURCE ../data/CsHelp.rss
+HEADER
+#ifdef RD_APPS_TO_EXES
+TARGETPATH APP_RESOURCE_DIR
+#endif
+
+//other settings like LANG  xx
+LANGUAGE_IDS
+
+END  // RESOURCE
+
+
+
+//2. Aif stuff
+#ifdef RD_SCALABLE_UI // New app framework used
+
+START RESOURCE ../data/Cshelp_reg.rss
+DEPENDS cshelp.rsg
+// Do not change the UID below.
+TARGETPATH /private/10003a3f/apps
+END
+
+#else // Old app framework used (no changes in the definitions below)
+
+START RESOURCE ../aif/cshelp_caption.rss     
+HEADER
+#ifdef RD_APPS_TO_EXES
+TARGETPATH APP_RESOURCE_DIR
+#endif
+
+//other settings like LANG  xx
+LANGUAGE_IDS
+END  // RESOURCE
+
+#endif
+
+
+
+//Target information
+#ifdef RD_APPS_TO_EXES
+// TARGETPATH need not be defined, it is automatically handled by the build tools
+TARGET          cshelp.exe
+TARGETTYPE      exe
+#else
+TARGET          cshelp.app
+TARGETTYPE      app
+#endif
+UID             0x100039CE 0x10005234
+
+EPOCSTACKSIZE   0x10000
+EPOCHEAPSIZE 0x5000 0x800000
+
+VENDORID        VID_DEFAULT
+
+//We use default capabilities (from defaultcaps.hrh)
+CAPABILITY CAP_APPLICATION 
+
+USERINCLUDE . ../inc ../HelpEngine/inc
+
+// This is a SYSTEMINCLUDE macro containing the applications
+// layer specific include directories
+APP_LAYER_SYSTEMINCLUDE
+
+SOURCEPATH   ../src
+
+SOURCE CSXH.cpp
+SOURCE CSXHApplication.cpp 
+SOURCE CSXHGenericView.cpp
+SOURCE CSXHGenericContainer.cpp
+SOURCE CSXHAppUi.cpp
+SOURCE CSXHDocument.cpp 
+SOURCE CSXHLegacyTopicContainer.cpp
+SOURCE CSXHLegacyTopicView.cpp
+SOURCE CSXHHtmlTopicView.cpp
+SOURCE CSXHHtmlTopicContainer.cpp
+SOURCE AppLauncherForCSXH.cpp
+SOURCE csxhruntimeappwatcher.cpp
+
+LIBRARY euser.lib apparc.lib cone.lib eikcore.lib
+LIBRARY apgrfx.lib charconv.lib 
+LIBRARY eikcoctl.lib eikctl.lib avkon.lib
+LIBRARY aknnotify.lib etext.lib
+LIBRARY aknskins.lib
+LIBRARY ws32.lib 
+LIBRARY CdlEngine.lib   //dynamic ui 
+LIBRARY AknLayout2Scalable.lib
+LIBRARY gdi.lib HelpEngine.lib apmime.lib featmgr.lib
+LIBRARY servicehandler.lib // For the AiwServiceHandler
+LIBRARY efsrv.lib
+
+#ifdef FF_HELP_TUTORIAL_MERGE
+LIBRARY bafl.lib 
+#endif
+
+DEBUGLIBRARY flogger.lib
+// End of File
