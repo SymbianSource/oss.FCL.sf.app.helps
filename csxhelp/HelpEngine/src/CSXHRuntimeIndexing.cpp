@@ -132,7 +132,12 @@ void CCSXHRuntimeIndexing::BeginIndexFileL( const TChar& aDrive )
     // rename to index.xml. otherwise, the old index file still exists.
     //
     des.Append( KMasterMetaTmpFile );
-    iFile.Replace( fileSession, des, EFileWrite );
+    TInt err = KErrNone;
+    err = iFile.Replace( fileSession, des, EFileWrite );
+    if ( KErrNone != err || 0 == iFile.SubSessionHandle() )
+        {
+        return;
+        }
     
     HBufC8* driveInfo = HBufC8::NewLC( KMaxDriveInfo );
     TPtr8 ptr = driveInfo->Des();
@@ -146,6 +151,10 @@ void CCSXHRuntimeIndexing::BeginIndexFileL( const TChar& aDrive )
     
 void CCSXHRuntimeIndexing::FinishAndCloseIndexFileL()
     {
+    if ( 0 == iFile.SubSessionHandle() )
+        {
+        return;
+        }
     RFs& fileSession = iCoeEnv->FsSession();
     iFile.Write( KIndexCollectEnd );
     iFile.Close();  
@@ -186,6 +195,10 @@ void CCSXHRuntimeIndexing::FinishAndCloseIndexFileL()
       
 void CCSXHRuntimeIndexing::RuntimeGenerateIndexL( const CCSXHHtmlTOC1& aToc1, const TDesC& aFeature )
     {
+    if ( 0 == iFile.SubSessionHandle() )
+        {
+        return;
+        }
     // Form into an entry, like
     // <collection FeatureID="-1" id="0x10005951" navtitle="Bluetooth"></collection>
     HBufC8* appName = CnvUtfConverter::ConvertFromUnicodeToUtf8L( aToc1.GetName() );
