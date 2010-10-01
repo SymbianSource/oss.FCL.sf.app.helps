@@ -37,6 +37,10 @@ public:
 private:
 	void initDocMl();
 	void initAllList();
+	
+signals:
+    // Automation is using MATTI tool and to do performance measuring we need signals as measuring point.
+    void applicationReady();
 
 private:
 	void expandCollapseAllList(QStandardItem* item, bool expand);

@@ -51,6 +51,7 @@ void HelpCategoryView::init()
 {
 	initDocMl();
     initAllList();
+    emit applicationReady();
 }
 
 void HelpCategoryView::initDocMl()

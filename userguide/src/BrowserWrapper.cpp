@@ -38,12 +38,7 @@ BrowserWrapper::~BrowserWrapper()
 
 void BrowserWrapper::init()
 {
-#ifdef Q_OS_SYMBIAN
-    WRT::WrtController* wrtController = new WRT::WrtController(this, WRT::GraphicsWebView);
-    mWebView = wrtController->graphicsWebView();
-#else
 	mWebView = new QGraphicsWebView();
-#endif
     mWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     mWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
     mWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
