@@ -57,7 +57,7 @@ LIBRARY         gdi.lib
 LIBRARY         bafl.lib
 LIBRARY         cone.lib
 LIBRARY         estlib.lib
-LIBRARY         servicehandler.lib
+LIBRARY         ServiceHandler.lib
 LIBRARY         eikcore.lib
 LIBRARY			hlplch.lib
 LIBRARY     	ws32.lib

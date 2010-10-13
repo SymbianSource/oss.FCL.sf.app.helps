@@ -56,8 +56,8 @@ APP_LAYER_SYSTEMINCLUDE
 
 LIBRARY	cone.lib	euser.lib	bafl.lib
 LIBRARY efsrv.lib charconv.lib   eikctl.lib       
-LIBRARY	senxml.lib xmlframework.lib	ezip.lib
-LIBRARY hlpmodel.lib platformenv.lib
+LIBRARY	SenXml.lib XMLFRAMEWORK.lib	ezip.lib 
+LIBRARY HLPMODEL.LIB PlatformEnv.lib
 LIBRARY featmgr.lib 
 LIBRARY ptiengine.lib //Input Language variation changes
 
