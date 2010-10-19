@@ -27,6 +27,7 @@ class HelpBaseView;
 class HelpCategoryView;
 class HelpKeywordView;
 class HelpContentsView;
+class AfActivityStorage;
 
 class HelpMainWindow : public HbMainWindow
 {
@@ -57,6 +58,7 @@ private:
 	HelpKeywordView* mKeywordView;
 	HelpContentsView* mContentsView;
 	HelpViewName mPreviousViewName;
+	AfActivityStorage* mActivityStorage;
 };
 
 #endif //HELPMAINWINDOW_H

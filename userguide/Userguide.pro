@@ -65,7 +65,9 @@ symbian {
     INCLUDEPATH += /sf/mw/webruntime/wrt/runtimecore
 		INCLUDEPATH += /sf/mw/webruntime/wrt
 		DEFINES += CWRT_BUILDING_TENONE
-  	LIBS += -lRuntimeCore -lezip -lxqservice -lxqserviceutil -lcone -leikcore -lmediaclientaudio -leikcoctl -leiksrv -lapparc -lavkon -lefsrv -lcharconv -lws32 -lhal -lgdi -lapgrfx
+  	LIBS += -lRuntimeCore -lezip -lxqservice -lxqserviceutil -lcone -leikcore -lmediaclientaudio \
+            -leikcoctl -leiksrv -lapparc -lavkon -lefsrv -lcharconv -lws32 -lhal -lgdi -lapgrfx \
+            -lafservice
   	include(rom/userguide.pri)
   	SKINICON = qtg_large_help
 }

@@ -19,7 +19,7 @@
 #include <hbnotificationdialog.h>
 #include <hbaction.h>
 #include <hbapplication.h>
-#include <hbactivitymanager.h>
+#include <afactivitystorage.h>
 
 #include "HelpBaseView.h"
 #include "HelpCategoryView.h"
@@ -35,7 +35,10 @@ mKeywordView(NULL),
 mContentsView(NULL)
 {
     QObject::connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveActivity()));
+
+    mActivityStorage = new AfActivityStorage(this);
 	HelpDataProvider::instance()->createHelpCategory();
+
     activateCategoryView();
 }
 
@@ -51,17 +54,19 @@ void HelpMainWindow::onActivateView(HelpViewName viewName)
 	    case HelpViewCategory:
             activateCategoryView();
 			break;
+			
 	    case HelpViewKeyword:
             activateKeywordView();
 			break;
+			
 	    case HelpViewContents:
             activateContentsView();
 			break;
+			
 		case PreviousView:
-			{
-				onActivateView(mPreviousViewName);
-			}
+			onActivateView(mPreviousViewName);
 			break;
+			
 	    default:
 			HbApplication::exit();
 	        break;
@@ -136,11 +141,9 @@ void HelpMainWindow::onShowFindList()
 
 void HelpMainWindow::saveActivity()
 {
-	HbActivityManager* activityManager = qobject_cast<HbApplication*>(qApp)->activityManager();
-
 	// clean up any previous versions of this activity from the activity manager.
-	bool ok = activityManager->removeActivity("UserGuideMainView");
-	if ( !ok )
+	bool ok = mActivityStorage->removeActivity("UserGuideMainView");
+	if(!ok)
 	{
 		//qFatal("Remove failed" );
 	}
@@ -154,10 +157,10 @@ void HelpMainWindow::saveActivity()
 	QDataStream stream(&serializedActivity, QIODevice::WriteOnly | QIODevice::Append);
 
 	// add the activity to the activity manager
-	ok = activityManager->addActivity("UserGuideMainView", serializedActivity, metadata);
-	if ( !ok )
+	ok = mActivityStorage->saveActivity("UserGuideMainView", serializedActivity, metadata);
+	if(!ok)
 	{
-		qFatal("Add failed" );
+		//qFatal("Add failed");
 	}
 }
 
