@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SystemDefinition xmlns:sf="http://www.symbian.org/system-definition" schema="3.0.0" id-namespace="http://www.nokia.com/schema/drd/system-definition">
+ <package id="sf:helps" name="Help Apps" levels="eng tools if ui">
+   <collection id="sf:helps_info" name="Help Apps Info" level="ui">
+   <component id="nokia_helps_metadata" name="Nokia Help Apps Metadata" class="config" introduced="^2" purpose="development" target="desktop">
+    <unit mrp="nokia_helps_metadata.mrp"/>
+   </component>
+  </collection>
+ </package>
+</SystemDefinition>
